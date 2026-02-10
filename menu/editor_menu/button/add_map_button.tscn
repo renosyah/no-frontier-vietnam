@@ -1,0 +1,73 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/user_interface/fonts/montserrat_eb_32.tres" type="DynamicFont" id=1]
+[ext_resource path="res://menu/editor_menu/button/add_map_button.gd" type="Script" id=2]
+[ext_resource path="res://assets/user_interface/fonts/montserrat_eb_36.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/user_interface/fonts/montserrat_eb_14.tres" type="DynamicFont" id=4]
+
+[node name="add_map_button" type="MarginContainer"]
+margin_right = 200.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 200, 200 )
+mouse_filter = 2
+script = ExtResource( 2 )
+
+[node name="Button" type="Button" parent="."]
+margin_left = 15.0
+margin_top = 15.0
+margin_right = 200.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 185, 185 )
+size_flags_horizontal = 8
+size_flags_vertical = 8
+custom_fonts/font = ExtResource( 1 )
+text = "+"
+icon_align = 1
+
+[node name="ColorRect2" type="ColorRect" parent="Button"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 30 )
+mouse_filter = 2
+size_flags_vertical = 8
+color = Color( 0, 0, 0, 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Button"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Button/VBoxContainer"]
+margin_right = 185.0
+margin_bottom = 121.0
+mouse_filter = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="Button/VBoxContainer/MarginContainer"]
+margin_right = 185.0
+margin_bottom = 121.0
+mouse_filter = 2
+color = Color( 0.00784314, 0.137255, 0, 1 )
+
+[node name="TextureRect" type="Label" parent="Button/VBoxContainer/MarginContainer"]
+margin_top = 38.0
+margin_right = 185.0
+margin_bottom = 83.0
+custom_fonts/font = ExtResource( 3 )
+text = "+"
+align = 1
+valign = 1
+
+[node name="Label" type="Label" parent="Button/VBoxContainer"]
+margin_top = 125.0
+margin_right = 185.0
+margin_bottom = 185.0
+rect_min_size = Vector2( 0, 60 )
+custom_fonts/font = ExtResource( 4 )
+text = "New"
+align = 1
+valign = 1
+autowrap = true
+max_lines_visible = 1
+
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/contested_area.obj-784b7b4f679e5537922e26475e160335.mesh"
+
+[deps]
+
+files=[ "res://.import/contested_area.obj-784b7b4f679e5537922e26475e160335.mesh" ]
+
+source_file="res://assets/tile_highlight/contested_area.obj"
+dest_files=[ "res://.import/contested_area.obj-784b7b4f679e5537922e26475e160335.mesh", "res://.import/contested_area.obj-784b7b4f679e5537922e26475e160335.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/detail_hill.obj-255d8d32d86e037d5cd76b1c041448da.mesh"
+
+[deps]
+
+files=[ "res://.import/detail_hill.obj-255d8d32d86e037d5cd76b1c041448da.mesh" ]
+
+source_file="res://scenes/tile_objects/models/detail_hill.obj"
+dest_files=[ "res://.import/detail_hill.obj-255d8d32d86e037d5cd76b1c041448da.mesh", "res://.import/detail_hill.obj-255d8d32d86e037d5cd76b1c041448da.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

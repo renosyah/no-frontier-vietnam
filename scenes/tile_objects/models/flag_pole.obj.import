@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/flag_pole.obj-1919adc1b5d052c2216eccd88f0f96bc.mesh"
+
+[deps]
+
+files=[ "res://.import/flag_pole.obj-1919adc1b5d052c2216eccd88f0f96bc.mesh" ]
+
+source_file="res://scenes/tile_objects/models/flag_pole.obj"
+dest_files=[ "res://.import/flag_pole.obj-1919adc1b5d052c2216eccd88f0f96bc.mesh", "res://.import/flag_pole.obj-1919adc1b5d052c2216eccd88f0f96bc.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

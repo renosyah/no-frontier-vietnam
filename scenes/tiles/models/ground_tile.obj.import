@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/ground_tile.obj-7e36daa999e1756183486db7dc6afb89.mesh"
+
+[deps]
+
+files=[ "res://.import/ground_tile.obj-7e36daa999e1756183486db7dc6afb89.mesh" ]
+
+source_file="res://scenes/tiles/models/ground_tile.obj"
+dest_files=[ "res://.import/ground_tile.obj-7e36daa999e1756183486db7dc6afb89.mesh", "res://.import/ground_tile.obj-7e36daa999e1756183486db7dc6afb89.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

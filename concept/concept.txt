@@ -1,0 +1,70 @@
+vietname fob commander
+
+"good morning vietnam" - radio
+
+is a base building & squad base mission oriented gameplay
+
+gameplay
+
+campaign map (grand map)
+- 2d map with tiles as area of operation
+- red, is enemy control
+- blue, ally control
+- mission will display here
+- unit movement will display here
+
+ao map (battle map)
+- 9 tile with 1 tile as center choosed from campaign map
+- has navigation using tile a star
+- mision or base building will be perform here
+- exit tile for ground unit
+
+
+base
+- choose tile as base position
+- clear area, and building a base
+- building : hq, medical tent, armory, barrack, landing pad, bunker & tower as defence
+- move to any tile on campaign map as you see fit
+- protect you CO
+
+resource
+- man power : to request infantry
+- ammo : to equip for mission
+- supply : base building
+- oil : vehicle
+
+unit
+- infantry : riflement, sniper, mg, radioman, pointman, medic & engineer
+	- slow movement
+	- main role territorial claim
+	- main combat unit
+
+- truck & apc : truck & m113
+	- normal movement
+	- can transport infantry
+	- can carry resource
+
+- tank : m48 patton
+	- normal movement
+	- support (must at AO)
+
+- artilery & spg (tow) : 105mm & 155mm
+	- slow movement
+	- support (at or off map AO)
+	- attack on target can only be called via radioman
+
+- helicopter (uh 1d)
+	- fast movement
+	- can transport infantry
+	- can carry resource
+
+- attack heli (cobra)
+	- fast movement
+	- support (must at AO)
+
+- jet (f4 panthom)
+	- fast movement
+	- cas : drop bom
+	- attack on target can only be called via radioman
+	- rtb after attack
+

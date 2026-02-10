@@ -1,0 +1,84 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/user_interface/fonts/montserrat_eb_28.tres" type="DynamicFont" id=1]
+[ext_resource path="res://addons/SafeArea/SafeArea.gd" type="Script" id=2]
+[ext_resource path="res://menu/main/ui/ui.gd" type="Script" id=3]
+[ext_resource path="res://assets/background/main_menu_bg.png" type="Texture" id=4]
+
+[node name="ui" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 3 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="bg" type="Control" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/bg"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 4 )
+stretch_mode = 7
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/bg"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.470588 )
+
+[node name="Control" type="MarginContainer" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 2 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control"]
+margin_left = 130.0
+margin_right = 470.0
+margin_bottom = 1024.0
+rect_min_size = Vector2( 340, 0 )
+size_flags_horizontal = 4
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
+margin_top = 354.0
+margin_right = 340.0
+margin_bottom = 434.0
+
+[node name="play" type="Button" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer"]
+margin_right = 200.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 200, 80 )
+custom_fonts/font = ExtResource( 1 )
+text = "New Game"
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer"]
+margin_top = 438.0
+margin_right = 340.0
+margin_bottom = 462.0
+rect_min_size = Vector2( 0, 24 )
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
+margin_top = 466.0
+margin_right = 340.0
+margin_bottom = 546.0
+alignment = 2
+
+[node name="editor" type="Button" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 140.0
+margin_right = 340.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 200, 80 )
+custom_fonts/font = ExtResource( 1 )
+text = "Map Editor"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer"]
+margin_top = 550.0
+margin_right = 340.0
+margin_bottom = 670.0
+rect_min_size = Vector2( 0, 120 )
+
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer2/editor" to="." method="_on_editor_pressed"]

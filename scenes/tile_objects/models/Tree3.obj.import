@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Tree3.obj-58f35e7673dd988ce9ad3c6e2cb0ba2b.mesh"
+
+[deps]
+
+files=[ "res://.import/Tree3.obj-58f35e7673dd988ce9ad3c6e2cb0ba2b.mesh" ]
+
+source_file="res://scenes/tile_objects/models/Tree3.obj"
+dest_files=[ "res://.import/Tree3.obj-58f35e7673dd988ce9ad3c6e2cb0ba2b.mesh", "res://.import/Tree3.obj-58f35e7673dd988ce9ad3c6e2cb0ba2b.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

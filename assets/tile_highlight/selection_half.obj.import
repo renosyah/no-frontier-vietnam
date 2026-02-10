@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/selection_half.obj-272e325cf5e8a01821d938cc6445d304.mesh"
+
+[deps]
+
+files=[ "res://.import/selection_half.obj-272e325cf5e8a01821d938cc6445d304.mesh" ]
+
+source_file="res://assets/tile_highlight/selection_half.obj"
+dest_files=[ "res://.import/selection_half.obj-272e325cf5e8a01821d938cc6445d304.mesh", "res://.import/selection_half.obj-272e325cf5e8a01821d938cc6445d304.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

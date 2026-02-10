@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Rock1.obj-02b8e24dc3b2b2a656c64d3247e316f2.mesh"
+
+[deps]
+
+files=[ "res://.import/Rock1.obj-02b8e24dc3b2b2a656c64d3247e316f2.mesh" ]
+
+source_file="res://scenes/tile_objects/models/Rock1.obj"
+dest_files=[ "res://.import/Rock1.obj-02b8e24dc3b2b2a656c64d3247e316f2.mesh", "res://.import/Rock1.obj-02b8e24dc3b2b2a656c64d3247e316f2.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

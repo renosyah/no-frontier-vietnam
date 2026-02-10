@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/detail_forestA.obj-2df543bb3c36e6695545cae65821351c.mesh"
+
+[deps]
+
+files=[ "res://.import/detail_forestA.obj-2df543bb3c36e6695545cae65821351c.mesh" ]
+
+source_file="res://scenes/tile_objects/models/detail_forestA.obj"
+dest_files=[ "res://.import/detail_forestA.obj-2df543bb3c36e6695545cae65821351c.mesh", "res://.import/detail_forestA.obj-2df543bb3c36e6695545cae65821351c.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

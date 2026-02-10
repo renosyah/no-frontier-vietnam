@@ -1,0 +1,268 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Resource",
+"class": "BaseData",
+"language": "GDScript",
+"path": "res://data/base_data.gd"
+}, {
+"base": "Node",
+"class": "BaseGameplay",
+"language": "GDScript",
+"path": "res://menu/gameplay/base_gameplay.gd"
+}, {
+"base": "Spatial",
+"class": "BaseTile",
+"language": "GDScript",
+"path": "res://scenes/tiles/base_tile.gd"
+}, {
+"base": "Spatial",
+"class": "BaseTileMap",
+"language": "GDScript",
+"path": "res://scenes/maps/base_tile_map.gd"
+}, {
+"base": "Spatial",
+"class": "BaseTileObject",
+"language": "GDScript",
+"path": "res://scenes/tile_objects/base_tile_object.gd"
+}, {
+"base": "Spatial",
+"class": "ClickableFloor",
+"language": "GDScript",
+"path": "res://assets/clickable_floor/clickable_floor.gd"
+}, {
+"base": "Control",
+"class": "ClickableScreen",
+"language": "GDScript",
+"path": "res://assets/user_interface/clickable_screen/clickable_screen.gd"
+}, {
+"base": "MarginContainer",
+"class": "DragableCard",
+"language": "GDScript",
+"path": "res://menu/editor/dragable_card/dragable_card.gd"
+}, {
+"base": "BaseData",
+"class": "GrandMapFileManifest",
+"language": "GDScript",
+"path": "res://data/manifest/grand_map_file_manifest.gd"
+}, {
+"base": "BaseData",
+"class": "GrandMapFileMission",
+"language": "GDScript",
+"path": "res://data/mission/grand_map_file_mission.gd"
+}, {
+"base": "InputEventAction",
+"class": "InputEventMultiScreenDrag",
+"language": "GDScript",
+"path": "res://addons/Godot-Touch-Input-Manager/CustomInputEvents/InputEventMultiScreenDrag.gd"
+}, {
+"base": "InputEventAction",
+"class": "InputEventScreenPinch",
+"language": "GDScript",
+"path": "res://addons/Godot-Touch-Input-Manager/CustomInputEvents/InputEventScreenPinch.gd"
+}, {
+"base": "InputEventAction",
+"class": "InputEventScreenTwist",
+"language": "GDScript",
+"path": "res://addons/Godot-Touch-Input-Manager/CustomInputEvents/InputEventScreenTwist.gd"
+}, {
+"base": "InputEventAction",
+"class": "InputEventSingleScreenDrag",
+"language": "GDScript",
+"path": "res://addons/Godot-Touch-Input-Manager/CustomInputEvents/InputEventSingleScreenDrag.gd"
+}, {
+"base": "InputEventAction",
+"class": "InputEventSingleScreenTap",
+"language": "GDScript",
+"path": "res://addons/Godot-Touch-Input-Manager/CustomInputEvents/InputEventSingleScreenTap.gd"
+}, {
+"base": "InputEventAction",
+"class": "InputEventSingleScreenTouch",
+"language": "GDScript",
+"path": "res://addons/Godot-Touch-Input-Manager/CustomInputEvents/InputEventSingleScreenTouch.gd"
+}, {
+"base": "BaseData",
+"class": "MapObjectData",
+"language": "GDScript",
+"path": "res://data/tile_map/map_object_data.gd"
+}, {
+"base": "BaseData",
+"class": "NavigationData",
+"language": "GDScript",
+"path": "res://data/tile_map/navigation_data.gd"
+}, {
+"base": "NetworkConfiguration",
+"class": "NetworkClient",
+"language": "GDScript",
+"path": "res://addons/network/helper/NetworkClient.gd"
+}, {
+"base": "Node",
+"class": "NetworkConfiguration",
+"language": "GDScript",
+"path": "res://addons/network/helper/NetworkConfiguration.gd"
+}, {
+"base": "Node",
+"class": "NetworkPlayer",
+"language": "GDScript",
+"path": "res://addons/network/helper/NetworkPlayer.gd"
+}, {
+"base": "NetworkConfiguration",
+"class": "NetworkServer",
+"language": "GDScript",
+"path": "res://addons/network/helper/NetworkServer.gd"
+}, {
+"base": "Node",
+"class": "QueueTask",
+"language": "GDScript",
+"path": "res://addons/queue_task/queue_task.gd"
+}, {
+"base": "Node",
+"class": "RadioChatters",
+"language": "GDScript",
+"path": "res://assets/sounds/radio_chatter/radio_chatters.gd"
+}, {
+"base": "Node",
+"class": "RandomNameGenerator",
+"language": "GDScript",
+"path": "res://addons/random-name/random_names.gd"
+}, {
+"base": "Node",
+"class": "SaveLoad",
+"language": "GDScript",
+"path": "res://addons/save_load/save_load.gd"
+}, {
+"base": "Node",
+"class": "SaveLoadImproved",
+"language": "GDScript",
+"path": "res://addons/save_load/save_load_improve.gd"
+}, {
+"base": "Node",
+"class": "ServerAdvertiser",
+"language": "GDScript",
+"path": "res://addons/LANServerBroadcast/server_advertiser/ServerAdvertiser.gd"
+}, {
+"base": "Node",
+"class": "ServerListener",
+"language": "GDScript",
+"path": "res://addons/LANServerBroadcast/server_listener/ServerListener.gd"
+}, {
+"base": "Node",
+"class": "SoldierNames",
+"language": "GDScript",
+"path": "res://assets/user_interface/soldier_names/soldier_names.gd"
+}, {
+"base": "Node",
+"class": "SoldierPotraits",
+"language": "GDScript",
+"path": "res://assets/user_interface/soldier_potraits/soldier_potraits.gd"
+}, {
+"base": "BaseData",
+"class": "TileMapData",
+"language": "GDScript",
+"path": "res://data/tile_map/tile_map_data.gd"
+}, {
+"base": "BaseData",
+"class": "TileMapFileData",
+"language": "GDScript",
+"path": "res://data/tile_map/tile_map_file_data.gd"
+}, {
+"base": "Node",
+"class": "TileMapUtils",
+"language": "GDScript",
+"path": "res://utils/tile_map_utils.gd"
+}, {
+"base": "Node",
+"class": "Utils",
+"language": "GDScript",
+"path": "res://utils/utils.gd"
+} ]
+_global_script_class_icons={
+"BaseData": "",
+"BaseGameplay": "",
+"BaseTile": "",
+"BaseTileMap": "",
+"BaseTileObject": "",
+"ClickableFloor": "",
+"ClickableScreen": "",
+"DragableCard": "",
+"GrandMapFileManifest": "",
+"GrandMapFileMission": "",
+"InputEventMultiScreenDrag": "",
+"InputEventScreenPinch": "",
+"InputEventScreenTwist": "",
+"InputEventSingleScreenDrag": "",
+"InputEventSingleScreenTap": "",
+"InputEventSingleScreenTouch": "",
+"MapObjectData": "",
+"NavigationData": "",
+"NetworkClient": "",
+"NetworkConfiguration": "",
+"NetworkPlayer": "",
+"NetworkServer": "",
+"QueueTask": "",
+"RadioChatters": "",
+"RandomNameGenerator": "",
+"SaveLoad": "",
+"SaveLoadImproved": "",
+"ServerAdvertiser": "res://addons/LANServerBroadcast/server_advertiser/server_advertiser.png",
+"ServerListener": "res://addons/LANServerBroadcast/server_listener/server_listener.png",
+"SoldierNames": "",
+"SoldierPotraits": "",
+"TileMapData": "",
+"TileMapFileData": "",
+"TileMapUtils": "",
+"Utils": ""
+}
+
+[application]
+
+config/name="No Frontier : Vietnam"
+config/description="is a real-time tactical war game set in the Vietnam War era."
+run/main_scene="res://menu/splash.tscn"
+boot_splash/use_filter=false
+config/icon="res://icn.png"
+
+[autoload]
+
+Network="*res://addons/network/Network.gd"
+NetworkLobbyManager="*res://addons/network/lobby-manager/NetworkLobbyManager.gd"
+Global="*res://global/global.gd"
+
+[display]
+
+window/size/width=600
+window/size/height=1024
+window/handheld/orientation="portrait"
+window/stretch/mode="2d"
+window/stretch/aspect="expand"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/LANServerBroadcast/plugin.cfg", "res://addons/SafeArea/plugin.cfg" )
+
+[gui]
+
+common/drop_mouse_on_gui_input_disabled=true
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+quality/driver/driver_name="GLES2"
+vram_compression/import_etc=true
+vram_compression/import_etc2=false
+environment/default_environment="res://default_env.tres"

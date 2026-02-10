@@ -1,0 +1,69 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://menu/editor/editor.gd" type="Script" id=1]
+[ext_resource path="res://menu/editor/ui/ui.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/maps/grand/grand_map.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/tile_highlight/contested_area.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://assets/clickable_floor/clickable_floor.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/enviroment/room_environment.tres" type="Environment" id=6]
+[ext_resource path="res://assets/tile_highlight/selection.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/background/bg_table.png" type="Texture" id=8]
+[ext_resource path="res://scenes/tiles/models/wood_material.tres" type="Material" id=9]
+
+[node name="editor" type="Node"]
+script = ExtResource( 1 )
+
+[node name="ui" parent="." instance=ExtResource( 2 )]
+
+[node name="movable_camera_custom" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 2 )
+
+[node name="Camera" type="Camera" parent="movable_camera_custom"]
+transform = Transform( 1, 0, 0, 0, 0.34202, 0.939693, 0, -0.939693, 0.34202, 0, 0, 0 )
+keep_aspect = 0
+environment = ExtResource( 6 )
+current = true
+
+[node name="SpotLight" type="SpotLight" parent="movable_camera_custom"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
+light_energy = 1.6
+shadow_enabled = true
+shadow_bias = 0.12
+spot_range = 10.0
+spot_angle = 55.0
+
+[node name="clickable_floor" parent="." instance=ExtResource( 5 )]
+
+[node name="grand_map" parent="." instance=ExtResource( 3 )]
+
+[node name="border" type="MeshInstance" parent="grand_map"]
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 9 )
+
+[node name="desk" type="Sprite3D" parent="grand_map"]
+transform = Transform( 3.5, 0, 0, 0, -1.5299e-07, 3.5, 0, -3.5, -1.5299e-07, 0, -0.4, -1 )
+cast_shadow = 0
+modulate = Color( 0.662745, 0.662745, 0.662745, 1 )
+transparent = false
+double_sided = false
+texture = ExtResource( 8 )
+
+[node name="selection" parent="." instance=ExtResource( 7 )]
+visible = false
+
+[connection signal="on_add_base" from="ui" to="." method="_on_ui_on_add_base"]
+[connection signal="on_add_object" from="ui" to="." method="_on_ui_on_add_object"]
+[connection signal="on_add_point" from="ui" to="." method="_on_ui_on_add_point"]
+[connection signal="on_cancel" from="ui" to="." method="_on_ui_on_cancel"]
+[connection signal="on_card_dragging" from="ui" to="." method="_on_ui_on_card_dragging"]
+[connection signal="on_remove_object" from="ui" to="." method="_on_ui_on_remove_object"]
+[connection signal="on_save" from="ui" to="." method="_on_ui_on_save"]
+[connection signal="on_toggle_nav" from="ui" to="." method="_on_ui_on_toggle_nav"]
+[connection signal="on_update_tile" from="ui" to="." method="_on_ui_on_update_tile"]
+[connection signal="on_zoom_tile" from="ui" to="." method="_on_ui_on_zoom_tile"]
+[connection signal="on_floor_clicked" from="clickable_floor" to="." method="_on_clickable_floor_on_floor_clicked"]
+[connection signal="on_map_ready" from="grand_map" to="." method="_on_grand_map_on_map_ready"]
+[connection signal="on_navigation_updated" from="grand_map" to="." method="_on_grand_map_on_navigation_updated"]
