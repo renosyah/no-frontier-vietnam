@@ -4,7 +4,7 @@ class_name BaseTileMap
 signal on_map_ready
 signal on_tile_updated(id, data, node)
 signal on_object_updated(id, data, node)
-signal on_navigation_updated(id, data, nav)
+signal on_navigation_updated(id, data)
 
 var _click_position :Vector3
 var _spawned_tiles :Dictionary = {} # { Vector2 : BaseTile }

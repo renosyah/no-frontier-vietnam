@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/clickable_floor/clickable_floor.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/maps/battle/battle_map.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/tile_highlight/selection.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/background/bg_ground.png" type="Texture" id=6]
 [ext_resource path="res://menu/editor_battle/editor_battle.gd" type="Script" id=7]
 [ext_resource path="res://assets/enviroment/outside_environment.tres" type="Environment" id=8]
 [ext_resource path="res://menu/editor_battle/ui/ui.tscn" type="PackedScene" id=10]
@@ -14,12 +15,12 @@ script = ExtResource( 7 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.307739, 0.951471, 0, -0.951471, 0.307739, 0, 0, 0 )
-light_energy = 0.7
+light_energy = 0.8
 shadow_enabled = true
 directional_shadow_mode = 0
 
 [node name="movable_camera_custom" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 2 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 2 )
 
 [node name="Camera" type="Camera" parent="movable_camera_custom"]
 transform = Transform( 1, 0, 0, 0, 0.34202, 0.939693, 0, -0.939693, 0.34202, 0, 0, 0 )
@@ -31,7 +32,22 @@ current = true
 
 [node name="battle_map" parent="." instance=ExtResource( 4 )]
 
+[node name="desk" type="Sprite3D" parent="battle_map"]
+transform = Transform( 3.5, 0, 0, 0, -1.5299e-07, 3.5, 0, -3.5, -1.5299e-07, 0, -0.4, -1 )
+cast_shadow = 0
+modulate = Color( 0.662745, 0.662745, 0.662745, 1 )
+transparent = false
+double_sided = false
+texture = ExtResource( 6 )
+
 [node name="selection" parent="." instance=ExtResource( 5 )]
 visible = false
 
+[connection signal="on_add_object" from="ui" to="." method="_on_ui_on_add_object"]
+[connection signal="on_cancel" from="ui" to="." method="_on_ui_on_cancel"]
+[connection signal="on_card_dragging" from="ui" to="." method="_on_ui_on_card_dragging"]
+[connection signal="on_remove_object" from="ui" to="." method="_on_ui_on_remove_object"]
+[connection signal="on_toggle_nav" from="ui" to="." method="_on_ui_on_toggle_nav"]
+[connection signal="on_update_tile" from="ui" to="." method="_on_ui_on_update_tile"]
 [connection signal="on_map_ready" from="battle_map" to="." method="_on_battle_map_on_map_ready"]
+[connection signal="on_navigation_updated" from="battle_map" to="." method="_on_battle_map_on_navigation_updated"]

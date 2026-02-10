@@ -33,5 +33,6 @@ func _spawn_object(data :MapObjectData) -> BaseTileObject:
 	add_child(obj)
 	obj.name = 'obj_%s' % data.id
 	obj.translation = data.pos
+	obj.rotation_degrees.y = data.rotation
 	return obj
 
