@@ -119,7 +119,7 @@ func add_object(at :Vector2, scene_idx :int, is_blocking :bool):
 	data.pos = pos3
 	data.scene_idx = scene_idx
 	data.is_blocking = is_blocking
-	
+	data.rotation = rand_range(0, 360)
 	emit_signal("on_add_object", data)
 	
 func _on_card_grab(_card :DragableCard, pos :Vector2, icon :StreamTexture):

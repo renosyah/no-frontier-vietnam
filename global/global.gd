@@ -80,6 +80,7 @@ onready var battle_map_datas :Dictionary = {} # [ Vector2:TileMapFileData ]
 
 var battle_map_name :String
 var battle_map_data :TileMapFileData
+var battle_map_id :Vector2
 
 func empty_map_data():
 	grand_map_manifest_data = GrandMapFileManifest.new()
@@ -88,7 +89,7 @@ func empty_map_data():
 	grand_map_manifest_data.battle_map_size = battle_map_size
 	grand_map_manifest_data.battle_map_names = {}
 	
-	grand_map_data = TileMapUtils.generate_basic_tile_map(grand_map_manifest_data.map_size)
+	grand_map_data = TileMapUtils.generate_empty_tile_map(grand_map_manifest_data.map_size)
 	
 	grand_map_mission_data = GrandMapFileMission.new()
 	grand_map_mission_data.bases = []
@@ -97,7 +98,7 @@ func empty_map_data():
 	var alphabetics = Utils.military_alphabetic()
 	battle_map_datas = {}
 	for key in grand_map_data.tile_ids.keys():
-		battle_map_datas[key] = TileMapUtils.generate_basic_tile_map(grand_map_manifest_data.battle_map_size, false)
+		battle_map_datas[key] = TileMapUtils.generate_empty_tile_map(grand_map_manifest_data.battle_map_size, false)
 		var sector_name = "%s %s-%s" % [alphabetics[randi() % alphabetics.size()], abs(key.x), abs(key.y)]
 		grand_map_manifest_data.battle_map_names[key] = sector_name
 		

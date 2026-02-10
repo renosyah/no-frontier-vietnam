@@ -185,6 +185,7 @@ func _on_ui_on_zoom_tile(pos):
 	if battle_map_datas.has(tile.id):
 		Global.battle_map_name = grand_map_manifest_data.battle_map_names[tile.id]
 		Global.battle_map_data = battle_map_datas[tile.id]
+		Global.battle_map_id = tile.id
 		Global.change_scene("res://menu/editor_battle/editor_battle.tscn")
 	
 func _on_ui_on_save():

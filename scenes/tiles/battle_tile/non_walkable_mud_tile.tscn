@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scenes/tiles/models/ground_material.tres" type="Material" id=1]
+[ext_resource path="res://scenes/tiles/models/mud_material.tres" type="Material" id=1]
 [ext_resource path="res://scenes/tiles/models/water_tile.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://scenes/tiles/base_tile.gd" type="Script" id=3]
 

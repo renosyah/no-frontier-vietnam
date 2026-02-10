@@ -46,6 +46,7 @@ visible = false
 [connection signal="on_add_object" from="ui" to="." method="_on_ui_on_add_object"]
 [connection signal="on_cancel" from="ui" to="." method="_on_ui_on_cancel"]
 [connection signal="on_card_dragging" from="ui" to="." method="_on_ui_on_card_dragging"]
+[connection signal="on_randomize" from="ui" to="." method="_on_ui_on_randomize"]
 [connection signal="on_remove_object" from="ui" to="." method="_on_ui_on_remove_object"]
 [connection signal="on_toggle_nav" from="ui" to="." method="_on_ui_on_toggle_nav"]
 [connection signal="on_update_tile" from="ui" to="." method="_on_ui_on_update_tile"]

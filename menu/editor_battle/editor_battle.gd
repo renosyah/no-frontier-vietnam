@@ -10,15 +10,27 @@ onready var clickable_floor = $clickable_floor
 onready var selection = $selection
 
 onready var nav_highlight_holder = {}
+onready var show_nav :bool = false
 
+var grand_map_mission_data :GrandMapFileMission
 var grand_map_manifest_data :GrandMapFileManifest
 var battle_map_data :TileMapFileData
+var untouch_tiles :Array = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	grand_map_mission_data = Global.grand_map_mission_data
 	grand_map_manifest_data = Global.grand_map_manifest_data
 	battle_map_data = Global.battle_map_data
 	
+	if grand_map_mission_data.bases.has(Global.battle_map_id):
+		untouch_tiles = TileMapUtils.get_adjacent_tiles(TileMapUtils.get_directions(), Vector2.ZERO, 2)
+		untouch_tiles.append(Vector2.ZERO)
+		
+	elif grand_map_mission_data.points.has(Global.battle_map_id):
+		untouch_tiles = TileMapUtils.get_adjacent_tiles(TileMapUtils.get_directions(), Vector2.ZERO, 1)
+		untouch_tiles.append(Vector2.ZERO)
+		
 	Global.camera_limit_bound = Vector3(grand_map_manifest_data.battle_map_size + 1, 0, grand_map_manifest_data.battle_map_size)
 	
 	ui.movable_camera_ui.camera_limit_bound = Global.camera_limit_bound
@@ -59,7 +71,7 @@ func _on_battle_map_on_map_ready():
 		nav_highlight.set_text_label("%s\n%s" % [nav.id, nav.navigation_id])
 		nav_highlight.set_surface_material(0, allow_nav if nav.enable else blocked_nav)
 		nav_highlight.translation = battle_map.get_tile(nav.id).translation
-		nav_highlight.visible = false
+		nav_highlight.visible = show_nav
 		nav_highlight_holder[nav.id] = nav_highlight
 	
 func _on_ui_on_card_dragging(pos):
@@ -84,42 +96,52 @@ func _on_ui_on_remove_object(pos):
 	battle_map.update_navigation_tile(tile.id, true)
 
 func _on_ui_on_toggle_nav(show):
+	show_nav = show
+	
 	for i in nav_highlight_holder.values():
-		i.visible = show
+		i.visible = show_nav
 
 func _on_ui_on_add_object(data :MapObjectData):
 	show_selection(Vector3.ZERO, false)
 	
 	var tile = battle_map.get_closes_tile(data.pos)
+	
+	# reserve for mission objects
+	if data.id in untouch_tiles:
+		return
+	
 	var obj = battle_map.get_object(tile.id)
 	if tile.tile_type in [4, 5] or is_instance_valid(obj):
 		return
 		
 	data.id = tile.id
 	data.pos = tile.pos
-	data.rotation = rand_range(0, 360)
 	battle_map.update_spawned_object(data)
 	
 	battle_map.update_navigation_tile(data.id, not data.is_blocking)
 	
 func _on_ui_on_update_tile(data :TileMapData):
 	var old_tile = battle_map.get_closes_tile(data.pos)
+	show_selection(old_tile.pos, false)
+	
+	# reserve for mission objects
+	if old_tile.id in untouch_tiles:
+		return
+
 	data.id = old_tile.id
 	data.pos = old_tile.pos
 	battle_map.update_spawned_tile(data)
-	show_selection(old_tile.pos, false)
 	
 	battle_map.update_navigation_tile(data.id, data.tile_type in [1, 2, 3])
 	
 func _on_battle_map_on_navigation_updated(id :Vector2, data :NavigationData):
 	nav_highlight_holder[id].set_surface_material(0, allow_nav if data.enable else blocked_nav)
 
-
-
-
-
-
-
-
-
-
+func _on_ui_on_randomize():
+	for i in nav_highlight_holder.values():
+		i.queue_free()
+		
+	nav_highlight_holder.clear()
+	
+	TileMapUtils.randomize_battle_map(battle_map_data, untouch_tiles)
+	battle_map.generate_from_data(battle_map_data, true)
