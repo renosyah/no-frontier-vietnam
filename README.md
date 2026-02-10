@@ -3,7 +3,7 @@
 No frontier : Vietnam is a real-time tactical war game set in the Vietnam War era.
 It combines a strategic grand map with real-time tactical battles, both running on a single continuous timeline.
 
-<img src="https://raw.githubusercontent.com/renosyah/no-frontier/refs/heads/master/concept/new_bg.png" height="600" />
+<img src="https://raw.githubusercontent.com/renosyah/no-frontier-vietnam/refs/heads/master/concept/new_bg.png" height="600" />
 
 ---
 
@@ -24,7 +24,7 @@ Procedural-only level design is intentionally avoided — a **map editor is a co
 
 ## Base & Logistics
 
-<img src="https://raw.githubusercontent.com/renosyah/no-frontier/refs/heads/master/assets/background/main_menu.png" height="400"/>
+<img src="https://raw.githubusercontent.com/renosyah/no-frontier-vietnam/refs/heads/master/assets/background/main_menu.png" height="400"/>
 
 Bases are the heart of your operation.  
 From here you create squads, resupply weapons, repair vehicles, and manage manpower.  
@@ -32,7 +32,7 @@ Bases are static in the current scope but can be placed anywhere on controlled t
 
 ## Command & Planning
 
-<img src="https://raw.githubusercontent.com/renosyah/no-frontier/refs/heads/master/assets/background/pre_match.png" height="400" />
+<img src="https://raw.githubusercontent.com/renosyah/no-frontier-vietnam/refs/heads/master/assets/background/pre_match.png" height="400" />
 
 All operations are planned from the command layer.  
 Players monitor troop movement, initiate ambushes, request indirect fire support, and decide when to zoom into battle maps.
