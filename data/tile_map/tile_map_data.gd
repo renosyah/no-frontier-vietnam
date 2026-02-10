@@ -5,7 +5,7 @@ var id :Vector2
 var pos :Vector3
 
 # tile_type for grand map = 1:ground, 2:water
-# tile_type for battle map = 1:grass, 2:mud, 3:sand, 4:water
+# tile_type for battle map = 1:grass, 2:mud, 3:sand, 4:water (non walk), 5:mud (non walk)
 var tile_type :int
 
 

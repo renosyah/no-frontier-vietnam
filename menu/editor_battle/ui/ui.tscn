@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://addons/SafeArea/SafeArea.gd" type="Script" id=1]
 [ext_resource path="res://assets/camera/movable_camera_ui.tscn" type="PackedScene" id=2]
@@ -9,10 +9,17 @@
 [ext_resource path="res://assets/user_interface/icons/editor_menu_icon/tile_remove.png" type="Texture" id=7]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_icon/tile_nav.png" type="Texture" id=8]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_icon/tile.png" type="Texture" id=9]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_icon/tile_rock.png" type="Texture" id=10]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_icon/tile_water.png" type="Texture" id=11]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_icon/tile_tree.png" type="Texture" id=12]
 [ext_resource path="res://assets/user_interface/icons/back_fill.png" type="Texture" id=13]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_icon/bush.png" type="Texture" id=14]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_icon/reload.png" type="Texture" id=15]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/water_tile_card.png" type="Texture" id=16]
 [ext_resource path="res://menu/editor_battle/ui/ui.gd" type="Script" id=17]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/forest_tile_card.png" type="Texture" id=18]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/forest_tile_card_2.png" type="Texture" id=19]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/ground_tile_card.png" type="Texture" id=20]
 
 [node name="ui" type="Control"]
 anchor_right = 1.0
@@ -123,17 +130,15 @@ mouse_filter = 2
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
-anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = -580.0
 margin_right = 100.0
 mouse_filter = 2
 alignment = 1
 
 [node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer"]
-margin_top = 114.0
+margin_top = 60.0
 margin_right = 100.0
-margin_bottom = 154.0
+margin_bottom = 100.0
 rect_min_size = Vector2( 0, 40 )
 custom_fonts/font = ExtResource( 6 )
 text = "Tile"
@@ -141,21 +146,33 @@ align = 1
 valign = 1
 
 [node name="ground_tile" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer" instance=ExtResource( 3 )]
-margin_top = 158.0
-margin_bottom = 258.0
+margin_top = 104.0
+margin_bottom = 204.0
 button_image = ExtResource( 9 )
 manual_toggle = true
 
 [node name="water_tile" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer" instance=ExtResource( 3 )]
-margin_top = 262.0
-margin_bottom = 362.0
+margin_top = 208.0
+margin_bottom = 308.0
 button_image = ExtResource( 11 )
 manual_toggle = true
 
+[node name="object_bush" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer" instance=ExtResource( 3 )]
+margin_top = 312.0
+margin_bottom = 412.0
+button_image = ExtResource( 14 )
+manual_toggle = true
+
 [node name="object_forest" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer" instance=ExtResource( 3 )]
-margin_top = 366.0
-margin_bottom = 466.0
+margin_top = 416.0
+margin_bottom = 516.0
 button_image = ExtResource( 12 )
+manual_toggle = true
+
+[node name="object_rock" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer" instance=ExtResource( 3 )]
+margin_top = 520.0
+margin_bottom = 620.0
+button_image = ExtResource( 10 )
 manual_toggle = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
@@ -169,18 +186,38 @@ mouse_filter = 2
 alignment = 1
 
 [node name="Label2" type="Label" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2"]
-margin_top = 218.0
+margin_top = 166.0
 margin_right = 100.0
-margin_bottom = 258.0
+margin_bottom = 206.0
 rect_min_size = Vector2( 0, 40 )
 custom_fonts/font = ExtResource( 6 )
 text = "Map"
 align = 1
 valign = 1
 
+[node name="random_map" type="Button" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+margin_top = 210.0
+margin_right = 100.0
+margin_bottom = 310.0
+rect_min_size = Vector2( 100, 100 )
+flat = true
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2/random_map"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 1 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2/random_map"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource( 15 )
+expand = true
+
 [node name="show_nav" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2" instance=ExtResource( 3 )]
-margin_top = 262.0
-margin_bottom = 362.0
+margin_top = 314.0
+margin_bottom = 414.0
 button_image = ExtResource( 8 )
 
 [node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer"]
@@ -198,23 +235,257 @@ margin_right = 600.0
 margin_bottom = 1024.0
 rect_min_size = Vector2( 0, 200 )
 mouse_filter = 2
-alignment = 1
+alignment = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
-margin_left = 234.0
-margin_right = 246.0
+[node name="MarginContainer4" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
+margin_left = 468.0
+margin_right = 480.0
 margin_bottom = 200.0
 rect_min_size = Vector2( 12, 0 )
 
+[node name="HBoxContainer1" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
+visible = false
+margin_left = 16.0
+margin_right = 480.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="ground_tile_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer1" instance=ExtResource( 4 )]
+margin_left = 40.0
+margin_right = 165.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer1/ground_tile_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 20 )
+expand = true
+
+[node name="mud_tile_card2" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer1" instance=ExtResource( 4 )]
+margin_left = 169.0
+margin_right = 294.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer1/mud_tile_card2"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 20 )
+expand = true
+
+[node name="sand_tile_card3" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer1" instance=ExtResource( 4 )]
+margin_left = 298.0
+margin_right = 423.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer1/sand_tile_card3"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 20 )
+expand = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
+visible = false
+margin_left = 16.0
+margin_right = 270.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="water_tile_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer2" instance=ExtResource( 4 )]
+margin_right = 125.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer2/water_tile_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 16 )
+expand = true
+
+[node name="mud_tile_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer2" instance=ExtResource( 4 )]
+margin_left = 129.0
+margin_right = 254.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer2/mud_tile_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 16 )
+expand = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
+visible = false
+margin_left = 16.0
+margin_right = 480.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="object_bush_1_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer3" instance=ExtResource( 4 )]
+margin_left = 26.0
+margin_right = 126.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer3/object_bush_1_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 18 )
+expand = true
+
+[node name="object_bush_2_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer3" instance=ExtResource( 4 )]
+margin_left = 130.0
+margin_right = 230.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer3/object_bush_2_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 19 )
+expand = true
+
+[node name="object_bush_3_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer3" instance=ExtResource( 4 )]
+margin_left = 234.0
+margin_right = 334.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer3/object_bush_3_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 19 )
+expand = true
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
+visible = false
+margin_left = 16.0
+margin_right = 480.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="object_tree_1_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4" instance=ExtResource( 4 )]
+margin_left = 26.0
+margin_right = 126.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 100, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4/object_tree_1_card"]
+show_behind_parent = true
+margin_right = 100.0
+margin_bottom = 150.0
+texture = ExtResource( 18 )
+expand = true
+
+[node name="object_tree_2_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4" instance=ExtResource( 4 )]
+margin_left = 130.0
+margin_right = 230.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 100, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4/object_tree_2_card"]
+show_behind_parent = true
+margin_right = 100.0
+margin_bottom = 150.0
+texture = ExtResource( 19 )
+expand = true
+
+[node name="object_tree_3_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4" instance=ExtResource( 4 )]
+margin_left = 234.0
+margin_right = 334.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 100, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4/object_tree_3_card"]
+show_behind_parent = true
+margin_right = 100.0
+margin_bottom = 150.0
+texture = ExtResource( 19 )
+expand = true
+
+[node name="object_tree_4_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4" instance=ExtResource( 4 )]
+margin_left = 338.0
+margin_right = 438.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 100, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4/object_tree_4_card"]
+show_behind_parent = true
+margin_right = 100.0
+margin_bottom = 150.0
+texture = ExtResource( 19 )
+expand = true
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
+visible = false
+margin_left = 16.0
+margin_right = 480.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="object_rock_1_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer5" instance=ExtResource( 4 )]
+margin_left = 26.0
+margin_right = 126.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer5/object_rock_1_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 18 )
+expand = true
+
+[node name="object_rock_2_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer5" instance=ExtResource( 4 )]
+margin_left = 130.0
+margin_right = 230.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer5/object_rock_2_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 19 )
+expand = true
+
+[node name="object_rock_3_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer5" instance=ExtResource( 4 )]
+margin_left = 234.0
+margin_right = 334.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 150 )
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer5/object_rock_3_card"]
+show_behind_parent = true
+margin_right = 125.0
+margin_bottom = 150.0
+texture = ExtResource( 19 )
+expand = true
+
 [node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
-margin_left = 250.0
-margin_right = 262.0
+margin_left = 484.0
+margin_right = 496.0
 margin_bottom = 200.0
 rect_min_size = Vector2( 12, 0 )
 
 [node name="object_remove_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6" instance=ExtResource( 4 )]
-margin_left = 266.0
-margin_right = 366.0
+margin_left = 500.0
+margin_right = 600.0
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/object_remove_card"]
 show_behind_parent = true
@@ -231,3 +502,5 @@ mouse_filter = 2
 color = Color( 0.45098, 0, 0, 1 )
 
 [connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/menu_button" to="." method="_on_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2/random_map" to="." method="_on_random_map_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2/show_nav" to="." method="_on_show_nav_pressed"]

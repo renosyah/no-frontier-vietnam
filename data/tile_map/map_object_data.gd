@@ -2,10 +2,26 @@ extends BaseData
 class_name MapObjectData
 
 const scenes = [
+	
+	# grand map scene object
 	preload("res://scenes/tile_objects/grand/faction_base.tscn"),
 	preload("res://scenes/tile_objects/grand/flag_pole.tscn"),
 	preload("res://scenes/tile_objects/grand/forest_1.tscn"),
-	preload("res://scenes/tile_objects/grand/forest_2.tscn")
+	preload("res://scenes/tile_objects/grand/forest_2.tscn"),
+	
+	# battle map scene object
+	preload("res://scenes/tile_objects/battle/bush_1.tscn"),
+	preload("res://scenes/tile_objects/battle/bush_2.tscn"),
+	preload("res://scenes/tile_objects/battle/bush_3.tscn"),
+	
+	preload("res://scenes/tile_objects/battle/tree_1.tscn"),
+	preload("res://scenes/tile_objects/battle/tree_2.tscn"),
+	preload("res://scenes/tile_objects/battle/tree_3.tscn"),
+	preload("res://scenes/tile_objects/battle/tree_4.tscn"),
+	
+	preload("res://scenes/tile_objects/battle/rock_1.tscn"),
+	preload("res://scenes/tile_objects/battle/rock_2.tscn"),
+	preload("res://scenes/tile_objects/battle/rock_3.tscn")
 ]
 
 var id :Vector2
