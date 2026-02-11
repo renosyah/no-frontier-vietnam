@@ -109,8 +109,8 @@ static func randomize_battle_map(map_data :TileMapFileData, untouch :Array = [],
 			var stones = [11, 12, 13]
 			
 			var objects = [bush, trees, stones]
-			var object = objects[rng.randf_range(0, objects.size() - 1)]
-			var scene_idx = object[rng.randf_range(0, object.size() - 1)]
+			var object = objects[int(rng.randf_range(0, objects.size()))]
+			var scene_idx = object[int(rng.randf_range(0, object.size()))]
 			
 			var obj :MapObjectData = MapObjectData.new()
 			obj.id = x.id

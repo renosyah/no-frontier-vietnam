@@ -105,33 +105,28 @@ func _on_ui_on_add_object(data :MapObjectData):
 	show_selection(Vector3.ZERO, false)
 	
 	var tile = battle_map.get_closes_tile(data.pos)
-	
-	# reserve for mission objects
-	if data.id in untouch_tiles:
-		return
-	
-	var obj = battle_map.get_object(tile.id)
-	if tile.tile_type in [4, 5] or is_instance_valid(obj):
-		return
-		
 	data.id = tile.id
 	data.pos = tile.pos
-	battle_map.update_spawned_object(data)
 	
+	# reserve for mission objects
+	# or if tile not ground
+	if data.id in untouch_tiles or tile.tile_type in [4, 5]:
+		return
+		
+	battle_map.update_spawned_object(data)
 	battle_map.update_navigation_tile(data.id, not data.is_blocking)
 	
 func _on_ui_on_update_tile(data :TileMapData):
 	var old_tile = battle_map.get_closes_tile(data.pos)
 	show_selection(old_tile.pos, false)
+	data.id = old_tile.id
+	data.pos = old_tile.pos
 	
 	# reserve for mission objects
 	if old_tile.id in untouch_tiles:
 		return
-
-	data.id = old_tile.id
-	data.pos = old_tile.pos
+		
 	battle_map.update_spawned_tile(data)
-	
 	battle_map.update_navigation_tile(data.id, data.tile_type in [1, 2, 3])
 	
 func _on_battle_map_on_navigation_updated(id :Vector2, data :NavigationData):
