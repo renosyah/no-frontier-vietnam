@@ -16,7 +16,7 @@
 [ext_resource path="res://assets/user_interface/icons/editor_menu_card/water_tile_card.png" type="Texture" id=14]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_card/forest_tile_card.png" type="Texture" id=15]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_card/faction_base_card.png" type="Texture" id=16]
-[ext_resource path="res://assets/user_interface/icons/editor_menu_icon/grand_map.png" type="Texture" id=17]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_icon/zoom_in.png" type="Texture" id=17]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_card/capture_point_card.png" type="Texture" id=18]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_icon/tile_nav.png" type="Texture" id=19]
 [ext_resource path="res://assets/user_interface/fonts/montserrat_eb_16.tres" type="DynamicFont" id=20]
@@ -287,6 +287,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color( 0.109804, 0.258824, 0.141176, 1 )
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer3/zoom_in_card/TextureRect/ColorRect2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = ExtResource( 24 )
+text = "14"
+align = 1
+valign = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer3"]
 margin_left = 286.0

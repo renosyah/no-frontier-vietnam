@@ -101,6 +101,7 @@ func empty_map_data():
 		battle_map_datas[key] = TileMapUtils.generate_empty_tile_map(grand_map_manifest_data.battle_map_size, false)
 		var sector_name = "%s %s-%s" % [alphabetics[randi() % alphabetics.size()], abs(key.x), abs(key.y)]
 		grand_map_manifest_data.battle_map_names[key] = sector_name
+		grand_map_mission_data.edited_battle_maps[key] = false
 		
 func save_edited_map():
 	var map_file = yield(_save_map(),"completed")

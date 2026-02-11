@@ -60,8 +60,17 @@ func update_base_point_quota():
 	var point_qty = grand_map_mission_data.points.size()
 	ui.base_qty.text = "%s" %  (2 - base_qty)
 	ui.point_qty.text = "%s" % (3 - point_qty)
-	ui.save_button.visible = (base_qty >= Global.req_base_count) and (point_qty >= Global.req_point_count)
-
+	
+	var edited_map :bool = grand_map_mission_data.edited_battle_maps.values().has(false)
+	var mission_esential :bool = (base_qty >= Global.req_base_count) and (point_qty >= Global.req_point_count)
+	var edited_battle_map = 0
+	for edited in grand_map_mission_data.edited_battle_maps:
+		if edited:
+			edited_battle_map += 1
+			
+	ui.battle_map_edited.text = "%s" % edited_battle_map
+	ui.save_button.visible = mission_esential and edited_map
+	
 func show_selection(at :Vector3,show :bool):
 	selection.visible = show
 	selection.translation = at
@@ -79,10 +88,14 @@ func _on_ui_on_update_tile(data :TileMapData):
 	if data.tile_type == 1:
 		grand_map.update_navigation_tile(data.id, true)
 		battle_map_datas[data.id] = TileMapUtils.generate_basic_tile_map(Global.battle_map_size, false)
-	
+		grand_map_mission_data.edited_battle_maps[data.id] = false
+		
 	elif data.tile_type == 2:
 		grand_map.update_navigation_tile(data.id, false)
 		grand_map.remove_spawned_object(data.id)
+		
+		if grand_map_mission_data.edited_battle_maps.has(data.id):
+			grand_map_mission_data.edited_battle_maps.erase(data.id)
 		
 		if grand_map_mission_data.bases.has(data.id):
 			grand_map_mission_data.bases.erase(data.id)
@@ -90,6 +103,7 @@ func _on_ui_on_update_tile(data :TileMapData):
 		if grand_map_mission_data.points.has(data.id):
 			grand_map_mission_data.points.erase(data.id)
 			
+		
 	update_base_point_quota()
 	
 func _on_ui_on_add_object(data :MapObjectData):
@@ -186,6 +200,7 @@ func _on_ui_on_zoom_tile(pos):
 		Global.battle_map_name = grand_map_manifest_data.battle_map_names[tile.id]
 		Global.battle_map_data = battle_map_datas[tile.id]
 		Global.battle_map_id = tile.id
+		grand_map_mission_data.edited_battle_maps[tile.id] = true
 		Global.change_scene("res://menu/editor_battle/editor_battle.tscn")
 	
 func _on_ui_on_save():

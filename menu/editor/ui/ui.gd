@@ -25,6 +25,7 @@ onready var map_name = $CanvasLayer/Control/VBoxContainer/HBoxContainer/ColorRec
 onready var base_qty = $CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2/faction_base/Label
 onready var point_qty = $CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer2/capture_point/Label2
 onready var save_button = $CanvasLayer/Control/VBoxContainer/HBoxContainer/save_button
+onready var battle_map_edited = $CanvasLayer/Control/VBoxContainer/HBoxContainer3/zoom_in_card/TextureRect/ColorRect2/Label
 
 func _ready():
 	var card_idx = 0
