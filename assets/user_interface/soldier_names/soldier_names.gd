@@ -50,6 +50,7 @@ static func get_random_us_name() -> String:
 	return "%s %s" % [first_names, family_names]
 
 static func get_random_viet_name():
-	var first_names = nva_family_names[randi() % nva_family_names.size()]
+	var first_names = nva_first_names[randi() % nva_first_names.size()]
 	var family_names = nva_family_names[randi() % nva_family_names.size()]
-	return "%s %s" % [first_names, family_names]
+	var last_names = nva_first_names[randi() % nva_first_names.size()]
+	return "%s %s %s" % [first_names, family_names, last_names]

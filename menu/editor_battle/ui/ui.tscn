@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://addons/SafeArea/SafeArea.gd" type="Script" id=1]
 [ext_resource path="res://assets/camera/movable_camera_ui.tscn" type="PackedScene" id=2]
@@ -15,11 +15,22 @@
 [ext_resource path="res://assets/user_interface/icons/back_fill.png" type="Texture" id=13]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_icon/bush.png" type="Texture" id=14]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_icon/dice.png" type="Texture" id=15]
-[ext_resource path="res://assets/user_interface/icons/editor_menu_card/water_tile_card.png" type="Texture" id=16]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/mud.png" type="Texture" id=16]
 [ext_resource path="res://menu/editor_battle/ui/ui.gd" type="Script" id=17]
-[ext_resource path="res://assets/user_interface/icons/editor_menu_card/forest_tile_card.png" type="Texture" id=18]
-[ext_resource path="res://assets/user_interface/icons/editor_menu_card/forest_tile_card_2.png" type="Texture" id=19]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/rock_3.png" type="Texture" id=18]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/rock_2.png" type="Texture" id=19]
 [ext_resource path="res://assets/user_interface/icons/editor_menu_card/ground_tile_card.png" type="Texture" id=20]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/water.png" type="Texture" id=21]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/bush_1.png" type="Texture" id=22]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/tree_4.png" type="Texture" id=23]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/tree_1.png" type="Texture" id=24]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/tree_2.png" type="Texture" id=25]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/dirt.png" type="Texture" id=26]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/bush_3.png" type="Texture" id=27]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/tree_3.png" type="Texture" id=28]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/bush_2.png" type="Texture" id=29]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/sand.png" type="Texture" id=30]
+[ext_resource path="res://assets/user_interface/icons/editor_menu_card/rock_1.png" type="Texture" id=31]
 
 [node name="ui" type="Control"]
 anchor_right = 1.0
@@ -274,7 +285,7 @@ rect_min_size = Vector2( 125, 150 )
 show_behind_parent = true
 margin_right = 125.0
 margin_bottom = 150.0
-texture = ExtResource( 20 )
+texture = ExtResource( 26 )
 expand = true
 
 [node name="sand_tile_card3" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer1" instance=ExtResource( 4 )]
@@ -287,7 +298,7 @@ rect_min_size = Vector2( 125, 150 )
 show_behind_parent = true
 margin_right = 125.0
 margin_bottom = 150.0
-texture = ExtResource( 20 )
+texture = ExtResource( 30 )
 expand = true
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
@@ -307,7 +318,7 @@ rect_min_size = Vector2( 125, 150 )
 show_behind_parent = true
 margin_right = 125.0
 margin_bottom = 150.0
-texture = ExtResource( 16 )
+texture = ExtResource( 21 )
 expand = true
 
 [node name="mud_tile_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer2" instance=ExtResource( 4 )]
@@ -341,7 +352,7 @@ rect_min_size = Vector2( 125, 150 )
 show_behind_parent = true
 margin_right = 125.0
 margin_bottom = 150.0
-texture = ExtResource( 18 )
+texture = ExtResource( 22 )
 expand = true
 
 [node name="object_bush_2_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer3" instance=ExtResource( 4 )]
@@ -354,7 +365,7 @@ rect_min_size = Vector2( 125, 150 )
 show_behind_parent = true
 margin_right = 125.0
 margin_bottom = 150.0
-texture = ExtResource( 19 )
+texture = ExtResource( 29 )
 expand = true
 
 [node name="object_bush_3_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer3" instance=ExtResource( 4 )]
@@ -367,7 +378,7 @@ rect_min_size = Vector2( 125, 150 )
 show_behind_parent = true
 margin_right = 125.0
 margin_bottom = 150.0
-texture = ExtResource( 19 )
+texture = ExtResource( 27 )
 expand = true
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
@@ -388,7 +399,7 @@ rect_min_size = Vector2( 100, 150 )
 show_behind_parent = true
 margin_right = 100.0
 margin_bottom = 150.0
-texture = ExtResource( 18 )
+texture = ExtResource( 24 )
 expand = true
 
 [node name="object_tree_2_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4" instance=ExtResource( 4 )]
@@ -401,7 +412,7 @@ rect_min_size = Vector2( 100, 150 )
 show_behind_parent = true
 margin_right = 100.0
 margin_bottom = 150.0
-texture = ExtResource( 19 )
+texture = ExtResource( 25 )
 expand = true
 
 [node name="object_tree_3_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4" instance=ExtResource( 4 )]
@@ -414,7 +425,7 @@ rect_min_size = Vector2( 100, 150 )
 show_behind_parent = true
 margin_right = 100.0
 margin_bottom = 150.0
-texture = ExtResource( 19 )
+texture = ExtResource( 28 )
 expand = true
 
 [node name="object_tree_4_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer4" instance=ExtResource( 4 )]
@@ -427,7 +438,7 @@ rect_min_size = Vector2( 100, 150 )
 show_behind_parent = true
 margin_right = 100.0
 margin_bottom = 150.0
-texture = ExtResource( 19 )
+texture = ExtResource( 23 )
 expand = true
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]
@@ -448,7 +459,7 @@ rect_min_size = Vector2( 125, 150 )
 show_behind_parent = true
 margin_right = 125.0
 margin_bottom = 150.0
-texture = ExtResource( 18 )
+texture = ExtResource( 31 )
 expand = true
 
 [node name="object_rock_2_card" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6/HBoxContainer5" instance=ExtResource( 4 )]
@@ -474,7 +485,7 @@ rect_min_size = Vector2( 125, 150 )
 show_behind_parent = true
 margin_right = 125.0
 margin_bottom = 150.0
-texture = ExtResource( 19 )
+texture = ExtResource( 18 )
 expand = true
 
 [node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer6"]

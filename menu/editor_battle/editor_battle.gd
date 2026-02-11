@@ -118,6 +118,11 @@ func _on_ui_on_add_object(data :MapObjectData):
 func _on_ui_on_update_tile(data :TileMapData):
 	var old_tile = battle_map.get_closes_tile(data.pos)
 	show_selection(old_tile.pos, false)
+	
+	var obj = battle_map.get_object(old_tile.id)
+	if is_instance_valid(obj):
+		return
+	
 	data.id = old_tile.id
 	data.pos = old_tile.pos
 	
