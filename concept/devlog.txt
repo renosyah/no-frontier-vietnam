@@ -15,8 +15,19 @@ editor :
 
 	- battle map
 		- generate empty tiles or load from file (done)
-		- drag and drop tile from ui to map
-		- drag and drop object from ui to map
-		- enable & disable navigation
-		- save battle map to file
-		- back -> grand map editor
+		- drag and drop tile from ui to map (done)
+		- drag and drop object from ui to map (done)
+		- enable & disable navigation (done)
+		- save battle map to file (done)
+		- back -> grand map editor (done)
+		
+gameplay entity (mp sync) : 
+	grand map : 
+		- squad
+	
+	battle map :
+		- soldier
+		- ground vehicle
+		- transportable ground vehicle
+		- transportable air vehicle
+		- base & base building
