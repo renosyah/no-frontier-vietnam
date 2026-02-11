@@ -3,7 +3,7 @@ extends Node
 const allow_nav = preload("res://assets/tile_highlight/allow_nav_material.tres")
 const blocked_nav = preload("res://assets/tile_highlight/blocked_nav_material.tres")
 
-onready var movable_camera_custom = $movable_camera_custom
+onready var movable_camera_battle = $movable_camera_battle
 onready var ui = $ui
 onready var battle_map = $battle_map
 onready var clickable_floor = $clickable_floor
@@ -19,6 +19,7 @@ var untouch_tiles :Array = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	movable_camera_battle.set_as_current(true)
 	grand_map_mission_data = Global.grand_map_mission_data
 	grand_map_manifest_data = Global.grand_map_manifest_data
 	battle_map_data = Global.battle_map_data
@@ -34,7 +35,7 @@ func _ready():
 	
 	ui.movable_camera_ui.camera_limit_bound = Global.camera_limit_bound
 	ui.map_name.text = Global.battle_map_name
-	ui.movable_camera_ui.target = movable_camera_custom
+	ui.movable_camera_ui.target = movable_camera_battle
 	
 	get_tree().set_quit_on_go_back(false)
 	get_tree().set_auto_accept_quit(false)
@@ -42,7 +43,7 @@ func _ready():
 	battle_map.generate_from_data(battle_map_data, true)
 	
 func _process(_delta):
-	var cam_pos = movable_camera_custom.translation
+	var cam_pos = movable_camera_battle.translation
 	clickable_floor.translation = cam_pos * Vector3(1,0,1)
 	
 func _notification(what):

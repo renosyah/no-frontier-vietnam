@@ -1,0 +1,256 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://addons/server-browser/back.png" type="Texture" id=1]
+[ext_resource path="res://assets/user_interface/fonts/montserrat_eb_32.tres" type="DynamicFont" id=3]
+[ext_resource path="res://addons/server-browser/server_browser.gd" type="Script" id=4]
+[ext_resource path="res://addons/LANServerBroadcast/server_listener/ServerListener.gd" type="Script" id=5]
+[ext_resource path="res://addons/server-browser/refresh.png" type="Texture" id=6]
+[ext_resource path="res://addons/server-browser/item/bg.png" type="Texture" id=7]
+[ext_resource path="res://addons/server-browser/item/bg_press.png" type="Texture" id=8]
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Label:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ "Finding server" ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "loading"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Label:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ "Finding Host", "Finding Host.", "Finding Host..", "Finding Host...", "Finding Host..." ]
+}
+
+[node name="server_browser" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 4 )
+
+[node name="TextureRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.882353 )
+
+[node name="server_listener" type="Node" parent="."]
+script = ExtResource( 5 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="PanelContainer" type="ColorRect" parent="VBoxContainer"]
+margin_right = 600.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 0, 120 )
+mouse_filter = 2
+color = Color( 0.203922, 0.203922, 0.203922, 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="back" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer"]
+margin_right = 100.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 100, 100 )
+custom_fonts/font = ExtResource( 3 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect2" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/back"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -40.0
+margin_top = -40.0
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 80, 80 )
+texture = ExtResource( 1 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="margin" type="CenterContainer" parent="VBoxContainer/PanelContainer/HBoxContainer"]
+margin_left = 104.0
+margin_right = 496.0
+margin_bottom = 120.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/HBoxContainer/margin"]
+margin_left = 160.0
+margin_top = 40.0
+margin_right = 231.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 3 )
+text = "Join"
+align = 1
+valign = 1
+
+[node name="refresh" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer"]
+margin_left = 500.0
+margin_right = 600.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 100, 100 )
+custom_fonts/font = ExtResource( 3 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect2" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/refresh"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -40.0
+margin_top = -40.0
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 80, 80 )
+texture = ExtResource( 6 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 124.0
+margin_right = 600.0
+margin_bottom = 214.0
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
+margin_right = 5.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 5, 0 )
+
+[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_left = 9.0
+margin_right = 69.0
+margin_bottom = 90.0
+size_flags_vertical = 7
+custom_fonts/font = ExtResource( 3 )
+text = "Ip : "
+align = 1
+valign = 1
+
+[node name="ip_input" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+margin_left = 73.0
+margin_right = 398.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 0, 80 )
+size_flags_horizontal = 3
+size_flags_vertical = 5
+custom_fonts/font = ExtResource( 3 )
+align = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
+margin_left = 402.0
+margin_right = 407.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 5, 0 )
+
+[node name="join_button" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
+margin_left = 411.0
+margin_right = 591.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 180, 90 )
+size_flags_vertical = 10
+
+[node name="btn" type="TextureButton" parent="VBoxContainer/HBoxContainer/join_button"]
+modulate = Color( 0, 0.592157, 0.0352941, 1 )
+margin_right = 180.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 100, 50 )
+texture_normal = ExtResource( 7 )
+texture_pressed = ExtResource( 8 )
+expand = true
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/join_button"]
+margin_top = 25.0
+margin_right = 180.0
+margin_bottom = 65.0
+custom_fonts/font = ExtResource( 3 )
+text = "Join"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer3" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
+margin_left = 595.0
+margin_right = 600.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 5, 0 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+visible = false
+margin_top = 124.0
+margin_right = 600.0
+margin_bottom = 572.0
+size_flags_vertical = 3
+scroll_horizontal_enabled = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+margin_right = 600.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+margin_top = 218.0
+margin_right = 600.0
+margin_bottom = 1024.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+custom_fonts/font = ExtResource( 3 )
+text = "Finding server"
+align = 1
+valign = 1
+
+[node name="error" type="Label" parent="VBoxContainer"]
+visible = false
+margin_top = 576.0
+margin_right = 600.0
+margin_bottom = 1024.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+custom_fonts/font = ExtResource( 3 )
+text = "..."
+align = 1
+valign = 1
+autowrap = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VBoxContainer"]
+autoplay = "loading"
+anims/RESET = SubResource( 1 )
+anims/loading = SubResource( 2 )
+
+[connection signal="error_listening" from="server_listener" to="." method="_on_server_listener_error_listening"]
+[connection signal="new_server" from="server_listener" to="." method="_on_server_listener_new_server"]
+[connection signal="remove_server" from="server_listener" to="." method="_on_server_listener_remove_server"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/refresh" to="." method="_on_refresh_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/join_button/btn" to="." method="_on_ip_join_pressed"]

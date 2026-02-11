@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/camera/movable_camera_ui.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/SafeArea/SafeArea.gd" type="Script" id=2]
+[ext_resource path="res://menu/gameplay/ui/ui.gd" type="Script" id=3]
+[ext_resource path="res://assets/camera/movable_camera_ui.gd" type="Script" id=4]
+
+[node name="ui" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 3 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="movable_camera_ui" type="Control" parent="CanvasLayer" instance=ExtResource( 1 )]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 4 )
+
+[node name="Control" type="MarginContainer" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 2 )

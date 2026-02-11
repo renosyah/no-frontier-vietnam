@@ -1,0 +1,52 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/user_interface/fonts/montserrat_eb_28.tres" type="DynamicFont" id=1]
+[ext_resource path="res://menu/lobby/player_item/player_item.gd" type="Script" id=2]
+[ext_resource path="res://assets/user_interface/icons/cap.png" type="Texture" id=3]
+
+[node name="player_item" type="MarginContainer"]
+margin_right = 319.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 0, 80 )
+script = ExtResource( 2 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 319.0
+margin_bottom = 80.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 319.0
+margin_bottom = 80.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
+margin_right = 24.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 24, 0 )
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+margin_left = 28.0
+margin_top = 10.0
+margin_right = 88.0
+margin_bottom = 70.0
+rect_min_size = Vector2( 60, 60 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 6
+
+[node name="MarginContainer2" type="MarginContainer" parent="HBoxContainer"]
+margin_left = 92.0
+margin_right = 100.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 8, 0 )
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+margin_left = 104.0
+margin_top = 22.0
+margin_right = 199.0
+margin_bottom = 58.0
+custom_fonts/font = ExtResource( 1 )
+text = "Player"
+valign = 1

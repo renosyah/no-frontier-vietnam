@@ -4,12 +4,10 @@ const allow_nav = preload("res://assets/tile_highlight/allow_nav_material.tres")
 const blocked_nav = preload("res://assets/tile_highlight/blocked_nav_material.tres")
 
 onready var ui = $ui
-onready var movable_camera_custom = $movable_camera_custom
+onready var movable_camera_room = $movable_camera_room
 onready var grand_map = $grand_map
 onready var clickable_floor = $clickable_floor
 onready var selection = $selection
-onready var border = $grand_map/border
-onready var camera = $movable_camera_custom/Camera
 
 onready var nav_highlight_holder = {}
 
@@ -20,18 +18,18 @@ onready var grand_map_mission_data = Global.grand_map_mission_data
 onready var battle_map_datas = Global.battle_map_datas
 
 func _ready():
+	movable_camera_room.set_as_current(true)
 	Global.camera_limit_bound = Vector3(grand_map_manifest_data.map_size + 1, 0, grand_map_manifest_data.map_size)
 	
 	ui.movable_camera_ui.camera_limit_bound = Global.camera_limit_bound
-	ui.movable_camera_ui.target = movable_camera_custom
+	ui.movable_camera_ui.target = movable_camera_room
 	ui.movable_camera_ui.center_pos = grand_map.global_position + Vector3(0, 0, 2)
-	ui.movable_camera_ui.camera_limit_bound = Global.camera_limit_bound
 	ui.save_button.visible = false
 	
 	ui.map_name.text = grand_map_manifest_data.map_name
 	update_base_point_quota()
 	
-	border.scale = Vector3.ONE * ((grand_map_manifest_data.map_size * 2) + 1.5)
+	grand_map.setup_border_scale(Vector3.ONE * ((grand_map_manifest_data.map_size * 2) + 1.5))
 	
 	get_tree().set_quit_on_go_back(false)
 	get_tree().set_auto_accept_quit(false)
@@ -39,7 +37,7 @@ func _ready():
 	grand_map.generate_from_data(grand_map_data, true)
 	
 func _process(_delta):
-	var cam_pos = movable_camera_custom.translation
+	var cam_pos = movable_camera_room.translation
 	clickable_floor.translation = cam_pos * Vector3(1,0,1)
 
 func _notification(what):
@@ -211,7 +209,7 @@ func _on_ui_on_zoom_tile(pos):
 	
 func _on_ui_on_save():
 	ui.set_visible(false)
-	movable_camera_custom.translation = Vector3(0, 5, 2)
+	movable_camera_room.translation = Vector3(0, 5, 2)
 	yield(get_tree().create_timer(0.6),"timeout")
 	
 	var disable_sectors :Array = []

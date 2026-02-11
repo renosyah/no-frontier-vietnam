@@ -1,6 +1,23 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/maps/grand/grand_map.gd" type="Script" id=1]
+[ext_resource path="res://assets/tile_highlight/contested_area.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://scenes/tiles/models/wood_material.tres" type="Material" id=3]
+[ext_resource path="res://assets/background/bg_table.png" type="Texture" id=4]
 
 [node name="grand_map" type="Spatial"]
 script = ExtResource( 1 )
+
+[node name="border" type="MeshInstance" parent="."]
+cast_shadow = 0
+mesh = ExtResource( 2 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+
+[node name="desk" type="Sprite3D" parent="."]
+transform = Transform( 3.5, 0, 0, 0, -1.5299e-07, 3.5, 0, -3.5, -1.5299e-07, 0, -0.4, -1 )
+cast_shadow = 0
+modulate = Color( 0.662745, 0.662745, 0.662745, 1 )
+transparent = false
+double_sided = false
+texture = ExtResource( 4 )

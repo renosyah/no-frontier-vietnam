@@ -3,6 +3,11 @@ extends BaseTileMap
 const land_tile = preload("res://scenes/tiles/grand_tile/land_tile.tscn")
 const water_tile = preload("res://scenes/tiles/grand_tile/water_tile.tscn")
 
+onready var border = $border
+
+func setup_border_scale(size :Vector3):
+	border.scale = size
+
 # override
 func _spawn_tile(data :TileMapData) -> BaseTile:
 	var tile_scene = water_tile if data.tile_type == 2 else land_tile
