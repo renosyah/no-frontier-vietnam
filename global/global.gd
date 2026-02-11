@@ -25,7 +25,7 @@ onready var camera_limit_bound = Vector3(3, 0, 2)
 # for load and save maps
 const map_dir = "map"
 const grand_map_size = 2
-const battle_map_size = 4
+const battle_map_size = 5
 const req_base_count = 2
 const req_point_count = 1
 

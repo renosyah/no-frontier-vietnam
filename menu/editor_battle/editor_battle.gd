@@ -24,8 +24,7 @@ func _ready():
 	battle_map_data = Global.battle_map_data
 	
 	if grand_map_mission_data.bases.has(Global.battle_map_id):
-		untouch_tiles = TileMapUtils.get_adjacent_tiles(TileMapUtils.get_directions(), Vector2.ZERO, 2)
-		untouch_tiles.append(Vector2.ZERO)
+		untouch_tiles = BaseReservedTile.getBaseResevedTiles(Vector2(-1, -1))
 		
 	elif grand_map_mission_data.points.has(Global.battle_map_id):
 		untouch_tiles = TileMapUtils.get_adjacent_tiles(TileMapUtils.get_directions(), Vector2.ZERO, 1)
