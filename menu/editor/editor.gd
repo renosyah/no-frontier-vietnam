@@ -61,11 +61,11 @@ func update_base_point_quota():
 	ui.base_qty.text = "%s" %  (2 - base_qty)
 	ui.point_qty.text = "%s" % (3 - point_qty)
 	
-	var edited_map :bool = grand_map_mission_data.edited_battle_maps.values().has(false)
+	var edited_map :bool = not grand_map_mission_data.edited_battle_maps.values().has(false)
 	var mission_esential :bool = (base_qty >= Global.req_base_count) and (point_qty >= Global.req_point_count)
 	var edited_battle_map = 0
-	for edited in grand_map_mission_data.edited_battle_maps:
-		if edited:
+	for key in grand_map_mission_data.edited_battle_maps.keys():
+		if not grand_map_mission_data.edited_battle_maps[key]:
 			edited_battle_map += 1
 			
 	ui.battle_map_edited.text = "%s" % edited_battle_map
@@ -87,7 +87,7 @@ func _on_ui_on_update_tile(data :TileMapData):
 	
 	if data.tile_type == 1:
 		grand_map.update_navigation_tile(data.id, true)
-		battle_map_datas[data.id] = TileMapUtils.generate_basic_tile_map(Global.battle_map_size, false)
+		battle_map_datas[data.id] = TileMapUtils.generate_empty_tile_map(Global.battle_map_size, false)
 		grand_map_mission_data.edited_battle_maps[data.id] = false
 		
 	elif data.tile_type == 2:
@@ -132,6 +132,9 @@ func _on_ui_on_add_point(data :MapObjectData):
 	data.pos = tile.pos
 	grand_map.update_spawned_object(data)
 	
+	battle_map_datas[data.id] = TileMapUtils.generate_empty_tile_map(Global.battle_map_size, false)
+	grand_map_mission_data.edited_battle_maps[data.id] = false
+	
 	grand_map_mission_data.points.append(data.id)
 	update_base_point_quota()
 	
@@ -148,6 +151,9 @@ func _on_ui_on_add_base(data :MapObjectData):
 	data.id = tile.id
 	data.pos = tile.pos
 	grand_map.update_spawned_object(data)
+	
+	battle_map_datas[data.id] = TileMapUtils.generate_empty_tile_map(Global.battle_map_size, false)
+	grand_map_mission_data.edited_battle_maps[data.id] = false
 	
 	grand_map_mission_data.bases.append(data.id)
 	update_base_point_quota()

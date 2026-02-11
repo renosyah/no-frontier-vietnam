@@ -99,11 +99,11 @@ static func randomize_battle_map(map_data :TileMapFileData, untouch :Array = [],
 			x.tile_type = 2
 			is_ground = true
 			
-		elif value >= 0.0:
+		elif value <= 0.1:
 			x.tile_type = 5
 			blocked.append(x.id)
 			
-		elif value < -0.1:
+		elif value < 0.0:
 			x.tile_type = 4
 			blocked.append(x.id)
 			
