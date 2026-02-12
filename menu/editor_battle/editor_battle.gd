@@ -31,9 +31,7 @@ func _ready():
 		untouch_tiles = TileMapUtils.get_adjacent_tiles(TileMapUtils.get_directions(), Vector2.ZERO, 1)
 		untouch_tiles.append(Vector2.ZERO)
 		
-	Global.camera_limit_bound = Vector3(grand_map_manifest_data.battle_map_size + 1, 0, grand_map_manifest_data.battle_map_size)
-	
-	ui.movable_camera_ui.camera_limit_bound = Global.camera_limit_bound
+	ui.movable_camera_ui.camera_limit_bound = Vector3(grand_map_manifest_data.battle_map_size + 1, 0, grand_map_manifest_data.battle_map_size)
 	ui.map_name.text = Global.battle_map_name
 	ui.movable_camera_ui.target = movable_camera_battle
 	

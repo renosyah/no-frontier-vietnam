@@ -42,7 +42,8 @@ func _spawn_grand_map():
 	grand_map.setup_border_scale(Vector3.ONE * ((Global.grand_map_manifest_data.map_size * 2) + 1.5))
 	
 func _on_grand_map_ready():
-	pass
+	if NetworkLobbyManager.is_server():
+		NetworkLobbyManager.set_host_ready()
 	
 ##########################################  ############################################
 
@@ -66,12 +67,16 @@ var ui :GameplayUi
 func _setup_ui():
 	ui = preload("res://menu/gameplay/ui/ui.tscn").instance()
 	add_child(ui)
-	
+	use_grand_camera()
+
+func use_grand_camera():
+	var map_size = Global.grand_map_manifest_data.map_size
 	ui.movable_camera_ui.target = movable_camera_room
-	Global.camera_limit_bound = Vector3(Global.grand_map_manifest_data.map_size + 1, 0, Global.grand_map_manifest_data.map_size)
-	
-	ui.movable_camera_ui.camera_limit_bound = Global.camera_limit_bound
+	ui.movable_camera_ui.camera_limit_bound = Vector3( map_size + 1, 0, map_size)
 	ui.movable_camera_ui.center_pos = grand_map.global_position + Vector3(0, 0, 2)
-
-
-
+	
+func use_battle_camera(center :Vector3):
+	var map_size = Global.grand_map_manifest_data.battle_map_size
+	ui.movable_camera_ui.target = movable_camera_battle
+	ui.movable_camera_ui.camera_limit_bound = Vector3(map_size + 1, 0, map_size)
+	ui.movable_camera_ui.center_pos = center + Vector3(0, 0, 2)

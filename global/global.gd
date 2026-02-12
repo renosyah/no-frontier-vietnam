@@ -17,10 +17,7 @@ func change_scene(scene :String, use :bool = false, bg_idx :int = 1):
 	
 func hide_transition():
 	transition.hide_transition()
-##########################################  camera strict  ############################################
-
-onready var camera_limit_bound = Vector3(3, 0, 2)
-
+	
 ##########################################  map editor  ############################################
 # for load and save maps
 const map_dir = "map"
@@ -78,6 +75,7 @@ onready var grand_map_data :TileMapFileData
 onready var grand_map_mission_data :GrandMapFileMission
 onready var battle_map_datas :Dictionary = {} # [ Vector2:TileMapFileData ]
 
+# entering battle map
 var battle_map_name :String
 var battle_map_data :TileMapFileData
 var battle_map_id :Vector2

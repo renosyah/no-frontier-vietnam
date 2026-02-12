@@ -1,0 +1,232 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://menu/join/ui/ui.gd" type="Script" id=1]
+[ext_resource path="res://addons/SafeArea/SafeArea.gd" type="Script" id=2]
+[ext_resource path="res://assets/user_interface/fonts/montserrat_eb_32.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/background/lobby_bg.png" type="Texture" id=4]
+[ext_resource path="res://assets/user_interface/icons/back.png" type="Texture" id=5]
+[ext_resource path="res://assets/user_interface/fonts/montserrat_eb_28.tres" type="DynamicFont" id=8]
+[ext_resource path="res://addons/LANServerBroadcast/server_listener/ServerListener.gd" type="Script" id=9]
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Label:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ "Finding server" ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "loading"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Label:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ "Finding Host", "Finding Host.", "Finding Host..", "Finding Host...", "Finding Host..." ]
+}
+
+[node name="ui" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+
+[node name="server_listener" type="Node" parent="."]
+script = ExtResource( 9 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="bg" type="Control" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/bg"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 4 )
+stretch_mode = 7
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/bg"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.705882 )
+
+[node name="Control" type="MarginContainer" parent="CanvasLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 2 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control"]
+margin_right = 600.0
+margin_bottom = 1024.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
+margin_right = 600.0
+margin_bottom = 128.0
+
+[node name="back" type="Button" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer"]
+margin_right = 128.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+icon = ExtResource( 5 )
+flat = true
+expand_icon = true
+
+[node name="MarginContainer3" type="CenterContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer"]
+margin_left = 132.0
+margin_right = 468.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer/MarginContainer3"]
+margin_left = 130.0
+margin_top = 44.0
+margin_right = 205.0
+margin_bottom = 84.0
+custom_constants/shadow_offset_x = 1
+custom_constants/line_spacing = 1
+custom_constants/shadow_offset_y = 1
+custom_constants/shadow_as_outline = 1
+custom_fonts/font = ExtResource( 3 )
+text = "Find"
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer"]
+margin_left = 472.0
+margin_right = 600.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
+margin_top = 132.0
+margin_right = 600.0
+margin_bottom = 222.0
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_right = 5.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 5, 0 )
+
+[node name="Label2" type="Label" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 9.0
+margin_right = 61.0
+margin_bottom = 90.0
+size_flags_vertical = 7
+custom_fonts/font = ExtResource( 8 )
+text = "Ip : "
+align = 1
+valign = 1
+
+[node name="ip_input" type="LineEdit" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 65.0
+margin_right = 398.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 0, 80 )
+size_flags_horizontal = 3
+size_flags_vertical = 5
+custom_fonts/font = ExtResource( 3 )
+align = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 402.0
+margin_right = 407.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 5, 0 )
+
+[node name="join_button" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 411.0
+margin_right = 591.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 180, 90 )
+size_flags_vertical = 10
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/join_button"]
+margin_right = 180.0
+margin_bottom = 90.0
+mouse_filter = 2
+color = Color( 0, 0.592157, 0.0352941, 1 )
+
+[node name="btn" type="TextureButton" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/join_button"]
+modulate = Color( 0, 0.592157, 0.0352941, 1 )
+margin_right = 180.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 100, 50 )
+expand = true
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/join_button"]
+margin_top = 27.0
+margin_right = 180.0
+margin_bottom = 63.0
+custom_fonts/font = ExtResource( 8 )
+text = "Join"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer3" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 595.0
+margin_right = 600.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 5, 0 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Control/VBoxContainer"]
+visible = false
+margin_top = 124.0
+margin_right = 600.0
+margin_bottom = 572.0
+size_flags_vertical = 3
+scroll_horizontal_enabled = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/VBoxContainer/ScrollContainer"]
+margin_right = 600.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer"]
+margin_top = 226.0
+margin_right = 600.0
+margin_bottom = 1024.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+custom_fonts/font = ExtResource( 3 )
+text = "Finding server"
+align = 1
+valign = 1
+
+[node name="error" type="Label" parent="CanvasLayer/Control/VBoxContainer"]
+visible = false
+margin_top = 576.0
+margin_right = 600.0
+margin_bottom = 1024.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+custom_fonts/font = ExtResource( 3 )
+text = "..."
+align = 1
+valign = 1
+autowrap = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer/Control/VBoxContainer"]
+autoplay = "loading"
+anims/RESET = SubResource( 1 )
+anims/loading = SubResource( 2 )
+
+[connection signal="error_listening" from="server_listener" to="." method="_on_server_listener_error_listening"]
+[connection signal="new_server" from="server_listener" to="." method="_on_server_listener_new_server"]
+[connection signal="remove_server" from="server_listener" to="." method="_on_server_listener_remove_server"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/back" to="." method="_on_back_pressed"]

@@ -45,12 +45,14 @@ func init_lobby():
 		return
 		
 	_network_player.player_name = player_name
-	_network_player.player_status = NetworkPlayer.PLAYER_STATUS_NOT_READY
 	_network_player.extra = player_extra_data
 	
 	if configuration is NetworkServer:
+		_network_player.player_status = NetworkPlayer.PLAYER_STATUS_READY
 		_init_host()
+		
 	elif configuration is NetworkClient:
+		_network_player.player_status = NetworkPlayer.PLAYER_STATUS_NOT_READY
 		_init_join()
 		
 # call if host player ready

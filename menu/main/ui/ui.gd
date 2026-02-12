@@ -69,7 +69,7 @@ func _on_host_player_connected():
 	Global.change_scene("res://menu/lobby/lobby.tscn", true, 2)
 	
 func _on_join_pressed():
-	pass
+	Global.change_scene("res://menu/join/join.tscn", true, 2)
 	
 func _on_back_pressed():
 	map_select.visible = false

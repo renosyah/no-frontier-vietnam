@@ -19,9 +19,8 @@ onready var battle_map_datas = Global.battle_map_datas
 
 func _ready():
 	movable_camera_room.set_as_current(true)
-	Global.camera_limit_bound = Vector3(grand_map_manifest_data.map_size + 1, 0, grand_map_manifest_data.map_size)
 	
-	ui.movable_camera_ui.camera_limit_bound = Global.camera_limit_bound
+	ui.movable_camera_ui.camera_limit_bound = Vector3(grand_map_manifest_data.map_size + 1, 0, grand_map_manifest_data.map_size)
 	ui.movable_camera_ui.target = movable_camera_room
 	ui.movable_camera_ui.center_pos = grand_map.global_position + Vector3(0, 0, 2)
 	ui.save_button.visible = false
