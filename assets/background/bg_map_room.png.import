@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/editor.png-1eb4fd5af8e1aa0797b4474273ee7549.stex"
+path="res://.import/bg_map_room.png-5151fcaad8c31f6efb6c6586dd2fa783.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/editor.png"
-dest_files=[ "res://.import/editor.png-1eb4fd5af8e1aa0797b4474273ee7549.stex" ]
+source_file="res://assets/background/bg_map_room.png"
+dest_files=[ "res://.import/bg_map_room.png-5151fcaad8c31f6efb6c6586dd2fa783.stex" ]
 
 [params]
 

@@ -68,11 +68,19 @@ static func contains_substring(text: String, sub: String) -> bool:
 	if sub.empty():
 		return true
 	return sub.to_lower() in text.to_lower()
-
-
-
-
-
+	
+	
+static func generate_positions(count: int, spacing: float, z :float = 0) -> Array:
+	var positions = []
+	for i in range(count):
+		if i == 0:
+			positions.append(Vector3(0, 0, z))
+			
+		else:
+			var step = int((i + 1) / 2)
+			var direction = 1 if i % 2 == 1 else -1
+			positions.append(Vector3(step * spacing * direction, 0, z))
+	return positions
 
 
 

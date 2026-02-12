@@ -15,6 +15,10 @@ var _is_editor :bool = false
 onready var _navigation :AStar2D = AStar2D.new()
 onready var _air_navigation :AStar2D = AStar2D.new()
 
+func _ready():
+	set_process(false)
+	set_physics_process(false)
+
 func generate_from_data(data: TileMapFileData, is_editor:bool = false):
 	_clean()
 	

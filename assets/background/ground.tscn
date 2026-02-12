@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/background/bg_ground.png" type="Texture" id=2]
+
+[node name="ground" type="Sprite3D"]
+transform = Transform( 3.5, 0, 0, 0, -1.5299e-07, 3.5, 0, -3.5, -1.5299e-07, 0, -0.4, -1 )
+cast_shadow = 0
+modulate = Color( 0.662745, 0.662745, 0.662745, 1 )
+transparent = false
+double_sided = false
+texture = ExtResource( 2 )

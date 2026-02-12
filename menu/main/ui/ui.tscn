@@ -37,6 +37,7 @@ mouse_filter = 2
 script = ExtResource( 2 )
 
 [node name="main" type="VBoxContainer" parent="CanvasLayer/Control"]
+visible = false
 margin_left = 130.0
 margin_right = 470.0
 margin_bottom = 1024.0
@@ -83,7 +84,6 @@ margin_bottom = 670.0
 rect_min_size = Vector2( 0, 120 )
 
 [node name="new_game" type="VBoxContainer" parent="CanvasLayer/Control"]
-visible = false
 margin_left = 130.0
 margin_right = 470.0
 margin_bottom = 1024.0
@@ -150,6 +150,7 @@ margin_bottom = 739.0
 rect_min_size = Vector2( 0, 120 )
 
 [node name="map_select" type="MarginContainer" parent="CanvasLayer/Control"]
+visible = false
 margin_right = 600.0
 margin_bottom = 1024.0
 

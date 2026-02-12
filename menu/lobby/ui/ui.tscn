@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://addons/SafeArea/SafeArea.gd" type="Script" id=1]
-[ext_resource path="res://assets/background/lobby_bg.png" type="Texture" id=2]
+[ext_resource path="res://assets/background/bg_map_room.png" type="Texture" id=2]
 [ext_resource path="res://menu/lobby/ui/ui.gd" type="Script" id=3]
 [ext_resource path="res://assets/user_interface/icons/back.png" type="Texture" id=4]
 [ext_resource path="res://assets/user_interface/fonts/montserrat_eb_32.tres" type="DynamicFont" id=5]
@@ -133,7 +133,7 @@ margin_right = 500.0
 margin_bottom = 62.0
 rect_min_size = Vector2( 400, 125 )
 custom_fonts/font = ExtResource( 7 )
-text = "Play"
+text = "To Battle!"
 
 [node name="ready" type="Button" parent="CanvasLayer/Control/VBoxContainer/CenterContainer"]
 visible = false
@@ -143,7 +143,7 @@ margin_right = 500.0
 margin_bottom = 62.0
 rect_min_size = Vector2( 400, 125 )
 custom_fonts/font = ExtResource( 7 )
-text = "Ready"
+text = "Ready!"
 
 [node name="fps_ping_displayer" parent="CanvasLayer/Control" instance=ExtResource( 6 )]
 margin_top = 974.0

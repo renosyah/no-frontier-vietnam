@@ -24,7 +24,7 @@ func _ready():
 	get_tree().set_auto_accept_quit(false)
 	
 	if NetworkLobbyManager.is_server():
-		play.disabled = true
+		play.disabled = false
 		play.visible = true
 		ready.visible = false
 		receiving_data.visible = false
