@@ -77,7 +77,7 @@ static func generate_positions(count: int, spacing: float, z :float = 0) -> Arra
 			positions.append(Vector3(0, 0, z))
 			
 		else:
-			var step = int((i + 1) / 2)
+			var step = int((i + 1.0) / 2.0)
 			var direction = 1 if i % 2 == 1 else -1
 			positions.append(Vector3(step * spacing * direction, 0, z))
 	return positions

@@ -130,6 +130,8 @@ func _on_lobby_player_update(players :Array):
 		players_holder.add_child(item)
 		item.set_loading(player.player_network_unique_id != NetworkLobbyManager.host_id)
 		
+	play.disabled = players.size() > 1
+	
 func _all_player_ready():
 	if NetworkLobbyManager.is_server():
 		play.disabled = false

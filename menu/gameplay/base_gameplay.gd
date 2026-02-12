@@ -8,14 +8,13 @@ func _ready():
 	get_tree().set_quit_on_go_back(false)
 	get_tree().set_auto_accept_quit(false)
 	
-	Global.hide_transition()
-	
+	setup_battle_map_pos()
 	spawn_grand_map()
 	spawn_movable_camera()
 	setup_clickable_floor()
 	setup_ui()
 	setup_selection()
-	setup_battle_map_pos()
+	
 	
 func _process(_delta):
 	var valids = [
@@ -63,6 +62,8 @@ func spawn_grand_map():
 func _on_grand_map_ready():
 	if NetworkLobbyManager.is_server():
 		NetworkLobbyManager.set_host_ready()
+		
+	Global.hide_transition()
 	
 ##########################################  ############################################
 
@@ -104,6 +105,8 @@ func use_grand_camera():
 	ui.movable_camera_ui.camera_limit_bound = Vector3( map_size + 1, 0, map_size)
 	ui.movable_camera_ui.center_pos = grand_map.global_position + Vector3(0, 0, 2)
 	
+	ground_table.visible = false
+	
 func use_battle_camera(center :Vector3):
 	movable_camera_room.set_as_current(false)
 	movable_camera_battle.set_as_current(true)
@@ -115,6 +118,8 @@ func use_battle_camera(center :Vector3):
 	ui.movable_camera_ui.target = movable_camera_battle
 	ui.movable_camera_ui.camera_limit_bound = Vector3(map_size + 1, 0, map_size)
 	ui.movable_camera_ui.center_pos = center + Vector3(0, 0, 2)
+	
+	ground_table.visible = true
 	
 ##########################################  ############################################
 
