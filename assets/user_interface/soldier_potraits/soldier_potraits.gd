@@ -15,9 +15,12 @@ static func generate_macv_potraits() -> Array:
 	for i in range(1, 10):
 		list[2].append("%s/riflement_%s.png" % [macv_potrait_path, i])
 		
+	for i in range(1, 10):
+		list[2].append("%s/sog_%s.png" % [macv_potrait_path, i])
+		
 	return list
 	
-# 0 crew, 1 heli, 2 gi
+# 0 crew, 1 heli, 2 gi, 3 sogs
 static func get_macv_potrait(i :int) -> Resource:
 	var list = generate_macv_potraits()
 	var s = list[i]

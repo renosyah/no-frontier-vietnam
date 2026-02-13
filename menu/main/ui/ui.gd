@@ -62,7 +62,8 @@ func _loaded_maps_edit_button_pressed(manif :GrandMapFileManifest):
 
 	var config :NetworkServer = NetworkServer.new()
 	NetworkLobbyManager.configuration = config
-	NetworkLobbyManager.player_name = "Host"
+	NetworkLobbyManager.player_name = Global.player_data.player_name
+	NetworkLobbyManager.player_extra_data = Global.player_data.to_dictionary()
 	NetworkLobbyManager.init_lobby()
 	
 func _on_host_player_connected():

@@ -35,23 +35,23 @@ func generate_from_data(data: TileMapFileData, is_editor:bool = false):
 func export_data() -> TileMapFileData:
 	return _tile_map_data
 	
-func get_tiles() -> Array:
-	return _spawned_tiles.values() # [ Tile ]
+func get_tiles_instances() -> Array:
+	return _spawned_tiles.values() # [ BaseTile ]
 	
 func has_tile(id :Vector2) -> bool:
 	return _spawned_tiles.has(id)
 	
-func get_tile(id :Vector2) -> BaseTile:
+func get_tile_instance(id :Vector2) -> BaseTile:
 	if not _spawned_tiles.has(id):
 		return null
 		
-	return _spawned_tiles[id] # Tile
+	return _spawned_tiles[id] # BaseTile
 	
 func get_object(id :Vector2) -> BaseTileObject:
 	if not _spawned_objects.has(id):
 		return null
 		
-	return _spawned_objects[id] # TileObject
+	return _spawned_objects[id] # BaseTileObject
 	
 func is_nav_enable(id :Vector2) -> bool:
 	if not _tile_map_data.tile_ids.has(id):
@@ -138,7 +138,7 @@ func update_navigation_tile(at :Vector2, enable :bool, _is_air :bool = false):
 	emit_signal("on_navigation_updated", at, nav_data)
 	
 func get_closes_tile_instance(from :Vector3) -> BaseTile:
-	var tiles :Array = get_tiles()
+	var tiles :Array = get_tiles_instances()
 	if tiles.empty():
 		return null
 		
@@ -268,7 +268,7 @@ func _enable_nav_tile(nav :AStar2D, id :Vector2, enable :bool = true):
 func _ids_to_tile_nodes(ids :Array) -> Array:
 	var datas = []
 	for i in ids:
-		datas.append(get_tile(i))
+		datas.append(get_tile_instance(i))
 	return datas
 	
 func _clean():

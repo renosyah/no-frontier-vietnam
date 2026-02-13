@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://menu/join/ui/ui.gd" type="Script" id=1]
 [ext_resource path="res://addons/SafeArea/SafeArea.gd" type="Script" id=2]
 [ext_resource path="res://assets/user_interface/fonts/montserrat_eb_32.tres" type="DynamicFont" id=3]
 [ext_resource path="res://assets/background/bg_radio_room.png" type="Texture" id=4]
 [ext_resource path="res://assets/user_interface/icons/back.png" type="Texture" id=5]
+[ext_resource path="res://assets/user_interface/loading/loading.tscn" type="PackedScene" id=6]
 [ext_resource path="res://assets/user_interface/fonts/montserrat_eb_28.tres" type="DynamicFont" id=8]
 [ext_resource path="res://addons/LANServerBroadcast/server_listener/ServerListener.gd" type="Script" id=9]
 
@@ -112,6 +113,7 @@ margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
+visible = false
 margin_top = 132.0
 margin_right = 600.0
 margin_bottom = 222.0
@@ -187,9 +189,9 @@ rect_min_size = Vector2( 5, 0 )
 
 [node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Control/VBoxContainer"]
 visible = false
-margin_top = 124.0
+margin_top = 132.0
 margin_right = 600.0
-margin_bottom = 572.0
+margin_bottom = 576.0
 size_flags_vertical = 3
 scroll_horizontal_enabled = false
 
@@ -198,7 +200,7 @@ margin_right = 600.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="CanvasLayer/Control/VBoxContainer"]
-margin_top = 226.0
+margin_top = 132.0
 margin_right = 600.0
 margin_bottom = 1024.0
 size_flags_horizontal = 3
@@ -225,6 +227,26 @@ autowrap = true
 autoplay = "loading"
 anims/RESET = SubResource( 1 )
 anims/loading = SubResource( 2 )
+
+[node name="overlay_loading" type="Control" parent="CanvasLayer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ColorRect2" type="ColorRect" parent="CanvasLayer/overlay_loading"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.819608 )
+
+[node name="loading" parent="CanvasLayer/overlay_loading" instance=ExtResource( 6 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -100.0
+margin_top = -100.0
+margin_right = 100.0
+margin_bottom = 100.0
 
 [connection signal="error_listening" from="server_listener" to="." method="_on_server_listener_error_listening"]
 [connection signal="new_server" from="server_listener" to="." method="_on_server_listener_new_server"]

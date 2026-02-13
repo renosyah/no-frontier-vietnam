@@ -68,7 +68,7 @@ func _on_battle_map_on_map_ready():
 		add_child(nav_highlight)
 		nav_highlight.set_text_label("%s\n%s" % [nav.id, nav.navigation_id])
 		nav_highlight.set_surface_material(0, allow_nav if nav.enable else blocked_nav)
-		nav_highlight.translation = battle_map.get_tile(nav.id).translation
+		nav_highlight.translation = battle_map.get_tile_instance(nav.id).translation
 		nav_highlight.visible = show_nav
 		nav_highlight_holder[nav.id] = nav_highlight
 	

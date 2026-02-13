@@ -5,28 +5,28 @@
 [ext_resource path="res://menu/join/server_item/server_item.gd" type="Script" id=5]
 
 [node name="server_item" type="MarginContainer"]
-margin_right = 540.0
-margin_bottom = 100.0
+anchor_right = 1.0
+margin_bottom = 114.0
 rect_min_size = Vector2( 0, 100 )
 script = ExtResource( 5 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
-margin_right = 540.0
+margin_right = 600.0
 margin_bottom = 114.0
 color = Color( 0.145098, 0.145098, 0.145098, 1 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-margin_right = 540.0
+margin_right = 600.0
 margin_bottom = 114.0
 
 [node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
-margin_right = 540.0
+margin_right = 600.0
 margin_bottom = 8.0
 rect_min_size = Vector2( 0, 8 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 margin_top = 12.0
-margin_right = 540.0
+margin_right = 600.0
 margin_bottom = 102.0
 mouse_filter = 2
 __meta__ = {
@@ -34,13 +34,13 @@ __meta__ = {
 }
 
 [node name="MarginContainer3" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
-margin_right = 8.0
+margin_right = 24.0
 margin_bottom = 90.0
-rect_min_size = Vector2( 8, 0 )
+rect_min_size = Vector2( 24, 0 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
-margin_left = 12.0
-margin_right = 185.0
+margin_left = 28.0
+margin_right = 201.0
 margin_bottom = 90.0
 mouse_filter = 2
 
@@ -58,15 +58,15 @@ custom_fonts/font = ExtResource( 4 )
 text = "Name guild"
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
-margin_left = 189.0
-margin_right = 324.0
+margin_left = 205.0
+margin_right = 368.0
 margin_bottom = 90.0
 mouse_filter = 2
 size_flags_horizontal = 3
 
 [node name="join_button" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
-margin_left = 328.0
-margin_right = 528.0
+margin_left = 372.0
+margin_right = 572.0
 margin_bottom = 90.0
 rect_min_size = Vector2( 200, 90 )
 size_flags_vertical = 10
@@ -96,14 +96,14 @@ __meta__ = {
 }
 
 [node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
-margin_left = 532.0
-margin_right = 540.0
+margin_left = 576.0
+margin_right = 600.0
 margin_bottom = 90.0
-rect_min_size = Vector2( 8, 0 )
+rect_min_size = Vector2( 24, 0 )
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
 margin_top = 106.0
-margin_right = 540.0
+margin_right = 600.0
 margin_bottom = 114.0
 rect_min_size = Vector2( 0, 8 )
 

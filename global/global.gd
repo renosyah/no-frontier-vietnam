@@ -2,13 +2,32 @@ extends Node
 
 func _ready():
 	SaveLoad.ensure_dir("user://%s/" % map_dir)
-	_init_save_load_map()
-	_setup_transition()
+	load_player_data()
+	init_save_load_map()
+	setup_transition()
 	
+##########################################  player data  ############################################
+
+const player_data_filepath :String = "player_data.dat"
+var player_data :PlayerData
+
+func load_player_data():
+	player_data = PlayerData.new()
+	var data = SaveLoad.load_save(player_data_filepath, true)
+	if data == null:
+		player_data.player_id = Utils.create_unique_id()
+		player_data.player_name = OS.get_name()
+		player_data.player_rank = 0
+		player_data.player_team = 1
+		SaveLoad.save(player_data_filepath, player_data.to_dictionary(), true)
+	
+	else:
+		player_data.from_dictionary(data)
+		
 ##########################################  transisiion  ############################################
 var transition :CanvasLayer
 
-func _setup_transition():
+func setup_transition():
 	transition = preload("res://assets/transision_screen/transision_screen.tscn").instance()
 	add_child(transition)
 	
@@ -30,7 +49,7 @@ var save_load_map :SaveLoadImproved
 
 onready var grand_map_manifest_datas :Array = [] # [ GrandMapFileManifest ]
 
-func _init_save_load_map():
+func init_save_load_map():
 	save_load_map = preload("res://addons/save_load/save_load_improve.tscn").instance()
 	add_child(save_load_map)
 

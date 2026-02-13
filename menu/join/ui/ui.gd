@@ -8,6 +8,7 @@ onready var _find_server = $CanvasLayer/Control/VBoxContainer/Label
 onready var _server_listener = $server_listener
 onready var _error = $CanvasLayer/Control/VBoxContainer/error
 onready var _ip_input = $CanvasLayer/Control/VBoxContainer/HBoxContainer2/ip_input
+onready var _overlay_loading = $CanvasLayer/overlay_loading
 
 func _ready():
 	NetworkLobbyManager.connect("on_client_player_connected", self, "_on_client_player_connected")
@@ -16,6 +17,8 @@ func _ready():
 	get_tree().set_auto_accept_quit(false)
 	
 	start_finding()
+	
+	_overlay_loading.visible = false
 	Global.hide_transition()
 	
 func _notification(what):
@@ -72,14 +75,17 @@ func _on_server_listener_new_server(serverInfo):
 	item.set_info(serverInfo.ip, serverInfo.name, "Player Slot : " + str(serverInfo.player) + "/" + str(serverInfo.max_player))
 
 func _join(info):
+	stop_finding()
+	_overlay_loading.visible = true
+	
 	var configuration = NetworkClient.new()
 	configuration.ip = info["ip"]
 	
-	NetworkLobbyManager.player_name = "Client"
+	NetworkLobbyManager.player_name = Global.player_data.player_name
+	NetworkLobbyManager.player_extra_data = Global.player_data.to_dictionary()
 	NetworkLobbyManager.configuration = configuration
 	NetworkLobbyManager.init_lobby()
 	
 func _on_client_player_connected():
-	stop_finding()
 	Global.change_scene("res://menu/lobby/lobby.tscn")
 	

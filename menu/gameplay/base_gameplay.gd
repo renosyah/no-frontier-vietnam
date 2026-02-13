@@ -55,6 +55,7 @@ func _on_grand_map_ready():
 		
 	Global.hide_transition()
 	
+	
 ##########################################  ############################################
 
 var movable_camera_room :MovableCamera
@@ -70,7 +71,7 @@ func spawn_movable_camera():
 	movable_camera_battle = preload("res://assets/camera/movable_camera_battle.tscn").instance()
 	movable_camera_battle.name = "movable_camera_battle"
 	add_child(movable_camera_battle)
-	movable_camera_battle.translation = Vector3(0, 3, 2)
+	movable_camera_battle.translation = Vector3(0, 6, 2)
 	
 ##########################################  ############################################
 
@@ -87,14 +88,21 @@ func setup_ui():
 	use_grand_camera()
 	
 func _on_camera_down_zoom_in():
-	if current_cam == movable_camera_room:
-		var tile = grand_map.get_closes_tile(selection.translation)
-		set_current_battle_map(battle_map_holder[tile.id])
+	if current_cam != movable_camera_room:
+		return
+		
+	var tile = get_closes_zoomable_battle_map(selection.translation)
+	if tile == null:
+		return
+		
+	set_current_battle_map(battle_map_holder[tile.id])
 		
 func _on_camera_up_exiting():
-	if current_cam == movable_camera_battle:
-		hide_battle_map()
-		use_grand_camera()
+	if current_cam != movable_camera_battle:
+		return
+		
+	hide_battle_map()
+	use_grand_camera()
 
 func use_grand_camera():
 	movable_camera_battle.set_as_current(false)
@@ -106,6 +114,7 @@ func use_grand_camera():
 	var map_size = Global.grand_map_manifest_data.map_size
 	ui.movable_camera_ui.target = movable_camera_room
 	ui.movable_camera_ui.min_zoom = 1
+	ui.movable_camera_ui.max_zoom = 5
 	ui.movable_camera_ui.camera_limit_bound = Vector3( map_size + 1, 0, map_size + 3)
 	ui.movable_camera_ui.center_pos = grand_map.global_position
 	
@@ -116,11 +125,12 @@ func use_battle_camera(center :Vector3):
 	movable_camera_battle.set_as_current(true)
 	
 	current_cam = movable_camera_battle
-	current_cam.translation = Vector3(0, 5, 2) + center
+	current_cam.translation = Vector3(0, 6, 2) + center
 	
 	var map_size = Global.grand_map_manifest_data.battle_map_size
 	ui.movable_camera_ui.target = movable_camera_battle
 	ui.movable_camera_ui.min_zoom = 2
+	ui.movable_camera_ui.max_zoom = 7
 	ui.movable_camera_ui.camera_limit_bound = Vector3(map_size + 1, 0, map_size)
 	ui.movable_camera_ui.center_pos = center + Vector3(0, 0, 2)
 	
@@ -158,22 +168,33 @@ func setup_selection():
 	selection.visible = false
 	
 func show_tile_by_ray():
-	if current_cam == movable_camera_room:
-		var cam_pos = current_cam.global_position + Vector3.FORWARD
-		var from = cam_pos + (Vector3.UP * 20)
-		var to = cam_pos + (Vector3.DOWN * 10)
+	if current_cam != movable_camera_room:
+		return
 		
-		var result :Dictionary = get_viewport().get_world().direct_space_state.intersect_ray(from, to, [], 4, false, true)
-		if not result.empty():
-			var tile = grand_map.get_closes_tile(result["position"])
-			selection.visible = true
-			selection.translation = tile.pos + grand_map.global_position
+	var cam_pos = current_cam.global_position + Vector3.FORWARD
+	var from = cam_pos + (Vector3.UP * 20)
+	var to = cam_pos + (Vector3.DOWN * 10)
+	
+	var result :Dictionary = get_viewport().get_world().direct_space_state.intersect_ray(from, to, [], 4, false, true)
+	if result.empty():
+		return
+		
+	var tile = get_closes_zoomable_battle_map(result["position"])
+	if tile == null:
+		return
+		
+	if not battle_map_holder.has(tile.id):
+		return
+	
+	selection.visible = true
+	selection.translation = tile.pos + grand_map.global_position
 	
 ##########################################  ############################################
 
 var ground_table :Sprite3D
 var battle_map_pos :Dictionary = {} # [Vector2 : Vector3]
 var battle_map_holder :Dictionary = {} # [Vector2 : BattleMap]
+var zoomable_battle_map :Dictionary = {} # [Vector2 : TileMapData (grand map)]
 var current_battle_map :BaseTileMap
 
 func setup_battle_map_pos():
@@ -198,8 +219,8 @@ func setup_battle_map_pos():
 		
 	# demo
 	# check if all battle map can be spawned
-	for id in Global.battle_map_datas.keys():
-		_spawn_battle_map(id, battle_map_pos[id])
+#	for id in Global.battle_map_datas.keys():
+#		_spawn_battle_map(id, battle_map_pos[id])
 		
 remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	if battle_map_holder.has(id):
@@ -216,6 +237,29 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	battle_map_holder[id] = battle_map
 	battle_map.visible = false
 	
+	for tile in Global.grand_map_data.tiles:
+		if tile.id == id:
+			zoomable_battle_map[id] = tile
+			return
+	
+func get_closes_zoomable_battle_map(from :Vector3) -> TileMapData:
+	var tiles :Array = zoomable_battle_map.values()
+	if tiles.empty():
+		return null
+		
+	var current :TileMapData = tiles[0]
+	var modifier :Vector3 = grand_map.global_position
+	for i in tiles:
+		if i == current:
+			continue
+			
+		var dist_1 = (current.pos + modifier).distance_squared_to(from)
+		var dist_2 = (i.pos + modifier).distance_squared_to(from)
+		if dist_2 < dist_1:
+			current = i
+			
+	return current # TileMapData
+	
 func set_current_battle_map(battle_map :BaseTileMap):
 	current_battle_map = battle_map
 	current_battle_map.visible = true
@@ -226,7 +270,7 @@ func hide_battle_map():
 	for i in battle_map_holder.values():
 		i.visible = false
 	
-func _on_battle_map_ready(battle_map :BaseTileMap):
+func _on_battle_map_ready(_battle_map :BaseTileMap):
 	pass
 
 
