@@ -21,6 +21,29 @@ editor :
 		- save battle map to file (done)
 		- back -> grand map editor (done)
 		
+gameplay menu (mp sync) : 
+	- player profile
+		- player id unique for gameplay (not network)
+		- player display name
+		
+	- join menu
+		- find game (done)
+		- display list of game found in LAN (done)
+		- join game (done)
+		
+	- lobby
+		- list player tab
+			- sync map data between host and client (done)
+			- check ready player  (done)
+			
+			
+		- lobby match tab
+			- host choose faction (left & right)
+			- host setting match : battle map max, faction bases, max squad & faction resource
+			- player choose side
+
+		- go to gameplay menu  (done)
+		
 gameplay entity (mp sync) : 
 	grand map : 
 		- squad

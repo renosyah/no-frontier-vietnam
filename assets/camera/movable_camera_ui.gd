@@ -1,5 +1,9 @@
 extends Control
 
+# if camera enter min zoom or max zoom
+signal camera_down
+signal camera_up
+
 var target :Spatial
 export var min_zoom :float = 2
 export var max_zoom :float = 6
@@ -14,6 +18,25 @@ var touches := {}
 var is_pinch_zoom := false
 var last_pinch_distance := 0.0
 
+onready var _label = $Label
+var _enable_check :bool = true
+
+func _is_camera_enter_down_up():
+	if not _enable_check:
+		return
+		
+	if target.translation.y <= (min_zoom + 0.5):
+		_enable_check = false
+		emit_signal("camera_down")
+		yield(get_tree().create_timer(0.5),"timeout")
+		
+	elif target.translation.y >= (max_zoom - 0.5):
+		_enable_check = false
+		emit_signal("camera_up")
+		yield(get_tree().create_timer(0.5),"timeout")
+	
+	_enable_check = true
+	
 func _unhandled_input(event):
 	if event is InputEventScreenTouch:
 		if not _is_point_inside_area(event.position):
@@ -54,9 +77,12 @@ func _unhandled_input(event):
 			else:
 				var delta_distance = current_distance - last_pinch_distance
 				target.translate(Vector3(0, -delta_distance * zoom_speed, 0))
+				_is_camera_enter_down_up()
 				target.translation.y = clamp(target.translation.y, min_zoom, max_zoom)
 				last_pinch_distance = current_distance
 				
+	_label.text = "Cam pos : %s" % target.translation
+
 func _is_point_inside_area(point: Vector2) -> bool:
 	var x: bool = point.x >= rect_global_position.x and point.x <= rect_global_position.x + (rect_size.x * get_global_transform_with_canvas().get_scale().x)
 	var y: bool = point.y >= rect_global_position.y and point.y <= rect_global_position.y + (rect_size.y * get_global_transform_with_canvas().get_scale().y)
