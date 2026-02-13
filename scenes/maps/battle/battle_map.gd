@@ -22,6 +22,7 @@ func _spawn_tile(data :TileMapData) -> BaseTile:
 			tile_scene = non_walkable_mud_tile_scene
 			
 	var tile :BaseTile = tile_scene.instance()
+	tile.name = 'tile_%s' % data.id
 	add_child(tile)
 	tile.translation = data.pos
 	return tile

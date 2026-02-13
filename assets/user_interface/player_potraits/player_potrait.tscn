@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/user_interface/player_potraits/player_potrait.gd" type="Script" id=1]
+
+[node name="player_potrait" type="Node"]
+script = ExtResource( 1 )

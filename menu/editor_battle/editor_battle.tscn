@@ -14,6 +14,7 @@ script = ExtResource( 7 )
 [node name="ui" parent="." instance=ExtResource( 10 )]
 
 [node name="movable_camera_battle" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 2 )
 
 [node name="clickable_floor" parent="." instance=ExtResource( 3 )]
 

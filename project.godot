@@ -140,6 +140,11 @@ _global_script_classes=[ {
 "path": "res://data/player_data/player_data.gd"
 }, {
 "base": "Node",
+"class": "PlayerPotrait",
+"language": "GDScript",
+"path": "res://assets/user_interface/player_potraits/player_potrait.gd"
+}, {
+"base": "Node",
 "class": "QueueTask",
 "language": "GDScript",
 "path": "res://addons/queue_task/queue_task.gd"
@@ -231,6 +236,7 @@ _global_script_class_icons={
 "NetworkPlayer": "",
 "NetworkServer": "",
 "PlayerData": "",
+"PlayerPotrait": "",
 "QueueTask": "",
 "RadioChatters": "",
 "RandomNameGenerator": "",

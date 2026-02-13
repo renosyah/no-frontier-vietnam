@@ -8,7 +8,7 @@ func _ready():
 	get_tree().set_quit_on_go_back(false)
 	get_tree().set_auto_accept_quit(false)
 	
-	setup_battle_map_pos()
+	setup_battle_map()
 	spawn_grand_map()
 	spawn_movable_camera()
 	setup_clickable_floor()
@@ -39,6 +39,11 @@ func _on_leave():
 	
 ##########################################  ############################################
 
+onready var grand_map_manifest_data :GrandMapFileManifest = Global.grand_map_manifest_data
+onready var grand_map_data :TileMapFileData = Global.grand_map_data
+onready var grand_map_mission_data :GrandMapFileMission = Global.grand_map_mission_data
+onready var battle_map_datas :Dictionary = Global.battle_map_datas
+
 var grand_map :BaseTileMap
 
 func spawn_grand_map():
@@ -46,16 +51,39 @@ func spawn_grand_map():
 	grand_map.connect("on_map_ready", self, "_on_grand_map_ready")
 	grand_map.name = "grand_map"
 	add_child(grand_map)
-	grand_map.generate_from_data(Global.grand_map_data)
-	grand_map.setup_border_scale(Vector3.ONE * ((Global.grand_map_manifest_data.map_size * 2) + 1.5))
+	grand_map.generate_from_data(grand_map_data)
+	grand_map.setup_border_scale(Vector3.ONE * ((grand_map_manifest_data.map_size * 2) + 1.5))
 	
 func _on_grand_map_ready():
 	if NetworkLobbyManager.is_server():
 		NetworkLobbyManager.set_host_ready()
 		
 	Global.hide_transition()
+	setup_base_and_point()
 	
-	
+# var bases :Dictionary = {} # [team_id : BaseTileObject] 
+var points :Dictionary = {} # [team_id : BaseTileObject] 
+
+func setup_base_and_point():
+	# remove default object spawn by map
+	for id in grand_map_mission_data.bases + grand_map_mission_data.points:
+		grand_map.remove_spawned_object(id)
+		
+	var idx = 1
+	for id in grand_map_mission_data.bases:
+		var base :BaseTileObject = preload("res://scenes/tile_objects/grand/faction_base.tscn").instance()
+		grand_map.add_child(base)
+		base.translation = grand_map.get_tile_instance(id).translation
+		base.set_color(Global.team_colors[idx])
+		idx += 1
+		
+	for id in grand_map_mission_data.points:
+		var point :BaseTileObject = preload("res://scenes/tile_objects/grand/flag_pole.tscn").instance()
+		grand_map.add_child(point)
+		point.translation = grand_map.get_tile_instance(id).translation
+		point.set_color(Global.team_colors[Global.TEAM_WHITE])
+		points[id] = point
+		
 ##########################################  ############################################
 
 var movable_camera_room :MovableCamera
@@ -111,7 +139,7 @@ func use_grand_camera():
 	current_cam = movable_camera_room
 	#current_cam.translation = Vector3(0, 5, 2) + grand_map.global_position
 	
-	var map_size = Global.grand_map_manifest_data.map_size
+	var map_size = grand_map_manifest_data.map_size
 	ui.movable_camera_ui.target = movable_camera_room
 	ui.movable_camera_ui.min_zoom = 1
 	ui.movable_camera_ui.max_zoom = 5
@@ -119,6 +147,7 @@ func use_grand_camera():
 	ui.movable_camera_ui.center_pos = grand_map.global_position
 	
 	ground_table.visible = false
+	grand_map.visible = true
 	
 func use_battle_camera(center :Vector3):
 	movable_camera_room.set_as_current(false)
@@ -127,7 +156,7 @@ func use_battle_camera(center :Vector3):
 	current_cam = movable_camera_battle
 	current_cam.translation = Vector3(0, 6, 2) + center
 	
-	var map_size = Global.grand_map_manifest_data.battle_map_size
+	var map_size = grand_map_manifest_data.battle_map_size
 	ui.movable_camera_ui.target = movable_camera_battle
 	ui.movable_camera_ui.min_zoom = 2
 	ui.movable_camera_ui.max_zoom = 7
@@ -197,13 +226,12 @@ var battle_map_holder :Dictionary = {} # [Vector2 : BattleMap]
 var zoomable_battle_map :Dictionary = {} # [Vector2 : TileMapData (grand map)]
 var current_battle_map :BaseTileMap
 
-func setup_battle_map_pos():
+func setup_battle_map():
 	ground_table = preload("res://assets/background/ground.tscn").instance()
 	ground_table.name = "ground_table"
 	add_child(ground_table)
 	
-	var maps = Global.battle_map_datas
-	var map_keys = maps.keys()
+	var map_keys = battle_map_datas.keys()
 	var poses = Utils.generate_positions(map_keys.size(), 40, 50)
 	
 	var idx = 0
@@ -213,31 +241,31 @@ func setup_battle_map_pos():
 		
 	# spawn battle map localy
 	# for bases and point
-	var mission = Global.grand_map_mission_data
+	var mission = grand_map_mission_data
 	for id in mission.bases + mission.points:
 		_spawn_battle_map(id, battle_map_pos[id])
 		
 	# demo
 	# check if all battle map can be spawned
-#	for id in Global.battle_map_datas.keys():
+#	for id in battle_map_datas.keys():
 #		_spawn_battle_map(id, battle_map_pos[id])
 		
 remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	if battle_map_holder.has(id):
 		return
 		
-	var manif = Global.grand_map_manifest_data
+	var manif = grand_map_manifest_data
 	var battle_map = preload("res://scenes/maps/battle/battle_map.tscn").instance()
 	battle_map.connect("on_map_ready", self, "_on_battle_map_ready", [battle_map])
 	battle_map.name = manif.battle_map_names[id]
 	add_child(battle_map)
 	
 	battle_map.translation = at
-	battle_map.generate_from_data(Global.battle_map_datas[id])
+	battle_map.generate_from_data(battle_map_datas[id])
 	battle_map_holder[id] = battle_map
 	battle_map.visible = false
 	
-	for tile in Global.grand_map_data.tiles:
+	for tile in grand_map_data.tiles:
 		if tile.id == id:
 			zoomable_battle_map[id] = tile
 			return
@@ -263,6 +291,7 @@ func get_closes_zoomable_battle_map(from :Vector3) -> TileMapData:
 func set_current_battle_map(battle_map :BaseTileMap):
 	current_battle_map = battle_map
 	current_battle_map.visible = true
+	grand_map.visible = false
 	use_battle_camera(current_battle_map.global_position)
 	ground_table.position = current_battle_map.global_position + Vector3(0, -0.4, -1)
 	

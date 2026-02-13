@@ -10,6 +10,7 @@ onready var clickable_floor = $clickable_floor
 onready var selection = $selection
 
 onready var nav_highlight_holder = {}
+onready var battle_map_edited_holder = {}
 
 # refrence variable, modified this, in global it got modified too
 onready var grand_map_manifest_data = Global.grand_map_manifest_data
@@ -87,12 +88,21 @@ func _on_ui_on_update_tile(data :TileMapData):
 		battle_map_datas[data.id] = TileMapUtils.generate_empty_tile_map(Global.battle_map_size, false)
 		grand_map_mission_data.edited_battle_maps[data.id] = false
 		
+		var edited = preload("res://assets/tile_highlight/floating_question.tscn").instance()
+		add_child(edited)
+		edited.translation = data.pos
+		battle_map_edited_holder[data.id] = edited
+				
 	elif data.tile_type == 2:
 		grand_map.update_navigation_tile(data.id, false)
 		grand_map.remove_spawned_object(data.id)
 		
 		if grand_map_mission_data.edited_battle_maps.has(data.id):
 			grand_map_mission_data.edited_battle_maps.erase(data.id)
+			
+		if battle_map_edited_holder.has(data.id):
+			battle_map_edited_holder[data.id].queue_free()
+			battle_map_edited_holder.erase(data.id)
 		
 		if grand_map_mission_data.bases.has(data.id):
 			grand_map_mission_data.bases.erase(data.id)
@@ -186,11 +196,21 @@ func _on_grand_map_on_map_ready():
 		var nav :NavigationData = i
 		var nav_highlight = preload("res://assets/tile_highlight/nav_highlight.tscn").instance()
 		add_child(nav_highlight)
+		
+		var pos = grand_map.get_tile_instance(nav.id).translation
 		nav_highlight.set_text_label("%s\n%s" % [nav.id, nav.navigation_id])
 		nav_highlight.set_surface_material(0, allow_nav if nav.enable else blocked_nav)
-		nav_highlight.translation = grand_map.get_tile_instance(nav.id).translation
+		nav_highlight.translation = pos
 		nav_highlight.visible = false
 		nav_highlight_holder[nav.id] = nav_highlight
+		
+		var ebms = grand_map_mission_data.edited_battle_maps
+		if ebms.has(nav.id):
+			if not ebms[nav.id]:
+				var edited = preload("res://assets/tile_highlight/floating_question.tscn").instance()
+				add_child(edited)
+				edited.translation = pos
+				battle_map_edited_holder[nav.id] = edited
 		
 func _on_ui_on_toggle_nav(show):
 	for i in nav_highlight_holder.values():
@@ -204,6 +224,11 @@ func _on_ui_on_zoom_tile(pos):
 		Global.battle_map_data = battle_map_datas[tile.id]
 		Global.battle_map_id = tile.id
 		grand_map_mission_data.edited_battle_maps[tile.id] = true
+		
+		if battle_map_edited_holder.has(tile.id):
+			battle_map_edited_holder[tile.id].queue_free()
+			battle_map_edited_holder.erase(tile.id)
+		
 		Global.change_scene("res://menu/editor_battle/editor_battle.tscn")
 	
 func _on_ui_on_save():

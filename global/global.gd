@@ -6,12 +6,28 @@ func _ready():
 	init_save_load_map()
 	setup_transition()
 	
+##########################################  team  ############################################
+
+const TEAM_WHITE = 0
+const TEAM_BLUE = 1
+const TEAM_RED = 2
+
+const team_colors = {
+	TEAM_WHITE :preload("res://assets/team_colors/white_color_team.tres"),
+	TEAM_BLUE : preload("res://assets/team_colors/blue_color_team.tres"),
+	TEAM_RED : preload("res://assets/team_colors/red_color_team.tres")
+}
+
 ##########################################  player data  ############################################
 
 const player_data_filepath :String = "player_data.dat"
 var player_data :PlayerData
+var player_potrait :PlayerPotrait
 
 func load_player_data():
+	player_potrait = preload("res://assets/user_interface/player_potraits/player_potrait.tscn").instance()
+	add_child(player_potrait)
+	
 	player_data = PlayerData.new()
 	var data = SaveLoad.load_save(player_data_filepath, true)
 	if data == null:
@@ -19,6 +35,7 @@ func load_player_data():
 		player_data.player_name = OS.get_name()
 		player_data.player_rank = 0
 		player_data.player_team = 1
+		player_data.player_potrait = 0
 		SaveLoad.save(player_data_filepath, player_data.to_dictionary(), true)
 	
 	else:
@@ -89,10 +106,10 @@ func set_active_map(manif :GrandMapFileManifest):
 		battle_map_datas[key] = battle_data
 	
 # for editor
-onready var grand_map_manifest_data :GrandMapFileManifest
-onready var grand_map_data :TileMapFileData
-onready var grand_map_mission_data :GrandMapFileMission
-onready var battle_map_datas :Dictionary = {} # [ Vector2:TileMapFileData ]
+var grand_map_manifest_data :GrandMapFileManifest
+var grand_map_data :TileMapFileData
+var grand_map_mission_data :GrandMapFileMission
+var battle_map_datas :Dictionary = {} # [ Vector2:TileMapFileData ]
 
 # entering battle map
 var battle_map_name :String
