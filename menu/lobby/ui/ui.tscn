@@ -112,7 +112,7 @@ size_flags_vertical = 3
 [node name="player_tab" type="Control" parent="CanvasLayer/Control/VBoxContainer"]
 margin_top = 196.0
 margin_right = 600.0
-margin_bottom = 1020.0
+margin_bottom = 956.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -121,9 +121,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/Control/VBoxContainer"]
-margin_top = 1024.0
+margin_top = 960.0
 margin_right = 600.0
-margin_bottom = 1024.0
+margin_bottom = 960.0
 
 [node name="play" type="Button" parent="CanvasLayer/Control/VBoxContainer/CenterContainer"]
 visible = false
@@ -144,6 +144,12 @@ margin_bottom = 62.0
 rect_min_size = Vector2( 400, 125 )
 custom_fonts/font = ExtResource( 7 )
 text = "Ready!"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer"]
+margin_top = 964.0
+margin_right = 600.0
+margin_bottom = 1024.0
+rect_min_size = Vector2( 0, 60 )
 
 [node name="fps_ping_displayer" parent="CanvasLayer/Control" instance=ExtResource( 6 )]
 margin_top = 974.0

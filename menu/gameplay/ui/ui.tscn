@@ -23,6 +23,7 @@ margin_top = -20.0
 margin_right = 20.0
 margin_bottom = 20.0
 rect_pivot_offset = Vector2( 20, 20 )
+mouse_filter = 2
 
 [node name="movable_camera_ui" parent="CanvasLayer" instance=ExtResource( 1 )]
 

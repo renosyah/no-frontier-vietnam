@@ -223,6 +223,7 @@ func show_tile_by_ray():
 	
 func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
 	var battle_map_adjacent = []
+	
 	var adjacent = TileMapUtils.get_adjacent_tiles(
 		TileMapUtils.ARROW_DIRECTIONS,
 		Vector2.ZERO, 1
@@ -231,13 +232,12 @@ func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
 		if grand_map.is_nav_enable(id + tile_id):
 			battle_map_adjacent.append(id)
 			
-	var transit_points = ReservedTile.get_transit_point_reseved_tiles(
-		battle_map_adjacent, grand_map_manifest_data.battle_map_size
-	)
-	for i in transit_points:
+	for id in battle_map_adjacent:
+		var pos_point = id * grand_map_manifest_data.battle_map_size
 		var t = preload("res://scenes/tile_objects/battle/transit_point.tscn").instance()
 		battle_map.add_child(t)
-		t.translation = battle_map.get_tile_instance(i).translation
+		t.set_label("Go to %s" % grand_map_manifest_data.battle_map_names[id + tile_id])
+		t.translation = battle_map.get_tile_instance(pos_point).translation
 		
 ##########################################  ############################################
 
@@ -324,7 +324,6 @@ func hide_battle_map():
 	
 func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	create_transit_point(tile_id, battle_map)
-
 	
 
 
