@@ -192,20 +192,19 @@ func _on_floor_clicked(pos :Vector3):
 			var tile = grand_map.get_closes_tile(pos)
 			
 			# test squad
-			var p :PoolVector2Array = grand_map.get_navigation(squad.current_tile, tile.id)
+			var p :PoolVector2Array = grand_map.get_navigation(squad.current_tile, tile.id, [], true)
 			var paths :Array = []
 			for id in p:
 				var pos3 = grand_map.get_tile_instance(id).global_position
 				paths.append(BaseTileUnit.TileUnitPath.new(id, pos3))
 				
-			squad.paths = paths
+			squad.set_paths(paths)
 			
 		movable_camera_battle:
 			var tile = current_battle_map.get_closes_tile(pos)
 			selection.translation = tile.pos + current_battle_map.global_position
 			selection.visible = true
-
-	
+			
 ##########################################  ############################################
 
 var selection :Spatial
@@ -358,6 +357,7 @@ remotesync func _spawn_squad(network_id :int, tile_id :Vector2):
 	squad.connect("on_current_tile_updated", self, "_on_squad_current_tile_updated")
 	add_child(squad)
 	
+	squad.visible = false
 	squad.translation = grand_map.get_tile_instance(tile_id).global_position
 
 func _on_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):

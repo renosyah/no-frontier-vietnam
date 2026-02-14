@@ -25,7 +25,7 @@ export var speed :float = 0.4
 export var is_dead :bool = false
 export var is_selectable :bool = false
 
-var paths :Array # [TileUnitPath]
+var _paths :Array # [TileUnitPath]
 var current_tile :Vector2
 
 var _last_to :Vector3
@@ -34,13 +34,15 @@ puppet var _puppet_current_tile :Vector2
 puppet var _puppet_translation :Vector3
 puppet var _puppet_rotation_y :float
 
+func set_paths(v :Array):
+	if _is_master:
+		_paths.clear()
+		_paths.append_array(v)
+
 func _network_timmer_timeout() -> void:
 	._network_timmer_timeout()
 	
-	if is_dead:
-		return
-	
-	if _is_master and _is_online:
+	if not is_dead and _is_master and _is_online:
 		rset_unreliable("_puppet_translation", global_position)
 		rset_unreliable("_puppet_rotation_y", global_rotation.y)
 		rset_unreliable("_puppet_current_tile", current_tile)
@@ -52,16 +54,16 @@ func _network_timmer_timeout() -> void:
 func master_moving(delta :float) -> void:
 	.master_moving(delta)
 	
-	if is_dead or paths.empty():
+	if is_dead or _paths.empty():
 		return
 		
 	var pos :Vector3 = global_position
-	var new_to :Vector3 = paths.front().pos
+	var new_to :Vector3 = _paths.front().pos
 	
 	if  pos.distance_to(new_to) < 0.1:
-		paths.pop_front()
+		_paths.pop_front()
 		
-		if paths.empty():
+		if _paths.empty():
 			emit_signal("on_finish_travel", self)
 			return
 			
@@ -70,7 +72,7 @@ func master_moving(delta :float) -> void:
 		
 	var dist_from = _last_to.distance_squared_to(pos)
 	var dist_to = new_to.distance_squared_to(pos)
-	var new_tile = paths.front().tile_id
+	var new_tile = _paths.front().tile_id
 	
 	if dist_from > dist_to and current_tile != new_tile:
 		emit_signal("on_current_tile_updated", self, current_tile, new_tile)
@@ -92,4 +94,4 @@ func puppet_moving(delta :float) -> void:
 	if current_tile != _puppet_current_tile:
 		var old = current_tile
 		current_tile = _puppet_current_tile
-		emit_signal("on_current_tile_updated",old , current_tile)
+		emit_signal("on_current_tile_updated", self, old, current_tile)
