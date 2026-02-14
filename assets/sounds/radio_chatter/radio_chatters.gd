@@ -141,23 +141,28 @@ onready var speaker = $speaker
 onready var static_ambient = $static_ambient
 onready var delays = $delays
 
-func play_radio(text :String, audio :Resource, clear:bool = false):
+func play_radio(text :String, audio :Resource, with_static :bool = false, clear:bool = false):
 	if clear:
 		queue_task.task_queue.clear()
 		
-	queue_task.add_task(self,"_play_radio",[text,audio])
+	queue_task.add_task(self,"_play_radio",[text,audio, with_static])
 
-func _play_radio(text :String, audio :Resource):
+func _play_radio(text :String, audio :Resource, with_static :bool):
 	emit_signal("on_radio_played", text)
 	speaker.stream = audio
-	static_ambient.play()
+	
+	if with_static:
+		static_ambient.play()
+		
 	delays.start()
 	
 	yield(delays,"timeout")
 	speaker.play()
 	
 	yield(speaker,"finished")
-	static_ambient.stop()
+	
+	if with_static:
+		static_ambient.stop()
 
 
 

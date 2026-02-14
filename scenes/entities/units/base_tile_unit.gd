@@ -26,6 +26,7 @@ export var is_dead :bool = false
 export var is_selectable :bool = false
 
 var _paths :Array # [TileUnitPath]
+var _hidden :bool
 var current_tile :Vector2
 
 var _last_to :Vector3
@@ -39,6 +40,10 @@ func set_paths(v :Array):
 		_paths.clear()
 		_paths.append_array(v)
 
+func set_hidden(v :bool):
+	_hidden = v
+	visible = not _hidden
+
 func _network_timmer_timeout() -> void:
 	._network_timmer_timeout()
 	
@@ -46,11 +51,15 @@ func _network_timmer_timeout() -> void:
 		rset_unreliable("_puppet_translation", global_position)
 		rset_unreliable("_puppet_rotation_y", global_rotation.y)
 		rset_unreliable("_puppet_current_tile", current_tile)
-		
-# so current tile updated is base on
-# ON when goes to next path, current tile is updated
-# yea, so unit still on old tile but give signal it "will" enter next tile
-# this will result in early detection, but nah, fine
+	
+func _on_camera_entered(_camera: Camera):
+	._on_camera_entered(_camera)
+	visible = not _hidden
+	
+func _on_camera_exited(_camera: Camera):
+	._on_camera_exited(_camera)
+	visible = false
+	
 func master_moving(delta :float) -> void:
 	.master_moving(delta)
 	

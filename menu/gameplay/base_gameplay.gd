@@ -357,14 +357,14 @@ remotesync func _spawn_squad(network_id :int, tile_id :Vector2):
 	squad.connect("on_current_tile_updated", self, "_on_squad_current_tile_updated")
 	add_child(squad)
 	
-	squad.visible = false
+	squad.set_hidden(true)
 	squad.translation = grand_map.get_tile_instance(tile_id).global_position
 
 func _on_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	
 	# rule of gameplay, squad cannot contact hq
 	# if inside one of active battle map
-	unit.visible = not (to in zoomable_battle_map.keys())
+	unit.set_hidden(to in zoomable_battle_map.keys())
 	
 	print("squad leave : %s and enter : %s" % [from,to])
 

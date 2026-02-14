@@ -5,6 +5,7 @@ func _ready():
 	load_player_data()
 	init_save_load_map()
 	setup_transition()
+	init_radio_chatter()
 	
 ##########################################  team  ############################################
 
@@ -54,6 +55,20 @@ func change_scene(scene :String, use :bool = false, bg_idx :int = 1):
 func hide_transition():
 	transition.hide_transition()
 	
+##########################################  radio  ############################################
+
+var radio_chatter :RadioChatters
+
+func init_radio_chatter():
+	radio_chatter = preload("res://assets/sounds/radio_chatter/radio_chatters.tscn").instance()
+	add_child(radio_chatter)
+
+func unit_responded(chatter_id :int):
+	var r = radio_chatter.US_RADIO[chatter_id]
+	var k = r.keys()
+	var key = k[randi() % k.size()]
+	radio_chatter.play_radio(key, r[key])
+
 ##########################################  map editor  ############################################
 # for load and save maps
 const map_dir = "map"

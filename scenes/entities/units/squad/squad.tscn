@@ -11,3 +11,6 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.364832, 0 )
 billboard = 1
 double_sided = false
 texture = ExtResource( 2 )
+
+[connection signal="on_current_tile_updated" from="." to="." method="_on_squad_on_current_tile_updated"]
+[connection signal="on_finish_travel" from="." to="." method="_on_squad_on_finish_travel"]
