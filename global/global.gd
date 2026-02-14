@@ -115,6 +115,7 @@ var battle_map_datas :Dictionary = {} # [ Vector2:TileMapFileData ]
 var battle_map_name :String
 var battle_map_data :TileMapFileData
 var battle_map_id :Vector2
+var battle_map_adjacent :Array # [ Vector2 ]
 
 func empty_map_data():
 	grand_map_manifest_data = GrandMapFileManifest.new()

@@ -32,6 +32,9 @@ func _notification(what):
 			return
 			
 func on_back_pressed():
+	if current_cam == movable_camera_battle:
+		return
+		
 	NetworkLobbyManager.leave()
 	
 func _on_leave():
@@ -123,7 +126,7 @@ func _on_camera_down_zoom_in():
 	if tile == null:
 		return
 		
-	set_current_battle_map(battle_map_holder[tile.id])
+	set_current_battle_map(tile.id)
 		
 func _on_camera_up_exiting():
 	if current_cam != movable_camera_battle:
@@ -218,12 +221,31 @@ func show_tile_by_ray():
 	selection.visible = true
 	selection.translation = tile.pos + grand_map.global_position
 	
+func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
+	var battle_map_adjacent = []
+	var adjacent = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.ARROW_DIRECTIONS,
+		Vector2.ZERO, 1
+	)
+	for id in adjacent:
+		if grand_map.is_nav_enable(id + tile_id):
+			battle_map_adjacent.append(id)
+			
+	var transit_points = ReservedTile.get_transit_point_reseved_tiles(
+		battle_map_adjacent, grand_map_manifest_data.battle_map_size
+	)
+	for i in transit_points:
+		var t = preload("res://scenes/tile_objects/battle/transit_point.tscn").instance()
+		battle_map.add_child(t)
+		t.translation = battle_map.get_tile_instance(i).translation
+		
 ##########################################  ############################################
 
 var ground_table :Sprite3D
 var battle_map_pos :Dictionary = {} # [Vector2 : Vector3]
 var battle_map_holder :Dictionary = {} # [Vector2 : BattleMap]
 var zoomable_battle_map :Dictionary = {} # [Vector2 : TileMapData (grand map)]
+
 var current_battle_map :BaseTileMap
 
 func setup_battle_map():
@@ -256,7 +278,7 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 		
 	var manif = grand_map_manifest_data
 	var battle_map = preload("res://scenes/maps/battle/battle_map.tscn").instance()
-	battle_map.connect("on_map_ready", self, "_on_battle_map_ready", [battle_map])
+	battle_map.connect("on_map_ready", self, "_on_battle_map_ready", [id, battle_map])
 	battle_map.name = manif.battle_map_names[id]
 	add_child(battle_map)
 	
@@ -288,10 +310,11 @@ func get_closes_zoomable_battle_map(from :Vector3) -> TileMapData:
 			
 	return current # TileMapData
 	
-func set_current_battle_map(battle_map :BaseTileMap):
-	current_battle_map = battle_map
+func set_current_battle_map(battle_map_id :Vector2):
+	current_battle_map = battle_map_holder[battle_map_id]
 	current_battle_map.visible = true
 	grand_map.visible = false
+	
 	use_battle_camera(current_battle_map.global_position)
 	ground_table.position = current_battle_map.global_position + Vector3(0, -0.4, -1)
 	
@@ -299,9 +322,10 @@ func hide_battle_map():
 	for i in battle_map_holder.values():
 		i.visible = false
 	
-func _on_battle_map_ready(_battle_map :BaseTileMap):
-	pass
+func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
+	create_transit_point(tile_id, battle_map)
 
+	
 
 
 

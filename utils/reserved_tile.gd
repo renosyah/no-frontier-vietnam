@@ -1,7 +1,7 @@
 extends Node
-class_name BaseReservedTile
+class_name ReservedTile
 
-static func getBaseResevedTiles(at :Vector2, _spaces :int = 0) -> Array:
+static func get_base_reseved_tiles(at :Vector2, _spaces :int = 0) -> Array:
 	var tiles :Array = []
 	var hq = [
 		at, at + Vector2.RIGHT,
@@ -14,3 +14,9 @@ static func getBaseResevedTiles(at :Vector2, _spaces :int = 0) -> Array:
 		
 	return tiles + hq
  
+static func get_transit_point_reseved_tiles(dirs :Array, map_size :int = 1) -> Array:
+	var v = []
+	for i in dirs:
+		v.append(i * map_size)
+		
+	return v

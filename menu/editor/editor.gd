@@ -219,17 +219,30 @@ func _on_ui_on_toggle_nav(show):
 func _on_ui_on_zoom_tile(pos):
 	show_selection(Vector3.ZERO, false)
 	var tile = grand_map.get_closes_tile(pos)
-	if battle_map_datas.has(tile.id):
-		Global.battle_map_name = grand_map_manifest_data.battle_map_names[tile.id]
-		Global.battle_map_data = battle_map_datas[tile.id]
-		Global.battle_map_id = tile.id
-		grand_map_mission_data.edited_battle_maps[tile.id] = true
-		
-		if battle_map_edited_holder.has(tile.id):
-			battle_map_edited_holder[tile.id].queue_free()
-			battle_map_edited_holder.erase(tile.id)
-		
-		Global.change_scene("res://menu/editor_battle/editor_battle.tscn")
+	if not battle_map_datas.has(tile.id):
+		return
+	
+	var battle_map_adjacent = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.ARROW_DIRECTIONS,
+		Vector2.ZERO, 1
+	)
+	
+	Global.battle_map_adjacent.clear()
+	for id in battle_map_adjacent:
+		if grand_map.is_nav_enable(id + tile.id):
+			Global.battle_map_adjacent.append(id)
+	
+	Global.battle_map_name = grand_map_manifest_data.battle_map_names[tile.id]
+	Global.battle_map_data = battle_map_datas[tile.id]
+	Global.battle_map_id = tile.id
+
+	grand_map_mission_data.edited_battle_maps[tile.id] = true
+	
+	if battle_map_edited_holder.has(tile.id):
+		battle_map_edited_holder[tile.id].queue_free()
+		battle_map_edited_holder.erase(tile.id)
+	
+	Global.change_scene("res://menu/editor_battle/editor_battle.tscn")
 	
 func _on_ui_on_save():
 	ui.set_visible(false)

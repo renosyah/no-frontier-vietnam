@@ -77,6 +77,8 @@ func _unhandled_input_mouse(event):
 		# Move along X/Z
 		target.translation.x -= delta.x * drag_sensitivity
 		target.translation.z -= delta.y * drag_sensitivity
+		target.translation.x = clamp(target.translation.x, center_pos.x - camera_limit_bound.x, center_pos.x + camera_limit_bound.x)
+		target.translation.z = clamp(target.translation.z, center_pos.z - camera_limit_bound.z, center_pos.z + camera_limit_bound.z)
 		
 func _unhandled_input_touch(event):
 	if event is InputEventScreenTouch:

@@ -15,7 +15,9 @@ onready var show_nav :bool = false
 var grand_map_mission_data :GrandMapFileMission
 var grand_map_manifest_data :GrandMapFileManifest
 var battle_map_data :TileMapFileData
+
 var untouch_tiles :Array = []
+var transit_points :Array = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -25,12 +27,14 @@ func _ready():
 	battle_map_data = Global.battle_map_data
 	
 	if grand_map_mission_data.bases.has(Global.battle_map_id):
-		untouch_tiles = BaseReservedTile.getBaseResevedTiles(Vector2(-1, -1))
+		untouch_tiles = ReservedTile.get_base_reseved_tiles(Vector2(-1, -1))
 		
 	elif grand_map_mission_data.points.has(Global.battle_map_id):
 		untouch_tiles = TileMapUtils.get_adjacent_tiles(TileMapUtils.get_directions(), Vector2.ZERO, 1)
 		untouch_tiles.append(Vector2.ZERO)
 		
+	transit_points = ReservedTile.get_transit_point_reseved_tiles(Global.battle_map_adjacent, grand_map_manifest_data.battle_map_size)
+	
 	ui.movable_camera_ui.camera_limit_bound = Vector3(grand_map_manifest_data.battle_map_size + 1, 0, grand_map_manifest_data.battle_map_size)
 	ui.map_name.text = Global.battle_map_name
 	ui.movable_camera_ui.target = movable_camera_battle
@@ -71,6 +75,11 @@ func _on_battle_map_on_map_ready():
 		nav_highlight.translation = battle_map.get_tile_instance(nav.id).translation
 		nav_highlight.visible = show_nav
 		nav_highlight_holder[nav.id] = nav_highlight
+	
+	for i in transit_points:
+		var t = preload("res://scenes/tile_objects/battle/transit_point.tscn").instance()
+		add_child(t)
+		t.translation = battle_map.get_tile_instance(i).translation
 	
 func _on_ui_on_card_dragging(pos):
 	var tile = battle_map.get_closes_tile(pos)
@@ -141,5 +150,5 @@ func _on_ui_on_randomize():
 		
 	nav_highlight_holder.clear()
 	
-	TileMapUtils.randomize_battle_map(battle_map_data, untouch_tiles)
+	TileMapUtils.randomize_battle_map(battle_map_data, untouch_tiles + transit_points)
 	battle_map.generate_from_data(battle_map_data, true)

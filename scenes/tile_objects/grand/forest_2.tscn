@@ -6,6 +6,7 @@
 [ext_resource path="res://scenes/tiles/models/rock_material.tres" type="Material" id=4]
 [ext_resource path="res://scenes/tile_objects/base_tile_object.gd" type="Script" id=5]
 
+
 [node name="forest_2" type="Spatial"]
 script = ExtResource( 5 )
 
