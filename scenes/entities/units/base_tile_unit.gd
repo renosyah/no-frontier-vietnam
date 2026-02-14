@@ -6,8 +6,8 @@ class_name BaseTileUnit
 # because this is unit that using tile mechanic as its movement
 # current tile also getting tracked
 
-signal on_current_tile_updated(from_id, to_id)
-signal on_reach
+signal on_current_tile_updated(unit, from_id, to_id)
+signal on_finish_travel(unit)
 
 class TileUnitPath:
 	var tile_id :Vector2
@@ -27,6 +27,8 @@ export var is_selectable :bool = false
 
 var paths :Array # [TileUnitPath]
 var current_tile :Vector2
+
+var _last_to :Vector3
 
 puppet var _puppet_current_tile :Vector2
 puppet var _puppet_translation :Vector3
@@ -54,21 +56,27 @@ func master_moving(delta :float) -> void:
 		return
 		
 	var pos :Vector3 = global_position
-	var to :Vector3 = paths.front().pos
+	var new_to :Vector3 = paths.front().pos
 	
-	if pos.distance_to(to) < 0.1:
-		var old :Vector2 = current_tile
+	if  pos.distance_to(new_to) < 0.1:
 		paths.pop_front()
 		
 		if paths.empty():
-			emit_signal("on_reach")
+			emit_signal("on_finish_travel", self)
 			return
 			
-		current_tile = paths.front().tile_id
-		emit_signal("on_current_tile_updated", old, current_tile)
+		_last_to = new_to
 		return
+		
+	var dist_from = _last_to.distance_squared_to(pos)
+	var dist_to = new_to.distance_squared_to(pos)
+	var new_tile = paths.front().tile_id
 	
-	translation += pos.direction_to(to) * speed * delta
+	if dist_from > dist_to and current_tile != new_tile:
+		emit_signal("on_current_tile_updated", self, current_tile, new_tile)
+		current_tile = new_tile
+		
+	translation += pos.direction_to(new_to) * speed * delta
 	
 func puppet_moving(delta :float) -> void:
 	.puppet_moving(delta)
