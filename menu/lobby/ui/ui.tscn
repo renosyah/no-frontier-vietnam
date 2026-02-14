@@ -135,16 +135,6 @@ rect_min_size = Vector2( 400, 125 )
 custom_fonts/font = ExtResource( 7 )
 text = "To Battle!"
 
-[node name="ready" type="Button" parent="CanvasLayer/Control/VBoxContainer/CenterContainer"]
-visible = false
-margin_left = 100.0
-margin_top = -63.0
-margin_right = 500.0
-margin_bottom = 62.0
-rect_min_size = Vector2( 400, 125 )
-custom_fonts/font = ExtResource( 7 )
-text = "Ready!"
-
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer"]
 margin_top = 964.0
 margin_right = 600.0
@@ -207,4 +197,3 @@ nine_patch_stretch = true
 [connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer2/match" to="." method="_on_match_pressed"]
 [connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer2/players" to="." method="_on_players_pressed"]
 [connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/CenterContainer/play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/CenterContainer/ready" to="." method="_on_ready_pressed"]

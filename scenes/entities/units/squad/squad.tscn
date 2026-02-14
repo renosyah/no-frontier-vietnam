@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/entities/units/squad/squad.gd" type="Script" id=1]
+[ext_resource path="res://assets/user_interface/icons/floating_icon/shield_icon.png" type="Texture" id=2]
+
+[node name="squad" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.364832, 0 )
+billboard = 1
+double_sided = false
+texture = ExtResource( 2 )

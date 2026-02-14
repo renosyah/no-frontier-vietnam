@@ -6,14 +6,12 @@ onready var match_tab = $CanvasLayer/Control/VBoxContainer/match_tab
 onready var player_tab = $CanvasLayer/Control/VBoxContainer/player_tab
 
 onready var play = $CanvasLayer/Control/VBoxContainer/CenterContainer/play
-onready var ready = $CanvasLayer/Control/VBoxContainer/CenterContainer/ready
 onready var receiving_data = $CanvasLayer/Control/receiving_data
 onready var receiving_data_progress = $CanvasLayer/Control/receiving_data/VBoxContainer/receiving_data_progress
 
 onready var players_holder = $CanvasLayer/Control/VBoxContainer/player_tab/VBoxContainer
 
 func _ready():
-	NetworkLobbyManager.connect("all_player_ready", self, "_all_player_ready")
 	NetworkLobbyManager.connect("lobby_player_update", self, "_on_lobby_player_update")
 	NetworkLobbyManager.connect("on_host_disconnected", self, "_on_leave")
 	NetworkLobbyManager.connect("on_leave", self, "_on_leave")
@@ -26,15 +24,12 @@ func _ready():
 	if NetworkLobbyManager.is_server():
 		play.disabled = false
 		play.visible = true
-		ready.visible = false
 		receiving_data.visible = false
 		
 		_on_lobby_player_update(NetworkLobbyManager.get_players())
 		
 	else:
 		play.visible = false
-		ready.visible = true
-		ready.disabled = true
 		
 		receiving_data.visible = true
 		receiving_data_progress.value = 0
@@ -105,18 +100,23 @@ remote func _receive_battle_map_data(id :Vector2, map_data: PoolByteArray, total
 	receiving_data_progress.max_value = total_size
 		
 	if Global.battle_map_datas.size() == total_size:
-		ready.disabled = false
 		receiving_data.visible = false
 		
 		# tell everyone that you have receive map data
 		rpc("_map_data_received",  NetworkLobbyManager.get_id())
 	
 remotesync func _map_data_received(player_id :int):
+	var player_loading = false
 	for i in players_holder.get_children():
 		if i.id == player_id:
 			i.set_loading(false)
-			return
+		
+		if i.is_loading():
+			player_loading = true
 			
+	if NetworkLobbyManager.is_server():
+		play.disabled = player_loading
+	
 func _on_lobby_player_update(players :Array):
 	for i in players_holder.get_children():
 		players_holder.remove_child(i)
@@ -130,12 +130,9 @@ func _on_lobby_player_update(players :Array):
 		players_holder.add_child(item)
 		item.set_loading(player.player_network_unique_id != NetworkLobbyManager.host_id)
 		
-	play.disabled = players.size() > 1
-	
-func _all_player_ready():
 	if NetworkLobbyManager.is_server():
-		play.disabled = false
-	
+		play.disabled = players.size() > 1
+		
 func _on_host_ready():
 	Global.change_scene("res://menu/gameplay/client/client.tscn", true, 3)
 	
@@ -152,10 +149,6 @@ func _on_players_pressed():
 
 func _on_play_pressed():
 	Global.change_scene("res://menu/gameplay/host/host.tscn", true, 3)
-	
-func _on_ready_pressed():
-	ready.disabled = true
-	NetworkLobbyManager.set_ready()
 
 
 

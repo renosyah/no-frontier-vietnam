@@ -2,6 +2,7 @@ extends Node
 class_name BaseGameplay
 
 func _ready():
+	NetworkLobbyManager.connect("all_player_ready", self, "_on_all_player_ready")
 	NetworkLobbyManager.connect("on_host_disconnected", self, "_on_leave")
 	NetworkLobbyManager.connect("on_leave", self, "_on_leave")
 	
@@ -15,6 +16,9 @@ func _ready():
 	setup_ui()
 	setup_selection()
 	
+	if NetworkLobbyManager.is_server():
+		NetworkLobbyManager.set_host_ready()
+		
 func _process(_delta):
 	if is_instance_valid(current_cam):
 		clickable_floor.translation = current_cam.translation * Vector3(1,0,1)
@@ -40,6 +44,13 @@ func on_back_pressed():
 func _on_leave():
 	Global.change_scene("res://menu/main/main.tscn", true, 1)
 	
+func _on_all_player_ready():
+	# test squad
+	if NetworkLobbyManager.is_server():
+		rpc("_spawn_squad", NetworkLobbyManager.host_id, grand_map_mission_data.bases[0])
+		
+	Global.hide_transition()
+	
 ##########################################  ############################################
 
 onready var grand_map_manifest_data :GrandMapFileManifest = Global.grand_map_manifest_data
@@ -58,10 +69,7 @@ func spawn_grand_map():
 	grand_map.setup_border_scale(Vector3.ONE * ((grand_map_manifest_data.map_size * 2) + 1.5))
 	
 func _on_grand_map_ready():
-	if NetworkLobbyManager.is_server():
-		NetworkLobbyManager.set_host_ready()
-		
-	Global.hide_transition()
+	NetworkLobbyManager.set_ready()
 	setup_base_and_point()
 	
 # var bases :Dictionary = {} # [team_id : BaseTileObject] 
@@ -181,12 +189,22 @@ func setup_clickable_floor():
 func _on_floor_clicked(pos :Vector3):
 	match current_cam:
 		movable_camera_room:
-			pass
+			var tile = grand_map.get_closes_tile(pos)
+			
+			# test squad
+			var p :PoolVector2Array = grand_map.get_navigation(squad.current_tile, tile.id)
+			var paths :Array = []
+			for id in p:
+				var pos3 = grand_map.get_tile_instance(id).global_position
+				paths.append(BaseTileUnit.TileUnitPath.new(id, pos3))
+				
+			squad.paths = paths
 			
 		movable_camera_battle:
 			var tile = current_battle_map.get_closes_tile(pos)
 			selection.translation = tile.pos + current_battle_map.global_position
 			selection.visible = true
+
 	
 ##########################################  ############################################
 
@@ -220,6 +238,8 @@ func show_tile_by_ray():
 	
 	selection.visible = true
 	selection.translation = tile.pos + grand_map.global_position
+	
+	ui.battle_map_name.text = grand_map_manifest_data.battle_map_names[tile.id]
 	
 func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
 	var battle_map_adjacent = []
@@ -325,6 +345,29 @@ func hide_battle_map():
 func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	create_transit_point(tile_id, battle_map)
 	
+##########################################  ############################################
+
+var squad :BaseTileUnit
+
+remotesync func _spawn_squad(network_id :int, tile_id :Vector2):
+	squad = preload("res://scenes/entities/units/squad/squad.tscn").instance()
+	squad.name = "test_squad"
+	squad.set_network_master(network_id)
+	squad.current_tile = tile_id
+	squad.connect("on_current_tile_updated", self, "_on_squad_current_tile_updated")
+	add_child(squad)
+	
+	squad.translation = grand_map.get_tile_instance(tile_id).global_position
+
+func _on_squad_current_tile_updated(from, to):
+	print("squad leave : %s and enter : %s" % [from,to])
+
+
+
+
+
+
+
 
 
 

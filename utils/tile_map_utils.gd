@@ -13,9 +13,6 @@ const DIAGONAL_DIRECTIONS = [
 	Vector2.DOWN + Vector2.RIGHT,
 ]
 
-const BASE_TILE_RESERVE_LAYOUT = [
-	
-]
 
 # size is range of tile map
 # for example : 
