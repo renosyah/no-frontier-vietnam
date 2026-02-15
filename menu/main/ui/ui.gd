@@ -59,17 +59,27 @@ func _show_maps():
 		
 func _loaded_maps_edit_button_pressed(manif :GrandMapFileManifest):
 	yield(Global.set_active_map(manif),"completed")
-
+	
+	# test
+	var player_data = Global.player_data
+	player_data.player_id = Utils.create_unique_id()
+	player_data.player_team = 1
+	
 	var config :NetworkServer = NetworkServer.new()
 	NetworkLobbyManager.configuration = config
-	NetworkLobbyManager.player_name = Global.player_data.player_name
-	NetworkLobbyManager.player_extra_data = Global.player_data.to_dictionary()
+	NetworkLobbyManager.player_name = player_data.player_name
+	NetworkLobbyManager.player_extra_data = player_data.to_dictionary()
 	NetworkLobbyManager.init_lobby()
 	
 func _on_host_player_connected():
 	Global.change_scene("res://menu/lobby/lobby.tscn", true, 2)
 	
 func _on_join_pressed():
+	# test
+	var player_data = Global.player_data
+	player_data.player_id = Utils.create_unique_id()
+	player_data.player_team = 2
+	
 	Global.change_scene("res://menu/join/join.tscn", true, 2)
 	
 func _on_back_pressed():

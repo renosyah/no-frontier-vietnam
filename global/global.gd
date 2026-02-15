@@ -13,12 +13,16 @@ const TEAM_WHITE = 0
 const TEAM_BLUE = 1
 const TEAM_RED = 2
 
-const team_colors = {
+const spatial_team_colors = {
 	TEAM_WHITE :preload("res://assets/team_colors/white_color_team.tres"),
 	TEAM_BLUE : preload("res://assets/team_colors/blue_color_team.tres"),
 	TEAM_RED : preload("res://assets/team_colors/red_color_team.tres")
 }
-
+const flat_team_colors = {
+	TEAM_WHITE :Color.white,
+	TEAM_BLUE : Color.blue,
+	TEAM_RED :Color.red
+}
 ##########################################  player data  ############################################
 
 const player_data_filepath :String = "player_data.dat"

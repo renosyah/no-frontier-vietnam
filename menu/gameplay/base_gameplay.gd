@@ -1,6 +1,8 @@
 extends Node
 class_name BaseGameplay
 
+onready var player :PlayerData = Global.player_data
+
 func _ready():
 	NetworkLobbyManager.connect("all_player_ready", self, "_on_all_player_ready")
 	NetworkLobbyManager.connect("on_host_disconnected", self, "_on_leave")
@@ -45,13 +47,12 @@ func _on_leave():
 	Global.change_scene("res://menu/main/main.tscn", true, 1)
 	
 func _on_all_player_ready():
-	# test squad
-	if NetworkLobbyManager.is_server():
-		rpc("_spawn_squad", NetworkLobbyManager.host_id, grand_map_mission_data.bases[0])
-		
 	Global.hide_transition()
 	
-##########################################  ############################################
+	# test squad
+	rpc("_spawn_squad", NetworkLobbyManager.get_id(), player.player_id, player.player_team, grand_map_mission_data.bases[0])
+	
+########################################## grand map  ############################################
 
 onready var grand_map_manifest_data :GrandMapFileManifest = Global.grand_map_manifest_data
 onready var grand_map_data :TileMapFileData = Global.grand_map_data
@@ -85,17 +86,17 @@ func setup_base_and_point():
 		var base :BaseTileObject = preload("res://scenes/tile_objects/grand/faction_base.tscn").instance()
 		grand_map.add_child(base)
 		base.translation = grand_map.get_tile_instance(id).translation
-		base.set_color(Global.team_colors[idx])
+		base.set_color(Global.spatial_team_colors[idx])
 		idx += 1
 		
 	for id in grand_map_mission_data.points:
 		var point :BaseTileObject = preload("res://scenes/tile_objects/grand/flag_pole.tscn").instance()
 		grand_map.add_child(point)
 		point.translation = grand_map.get_tile_instance(id).translation
-		point.set_color(Global.team_colors[Global.TEAM_WHITE])
+		point.set_color(Global.spatial_team_colors[Global.TEAM_WHITE])
 		points[id] = point
 		
-##########################################  ############################################
+########################################## camera  ############################################
 
 var movable_camera_room :MovableCamera
 var movable_camera_battle :MovableCamera
@@ -111,8 +112,45 @@ func spawn_movable_camera():
 	movable_camera_battle.name = "movable_camera_battle"
 	add_child(movable_camera_battle)
 	movable_camera_battle.translation = Vector3(0, 6, 2)
+
+func use_grand_camera():
+	movable_camera_battle.set_as_current(false)
+	movable_camera_room.set_as_current(true)
 	
-##########################################  ############################################
+	current_cam = movable_camera_room
+	#current_cam.translation = Vector3(0, 5, 2) + grand_map.global_position
+	
+	var map_size = grand_map_manifest_data.map_size
+	ui.movable_camera_ui.target = movable_camera_room
+	ui.movable_camera_ui.min_zoom = 1
+	ui.movable_camera_ui.max_zoom = 5
+	ui.movable_camera_ui.camera_limit_bound = Vector3( map_size + 1, 0, map_size + 3)
+	ui.movable_camera_ui.center_pos = grand_map.global_position
+	
+	ui.grand_map_overlay_ui.visible = true
+	
+	ground_table.visible = false
+	grand_map.visible = true
+	
+func use_battle_camera(center :Vector3):
+	movable_camera_room.set_as_current(false)
+	movable_camera_battle.set_as_current(true)
+	
+	current_cam = movable_camera_battle
+	current_cam.translation = Vector3(0, 6, 2) + center
+	
+	var map_size = grand_map_manifest_data.battle_map_size
+	ui.movable_camera_ui.target = movable_camera_battle
+	ui.movable_camera_ui.min_zoom = 2
+	ui.movable_camera_ui.max_zoom = 7
+	ui.movable_camera_ui.camera_limit_bound = Vector3(map_size + 1, 0, map_size)
+	ui.movable_camera_ui.center_pos = center + Vector3(0, 0, 2)
+	
+	ui.grand_map_overlay_ui.visible = false
+	
+	ground_table.visible = true
+	
+########################################## UI  ############################################
 
 var ui :GameplayUi
 
@@ -143,40 +181,7 @@ func _on_camera_up_exiting():
 	hide_battle_map()
 	use_grand_camera()
 
-func use_grand_camera():
-	movable_camera_battle.set_as_current(false)
-	movable_camera_room.set_as_current(true)
-	
-	current_cam = movable_camera_room
-	#current_cam.translation = Vector3(0, 5, 2) + grand_map.global_position
-	
-	var map_size = grand_map_manifest_data.map_size
-	ui.movable_camera_ui.target = movable_camera_room
-	ui.movable_camera_ui.min_zoom = 1
-	ui.movable_camera_ui.max_zoom = 5
-	ui.movable_camera_ui.camera_limit_bound = Vector3( map_size + 1, 0, map_size + 3)
-	ui.movable_camera_ui.center_pos = grand_map.global_position
-	
-	ground_table.visible = false
-	grand_map.visible = true
-	
-func use_battle_camera(center :Vector3):
-	movable_camera_room.set_as_current(false)
-	movable_camera_battle.set_as_current(true)
-	
-	current_cam = movable_camera_battle
-	current_cam.translation = Vector3(0, 6, 2) + center
-	
-	var map_size = grand_map_manifest_data.battle_map_size
-	ui.movable_camera_ui.target = movable_camera_battle
-	ui.movable_camera_ui.min_zoom = 2
-	ui.movable_camera_ui.max_zoom = 7
-	ui.movable_camera_ui.camera_limit_bound = Vector3(map_size + 1, 0, map_size)
-	ui.movable_camera_ui.center_pos = center + Vector3(0, 0, 2)
-	
-	ground_table.visible = true
-	
-##########################################  ############################################
+##########################################  floor interaction  ############################################
 
 var clickable_floor :ClickableFloor
 
@@ -189,23 +194,27 @@ func setup_clickable_floor():
 func _on_floor_clicked(pos :Vector3):
 	match current_cam:
 		movable_camera_room:
-			var tile = grand_map.get_closes_tile(pos)
-			
-			# test squad
-			var p :PoolVector2Array = grand_map.get_navigation(squad.current_tile, tile.id, [], true)
-			var paths :Array = []
-			for id in p:
-				var pos3 = grand_map.get_tile_instance(id).global_position
-				paths.append(BaseTileUnit.TileUnitPath.new(id, pos3))
-				
-			squad.set_paths(paths)
+			on_grandmap_clicked_input(grand_map.get_closes_tile(pos))
 			
 		movable_camera_battle:
-			var tile = current_battle_map.get_closes_tile(pos)
-			selection.translation = tile.pos + current_battle_map.global_position
-			selection.visible = true
+			on_battle_map_clicked_input(current_battle_map.get_closes_tile(pos))
 			
-##########################################  ############################################
+func on_grandmap_clicked_input(tile :TileMapData):
+	if is_instance_valid(selected_squad):
+		# test squad
+		var p :PoolVector2Array = grand_map.get_navigation(selected_squad.current_tile, tile.id, [], true)
+		var paths :Array = []
+		for id in p:
+			var pos3 = grand_map.get_tile_instance(id).global_position
+			paths.append(BaseTileUnit.TileUnitPath.new(id, pos3))
+			
+		selected_squad.set_paths(paths)
+	
+func on_battle_map_clicked_input(tile :TileMapData):
+	selection.translation = tile.pos + current_battle_map.global_position
+	selection.visible = true
+	
+########################################## selection tile ############################################
 
 var selection :Spatial
 
@@ -240,25 +249,7 @@ func show_tile_by_ray():
 	
 	ui.battle_map_name.text = grand_map_manifest_data.battle_map_names[tile.id]
 	
-func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
-	var battle_map_adjacent = []
-	
-	var adjacent = TileMapUtils.get_adjacent_tiles(
-		TileMapUtils.ARROW_DIRECTIONS,
-		Vector2.ZERO, 1
-	)
-	for id in adjacent:
-		if grand_map.is_nav_enable(id + tile_id):
-			battle_map_adjacent.append(id)
-			
-	for id in battle_map_adjacent:
-		var pos_point = id * grand_map_manifest_data.battle_map_size
-		var t = preload("res://scenes/tile_objects/battle/transit_point.tscn").instance()
-		battle_map.add_child(t)
-		t.set_label("Go to %s" % grand_map_manifest_data.battle_map_names[id + tile_id])
-		t.translation = battle_map.get_tile_instance(pos_point).translation
-		
-##########################################  ############################################
+########################################## battle map ############################################
 
 var ground_table :Sprite3D
 var battle_map_pos :Dictionary = {} # [Vector2 : Vector3]
@@ -344,32 +335,96 @@ func hide_battle_map():
 func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	create_transit_point(tile_id, battle_map)
 	
-##########################################  ############################################
+func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
+	var battle_map_adjacent = []
+	
+	var adjacent = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.ARROW_DIRECTIONS,
+		Vector2.ZERO, 1
+	)
+	for id in adjacent:
+		if grand_map.is_nav_enable(id + tile_id):
+			battle_map_adjacent.append(id)
+			
+	for id in battle_map_adjacent:
+		var pos_point = id * grand_map_manifest_data.battle_map_size
+		var t = preload("res://scenes/tile_objects/battle/transit_point.tscn").instance()
+		battle_map.add_child(t)
+		t.set_label("Go to %s" % grand_map_manifest_data.battle_map_names[id + tile_id])
+		t.translation = battle_map.get_tile_instance(pos_point).translation
+		
+########################################## grand map squad ############################################
 
-var squad :BaseTileUnit
+var squad_positions :Dictionary = {} # [Vector2 : [ BaseTileUnit ] ]
+var spawned_squad :Array = []
+var selected_squad :BaseTileUnit
 
-remotesync func _spawn_squad(network_id :int, tile_id :Vector2):
-	squad = preload("res://scenes/entities/units/squad/squad.tscn").instance()
-	squad.name = "test_squad"
+# this is for spotting mechanic
+var watchlist_position :Array = []
+
+remotesync func _spawn_squad(network_id :int, player_id :String, team :int, tile_id :Vector2):
+	var squad = preload("res://scenes/entities/units/squad/squad.tscn").instance()
+	squad.player_id = player_id
+	squad.name = "squad-%s" % player_id
 	squad.set_network_master(network_id)
 	squad.current_tile = tile_id
+	squad.team = team
+	squad.overlay_ui = ui.grand_map_overlay_ui
 	squad.connect("on_finish_travel", self ,"_on_squad_finish_travel")
 	squad.connect("on_current_tile_updated", self, "_on_squad_current_tile_updated")
 	add_child(squad)
 	
 	squad.set_hidden(true)
-	squad.translation = grand_map.get_tile_instance(tile_id).global_position
-
-func _on_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	
+	squad.translation = grand_map.get_tile_instance(tile_id).global_position
+	on_squad_spawned(squad)
+	
+func on_squad_spawned(unit :BaseTileUnit):
+	if not squad_positions.has(unit.current_tile):
+		squad_positions[unit.current_tile] = []
+		
+	squad_positions[unit.current_tile].append(unit)
+	
+	if unit.player_id == player.player_id:
+		spawned_squad.append(unit)
+		selected_squad = unit
+		
+	if unit.team != player.player_team:
+		unit.set_spotted(false)
+		
+func _on_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# rule of gameplay, squad cannot contact hq
 	# if inside one of active battle map
 	unit.set_hidden(to in zoomable_battle_map.keys())
 	
-	print("squad leave : %s and enter : %s" % [from,to])
+	if squad_positions.has(from):
+		squad_positions[from].erase(unit)
+		
+	if not squad_positions.has(to):
+		squad_positions[to] = []
+		
+	squad_positions[to].append(unit)
+	
+	if unit.player_id == player.player_id:
+		on_player_squad_moving(unit, from, to)
+	
+	if unit.team != player.player_team:
+		on_enemy_squad_moving(unit, from, to)
 
 func _on_squad_finish_travel(unit :BaseTileUnit):
 	print("squad finish travel : %s" % unit.current_tile)
+	
+func on_player_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
+	if not watchlist_position.has(to):
+		watchlist_position.append(to)
+		
+	if watchlist_position.has(from):
+		watchlist_position.erase(from)
+		
+func on_enemy_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vector2):
+	unit.set_spotted(to in watchlist_position)
+	
+##########################################  ############################################
 
 
 

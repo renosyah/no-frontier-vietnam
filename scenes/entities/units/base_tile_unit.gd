@@ -25,24 +25,31 @@ export var speed :float = 0.4
 export var is_dead :bool = false
 export var is_selectable :bool = false
 
-var _paths :Array # [TileUnitPath]
-var _hidden :bool
 var current_tile :Vector2
 
 var _last_to :Vector3
+var _paths :Array # [TileUnitPath]
+var _hidden :bool
+var _spotted :bool
+var _current_visible :bool
 
 puppet var _puppet_current_tile :Vector2
 puppet var _puppet_translation :Vector3
 puppet var _puppet_rotation_y :float
 
 func set_paths(v :Array):
-	if _is_master:
+	if _is_master and not v.empty():
 		_paths.clear()
 		_paths.append_array(v)
-
+	
+func set_spotted(v :bool):
+	if not _is_master and not _hidden:
+		_spotted = v
+		_current_visible = _spotted
+		
 func set_hidden(v :bool):
 	_hidden = v
-	visible = not _hidden
+	_current_visible = not _hidden
 
 func _network_timmer_timeout() -> void:
 	._network_timmer_timeout()
@@ -51,14 +58,6 @@ func _network_timmer_timeout() -> void:
 		rset_unreliable("_puppet_translation", global_position)
 		rset_unreliable("_puppet_rotation_y", global_rotation.y)
 		rset_unreliable("_puppet_current_tile", current_tile)
-	
-func _on_camera_entered(_camera: Camera):
-	._on_camera_entered(_camera)
-	visible = not _hidden
-	
-func _on_camera_exited(_camera: Camera):
-	._on_camera_exited(_camera)
-	visible = false
 	
 func master_moving(delta :float) -> void:
 	.master_moving(delta)
