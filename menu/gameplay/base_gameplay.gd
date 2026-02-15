@@ -49,9 +49,14 @@ func _on_leave():
 func _on_all_player_ready():
 	Global.hide_transition()
 	
-	# test squad
-	rpc("_spawn_squad", NetworkLobbyManager.get_id(), player.player_id, player.player_team, grand_map_mission_data.bases[0])
+	var tile_id = grand_map_mission_data.bases[0]
 	
+	# test squad
+	rpc("_spawn_grand_map_squad", 
+		NetworkLobbyManager.get_id(), player.player_id,
+		player.player_team, tile_id,
+		grand_map.get_tile_instance(tile_id).global_position
+	)
 ########################################## grand map  ############################################
 
 onready var grand_map_manifest_data :GrandMapFileManifest = Global.grand_map_manifest_data
@@ -162,13 +167,16 @@ func setup_ui():
 	ui.movable_camera_ui.connect("camera_down", self, "_on_camera_down_zoom_in")
 	ui.movable_camera_ui.connect("camera_up", self, "_on_camera_up_exiting")
 	
+	ui.spawned_squad = spawned_squad
+	ui.squad_positions = squad_positions
+	
 	use_grand_camera()
 	
 func _on_camera_down_zoom_in():
 	if current_cam != movable_camera_room:
 		return
 		
-	var tile = get_closes_zoomable_battle_map(selection.translation)
+	var tile = get_closes_zoomable_battle_map(selection_battle_map_indicator.translation)
 	if tile == null:
 		return
 		
@@ -200,30 +208,57 @@ func _on_floor_clicked(pos :Vector3):
 			on_battle_map_clicked_input(current_battle_map.get_closes_tile(pos))
 			
 func on_grandmap_clicked_input(tile :TileMapData):
+	
+	# just test and example
+	# select squad from tile
+	# order squad to move around
 	if is_instance_valid(selected_squad):
-		# test squad
-		var p :PoolVector2Array = grand_map.get_navigation(selected_squad.current_tile, tile.id, [], true)
-		var paths :Array = []
-		for id in p:
-			var pos3 = grand_map.get_tile_instance(id).global_position
-			paths.append(BaseTileUnit.TileUnitPath.new(id, pos3))
-			
-		selected_squad.set_paths(paths)
+		selected_squad.set_paths(get_tile_path(grand_map, selected_squad.current_tile, tile.id))
+		show_feedback_move_order(tile.pos + grand_map.global_position)
+		selected_squad = null
+		return
+		
+	show_tile_selection(tile.pos + grand_map.global_position)
+	if squad_positions.has(tile.id):
+		if not squad_positions[tile.id].empty():
+			selected_squad = squad_positions[tile.id][0]
+	
+	ui.on_grand_map_tile_selected(tile.id, grand_map)
 	
 func on_battle_map_clicked_input(tile :TileMapData):
-	selection.translation = tile.pos + current_battle_map.global_position
-	selection.visible = true
+	show_tile_selection(tile.pos + current_battle_map.global_position)
+	ui.on_battle_map_tile_selected(tile.id, current_battle_map)
 	
 ########################################## selection tile ############################################
 
-var selection :Spatial
+var tile_selection :Spatial
+var selection_battle_map_indicator :Spatial
+var move_order_tap :Spatial
 
 func setup_selection():
-	selection = preload("res://assets/tile_highlight/selection.tscn").instance()
-	selection.name = "selection"
-	add_child(selection)
+	tile_selection = preload("res://assets/tile_highlight/selection.tscn").instance()
+	tile_selection.name = "tile_selection"
+	add_child(tile_selection)
 	
-	selection.visible = false
+	selection_battle_map_indicator = preload("res://assets/tile_highlight/got_to_here.tscn").instance()
+	selection_battle_map_indicator.name = "selection_battle_map_indicator"
+	add_child(selection_battle_map_indicator)
+	
+	move_order_tap = preload("res://assets/tile_highlight/circle_selection.tscn").instance()
+	move_order_tap.name = "move_order_tap"
+	add_child(move_order_tap)
+	
+	selection_battle_map_indicator.visible = false
+	move_order_tap.visible = false
+	
+func show_feedback_move_order(at :Vector3):
+	move_order_tap.visible = true
+	move_order_tap.translation = at
+	move_order_tap.tap()
+	
+func show_tile_selection(at :Vector3):
+	tile_selection.visible = true
+	tile_selection.translation = at
 	
 func show_tile_by_ray():
 	if current_cam != movable_camera_room:
@@ -244,8 +279,8 @@ func show_tile_by_ray():
 	if not battle_map_holder.has(tile.id):
 		return
 	
-	selection.visible = true
-	selection.translation = tile.pos + grand_map.global_position
+	selection_battle_map_indicator.visible = true
+	selection_battle_map_indicator.translation = tile.pos + grand_map.global_position
 	
 	ui.battle_map_name.text = grand_map_manifest_data.battle_map_names[tile.id]
 	
@@ -326,7 +361,7 @@ func set_current_battle_map(battle_map_id :Vector2):
 	grand_map.visible = false
 	
 	use_battle_camera(current_battle_map.global_position)
-	ground_table.position = current_battle_map.global_position + Vector3(0, -0.4, -1)
+	ground_table.translation = current_battle_map.global_position + Vector3(0, -0.4, -1)
 	
 func hide_battle_map():
 	for i in battle_map_holder.values():
@@ -357,29 +392,31 @@ func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
 
 var squad_positions :Dictionary = {} # [Vector2 : [ BaseTileUnit ] ]
 var spawned_squad :Array = []
+
 var selected_squad :BaseTileUnit
 
 # this is for spotting mechanic
-var watchlist_position :Array = []
+var grand_map_watchlist_position :Array = []
 
-remotesync func _spawn_squad(network_id :int, player_id :String, team :int, tile_id :Vector2):
-	var squad = preload("res://scenes/entities/units/squad/squad.tscn").instance()
+remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team :int, tile_id :Vector2, at :Vector3):
+	var squad = preload("res://scenes/entities/units/squad/infatry_squad.tscn").instance()
 	squad.player_id = player_id
 	squad.name = "squad-%s" % player_id
 	squad.set_network_master(network_id)
 	squad.current_tile = tile_id
 	squad.team = team
-	squad.overlay_ui = ui.grand_map_overlay_ui
-	squad.connect("on_finish_travel", self ,"_on_squad_finish_travel")
-	squad.connect("on_current_tile_updated", self, "_on_squad_current_tile_updated")
+	squad.overlay_ui = ui.grand_map_overlay_ui.get_path()
+	squad.squad_icon = preload("res://assets/user_interface/icons/floating_icon/infantry.png")
+	squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
+	squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
 	add_child(squad)
 	
 	squad.set_hidden(true)
 	
-	squad.translation = grand_map.get_tile_instance(tile_id).global_position
-	on_squad_spawned(squad)
+	squad.translation = at
+	on_grand_map_squad_spawned(squad)
 	
-func on_squad_spawned(unit :BaseTileUnit):
+func on_grand_map_squad_spawned(unit :BaseTileUnit):
 	if not squad_positions.has(unit.current_tile):
 		squad_positions[unit.current_tile] = []
 		
@@ -387,12 +424,11 @@ func on_squad_spawned(unit :BaseTileUnit):
 	
 	if unit.player_id == player.player_id:
 		spawned_squad.append(unit)
-		selected_squad = unit
 		
 	if unit.team != player.player_team:
 		unit.set_spotted(false)
 		
-func _on_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
+func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# rule of gameplay, squad cannot contact hq
 	# if inside one of active battle map
 	unit.set_hidden(to in zoomable_battle_map.keys())
@@ -406,31 +442,36 @@ func _on_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vecto
 	squad_positions[to].append(unit)
 	
 	if unit.player_id == player.player_id:
-		on_player_squad_moving(unit, from, to)
+		on_player_grand_map_squad_moving(unit, from, to)
 	
 	if unit.team != player.player_team:
-		on_enemy_squad_moving(unit, from, to)
+		on_enemy_grand_map_squad_moving(unit, from, to)
 
-func _on_squad_finish_travel(unit :BaseTileUnit):
+func _on_grand_map_squad_finish_travel(unit :BaseTileUnit):
 	print("squad finish travel : %s" % unit.current_tile)
 	
-func on_player_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
-	if not watchlist_position.has(to):
-		watchlist_position.append(to)
+func on_player_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
+	if not grand_map_watchlist_position.has(to):
+		grand_map_watchlist_position.append(to)
 		
-	if watchlist_position.has(from):
-		watchlist_position.erase(from)
+	if grand_map_watchlist_position.has(from):
+		grand_map_watchlist_position.erase(from)
 		
-func on_enemy_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vector2):
-	unit.set_spotted(to in watchlist_position)
-	
-##########################################  ############################################
+func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vector2):
+	if to in grand_map_watchlist_position:
+		unit.set_spotted(true)
+		Global.unit_responded(RadioChatters.ENEMY_SPOTTED, player.player_team)
+		
+	else:
+		unit.set_spotted(false)
 
+########################################## utils ############################################
 
-
-
-
-
-
-
-
+func get_tile_path(m :BaseTileMap, from :Vector2, to :Vector2, is_air :bool = false) -> Array:
+	var paths :Array = []
+	var p :PoolVector2Array = m.get_navigation(from, to, [], true)
+	for id in p:
+		var pos3 = m.get_tile_instance(id).global_position
+		paths.append(BaseTileUnit.TileUnitPath.new(id, pos3))
+		
+	return paths

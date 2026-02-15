@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/circle_selection.obj-68f77065901b92c07c5ce23302378db6.mesh"
+
+[deps]
+
+files=[ "res://.import/circle_selection.obj-68f77065901b92c07c5ce23302378db6.mesh" ]
+
+source_file="res://assets/tile_highlight/circle_selection.obj"
+dest_files=[ "res://.import/circle_selection.obj-68f77065901b92c07c5ce23302378db6.mesh", "res://.import/circle_selection.obj-68f77065901b92c07c5ce23302378db6.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true
