@@ -6,6 +6,7 @@ class_name BaseTileUnit
 # because this is unit that using tile mechanic as its movement
 # current tile also getting tracked
 
+signal on_unit_selected(unit, selected)
 signal on_current_tile_updated(unit, from_id, to_id)
 signal on_finish_travel(unit)
 
@@ -27,6 +28,7 @@ export var is_selectable :bool = false
 
 var current_tile :Vector2
 
+var _is_selected :bool
 var _last_to :Vector3
 var _paths :Array # [TileUnitPath]
 var _hidden :bool
@@ -51,6 +53,9 @@ func set_hidden(v :bool):
 	_hidden = v
 	_current_visible = not _hidden
 
+func set_selected(v :bool):
+	_is_selected = v
+	
 func _network_timmer_timeout() -> void:
 	._network_timmer_timeout()
 	

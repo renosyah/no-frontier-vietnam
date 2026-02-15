@@ -13,6 +13,7 @@ func _ready():
 	_floating_icon = preload("res://assets/user_interface/icons/floating_icon/floating_icon.tscn").instance()
 	_floating_icon.color = Global.flat_team_colors[team]
 	_floating_icon.icon = squad_icon
+	_floating_icon.connect("on_press", self, "_on_floating_icon_press")
 	_overlay_ui.add_child(_floating_icon)
 	
 func set_spotted(v :bool):
@@ -41,6 +42,15 @@ func set_paths(v :Array):
 	if _is_master and not v.empty():
 		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,team)
 		
+func set_selected(v :bool):
+	.set_selected(v)
+	
+	_floating_icon.selected(_is_selected)
+	
+func _on_floating_icon_press():
+	set_selected(not _is_selected)
+	emit_signal("on_unit_selected", self, _is_selected)
+	
 func _on_squad_on_finish_travel(_unit):
 	if _is_master:
 		Global.unit_responded(RadioChatters.MOVEMENT,team)
