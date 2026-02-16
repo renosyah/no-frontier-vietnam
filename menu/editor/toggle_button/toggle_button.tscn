@@ -9,7 +9,6 @@ rect_min_size = Vector2( 100, 100 )
 flat = true
 expand_icon = true
 script = ExtResource( 2 )
-id = 0
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchor_right = 1.0

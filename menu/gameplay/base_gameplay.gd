@@ -208,8 +208,8 @@ func _on_floor_clicked(pos :Vector3):
 			on_battle_map_clicked_input(current_battle_map.get_closes_tile(pos))
 			
 func on_grandmap_clicked_input(tile :TileMapData):
-	if is_instance_valid(selected_squad):
-		selected_squad.set_paths(get_tile_path(grand_map, selected_squad.current_tile, tile.id))
+	if is_instance_valid(ui.selected_squad):
+		ui.selected_squad.set_paths(get_tile_path(grand_map, ui.selected_squad.current_tile, tile.id))
 		show_feedback_move_order(tile.pos + grand_map.global_position)
 		return
 		
@@ -381,8 +381,6 @@ func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
 var squad_positions :Dictionary = {} # [Vector2 : [ BaseTileUnit ] ]
 var spawned_squad :Array = []
 
-var selected_squad :BaseTileUnit
-
 # this is for spotting mechanic
 var grand_map_watchlist_position :Array = []
 
@@ -394,15 +392,18 @@ remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team 
 	squad.current_tile = tile_id
 	squad.team = team
 	squad.overlay_ui = ui.grand_map_overlay_ui.get_path()
+	squad.is_selectable = (player_id == player.player_id)
 	squad.squad_icon = preload("res://assets/user_interface/icons/floating_icon/infantry.png")
 	squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
 	squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
 	squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
+	squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
 	add_child(squad)
 	
+	squad.set_spotted(team != player.player_team)
 	squad.set_hidden(false)
-	
 	squad.translation = at
+	
 	on_grand_map_squad_spawned(squad)
 	
 func on_grand_map_squad_spawned(unit :BaseTileUnit):
@@ -418,17 +419,15 @@ func on_grand_map_squad_spawned(unit :BaseTileUnit):
 		unit.set_spotted(false)
 		
 func _on_grand_map_squad_selected(unit :BaseTileUnit, selected :bool):
-	if is_instance_valid(selected_squad):
-		selected_squad.set_selected(false)
+	if is_instance_valid(ui.selected_squad):
+		ui.selected_squad.set_selected(false)
 		
-	selected_squad = unit if selected else null
+	ui.selected_squad = unit if selected else null
 	
 	
 func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
-	# rule of gameplay, squad cannot contact hq
-	# if inside one of active battle map
-	unit.set_hidden(to in zoomable_battle_map.keys())
-	
+	# form of position tracking on map
+	# this will tied to spotting mechanic
 	if squad_positions.has(from):
 		squad_positions[from].erase(unit)
 		
@@ -437,29 +436,53 @@ func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2,
 		
 	squad_positions[to].append(unit)
 	
-	if unit.player_id == player.player_id:
-		on_player_grand_map_squad_moving(unit, from, to)
-	
 	if unit.team != player.player_team:
 		on_enemy_grand_map_squad_moving(unit, from, to)
+		
+	else:
+		on_team_grand_map_squad_moving(unit, from, to)
 
 func _on_grand_map_squad_finish_travel(unit :BaseTileUnit):
+	# rule of gameplay, squad cannot contact hq
+	# if inside one of active battle map
+	# apply to all unit sides
 	var in_zone = unit.current_tile in zoomable_battle_map.keys()
-	var is_squad = selected_squad == unit
+	unit.set_hidden(in_zone)
+	
+	# if currently selected squad then it became unselected
+	var is_squad = (ui.selected_squad == unit)
 	if in_zone and is_squad:
-		unit.set_selected(false)
-		selected_squad = null
+		ui.selected_squad.set_selected(false)
+		ui.selected_squad = null
 		
 	print("squad finish travel : %s" % unit.current_tile)
 	
-func on_player_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
+func _on_grand_map_squad_spotted(_unit :BaseTileUnit):
+	Global.unit_responded(RadioChatters.ENEMY_SPOTTED, player.player_team)
+	
+func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
+	
+	# pasive spotting
 	if not grand_map_watchlist_position.has(to):
 		grand_map_watchlist_position.append(to)
 		
 	if grand_map_watchlist_position.has(from):
 		grand_map_watchlist_position.erase(from)
 		
+	# for active spotting
+	# when entering check if any enemy in it
+	# set spot if true
+	var _enemy_spotted :bool = false
+	if not squad_positions[to].empty():
+		for i in squad_positions[to]:
+			if i.team != player.player_team:
+				i.set_spotted(true)
+		
 func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vector2):
+	
+	# pasive spotting
+	# enemy enter one of the watch list position
+	# set spotted true, only from POV of spotter player
 	if to in grand_map_watchlist_position:
 		unit.set_spotted(true)
 		Global.unit_responded(RadioChatters.ENEMY_SPOTTED, player.player_team)

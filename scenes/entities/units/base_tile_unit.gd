@@ -6,6 +6,7 @@ class_name BaseTileUnit
 # because this is unit that using tile mechanic as its movement
 # current tile also getting tracked
 
+signal on_unit_spotted(unit)
 signal on_unit_selected(unit, selected)
 signal on_current_tile_updated(unit, from_id, to_id)
 signal on_finish_travel(unit)
@@ -44,10 +45,21 @@ func set_paths(v :Array):
 		_paths.clear()
 		_paths.append_array(v)
 	
+func stop():
+	if _is_master:
+		_stop()
+		return
+		
+	# call stop, tell master to stop from other peer
+	rpc_id(get_network_master(), "_stop")
+	
 func set_spotted(v :bool):
 	if not _is_master and not _hidden:
 		_spotted = v
 		_current_visible = _spotted
+		
+	if _current_visible:
+		emit_signal("on_unit_spotted", self)
 		
 func set_hidden(v :bool):
 	_hidden = v
@@ -55,6 +67,9 @@ func set_hidden(v :bool):
 
 func set_selected(v :bool):
 	_is_selected = v
+	
+remote func _stop():
+	_paths.clear()
 	
 func _network_timmer_timeout() -> void:
 	._network_timmer_timeout()

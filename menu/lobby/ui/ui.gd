@@ -11,6 +11,8 @@ onready var receiving_data_progress = $CanvasLayer/Control/receiving_data/VBoxCo
 
 onready var players_holder = $CanvasLayer/Control/VBoxContainer/player_tab/VBoxContainer
 
+var player_map_data_received :Array = []
+
 func _ready():
 	NetworkLobbyManager.connect("lobby_player_update", self, "_on_lobby_player_update")
 	NetworkLobbyManager.connect("on_host_disconnected", self, "_on_leave")
@@ -103,12 +105,13 @@ remote func _receive_battle_map_data(id :Vector2, map_data: PoolByteArray, total
 		receiving_data.visible = false
 		
 		# tell everyone that you have receive map data
-		rpc("_map_data_received",  NetworkLobbyManager.get_id())
+		rpc_id(NetworkLobbyManager.host_id ,"_map_data_received" ,NetworkLobbyManager.get_id())
 	
-remotesync func _map_data_received(player_id :int):
+remote func _map_data_received(player_id :int):
 	var player_loading = false
 	for i in players_holder.get_children():
 		if i.id == player_id:
+			player_map_data_received.append(i.id)
 			i.set_loading(false)
 		
 		if i.is_loading():
@@ -124,11 +127,18 @@ func _on_lobby_player_update(players :Array):
 		
 	for i in players:
 		var player :NetworkPlayer = i
+		var is_host :bool = player.player_network_unique_id == NetworkLobbyManager.host_id
+		var has_map :bool = player_map_data_received.has(player.player_network_unique_id)
 		var item = player_item_scene.instance()
 		item.id = player.player_network_unique_id
 		item.player_name = player.player_name
 		players_holder.add_child(item)
-		item.set_loading(player.player_network_unique_id != NetworkLobbyManager.host_id)
+		
+		if NetworkLobbyManager.is_server():
+			item.set_loading(not is_host and not has_map)
+		
+		if is_host:
+			item.set_loading(false)
 		
 	if NetworkLobbyManager.is_server():
 		play.disabled = players.size() > 1

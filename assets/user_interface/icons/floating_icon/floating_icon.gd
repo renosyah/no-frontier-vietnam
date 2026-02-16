@@ -5,6 +5,7 @@ signal on_press
 
 export var color :Color
 export var icon :Resource
+export var is_selectable :bool
 
 onready var bg_2 = $bg2
 onready var bg = $bg
@@ -15,6 +16,12 @@ func _ready():
 	bg.modulate = color
 	icn.texture = icon
 	bg_2.visible = false
+	
+	mouse_filter = MOUSE_FILTER_IGNORE
+	
+	if is_selectable:
+		mouse_filter = MOUSE_FILTER_STOP
+		connect("gui_input", self, "_on_floating_icon_gui_input")
 	
 func selected(v :bool):
 	bg_2.visible = v
