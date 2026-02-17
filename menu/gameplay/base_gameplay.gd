@@ -358,24 +358,45 @@ func hide_battle_map():
 func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	create_transit_point(tile_id, battle_map)
 	
+########################################## battle map transit point ############################################
+
+# to despawn unit in battle map to enter back at grand map
+# use BattleMapTransitPoint.grand_map_tile_id to move unit to it
+var transit_points :Dictionary = {} # { Vector2 : [ BattleMapTransitPoint ] }
+
 func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
-	var battle_map_adjacent = []
-	
-	var adjacent = TileMapUtils.get_adjacent_tiles(
-		TileMapUtils.ARROW_DIRECTIONS,
-		Vector2.ZERO, 1
-	)
-	for id in adjacent:
-		if grand_map.is_nav_enable(id + tile_id):
-			battle_map_adjacent.append(id)
+	for dir in TileMapUtils.ARROW_DIRECTIONS:
+		var grand_map_tile_id :Vector2 = dir + tile_id
+		if not grand_map.is_nav_enable(grand_map_tile_id):
+			continue
 			
-	for id in battle_map_adjacent:
-		var pos_point = id * grand_map_manifest_data.battle_map_size
-		var t = preload("res://scenes/tile_objects/battle/transit_point.tscn").instance()
+		var pos_point = dir * grand_map_manifest_data.battle_map_size
+		var battle_map_name :String = grand_map_manifest_data.battle_map_names[grand_map_tile_id]
+		var t :BattleMapTransitPoint = preload("res://scenes/tile_objects/battle/transit_point.tscn").instance()
+		t.grand_map_tile_id = grand_map_tile_id
+		t.name = "tp_%s" % battle_map_name
 		battle_map.add_child(t)
-		t.set_label("Go to %s" % grand_map_manifest_data.battle_map_names[id + tile_id])
+		t.set_label("Go to %s" % battle_map_name)
 		t.translation = battle_map.get_tile_instance(pos_point).translation
 		
+		if not transit_points.has(tile_id):
+			transit_points[tile_id] = []
+		
+		transit_points[tile_id].append(t)
+		
+# to spawn unit entering battle map
+# find current tile id and find BattleMapTransitPoint.grand_map_tile_id unit comming from
+func get_transit_point_spawn_point(current_tile_id :Vector2, from_tile_id :Vector2) -> BattleMapTransitPoint:
+	if not transit_points.has(current_tile_id):
+		return null
+		
+	for i in transit_points[current_tile_id]:
+		var point :BattleMapTransitPoint = i
+		if point.grand_map_tile_id == from_tile_id:
+			return point
+		
+	return null
+	
 ########################################## grand map squad ############################################
 
 var squad_positions :Dictionary = {} # [Vector2 : [ BaseTileUnit ] ]
@@ -442,23 +463,26 @@ func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2,
 	else:
 		on_team_grand_map_squad_moving(unit, from, to)
 
-func _on_grand_map_squad_finish_travel(unit :BaseTileUnit):
+func _on_grand_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
 	# rule of gameplay, squad cannot contact hq
 	# if inside one of active battle map
 	# apply to all unit sides
-	var in_zone = unit.current_tile in zoomable_battle_map.keys()
+	var in_zone = current_tile_id in zoomable_battle_map.keys()
 	unit.set_hidden(in_zone)
 	
-	# if currently selected squad then it became unselected
-	var is_squad = (ui.selected_squad == unit)
-	if in_zone and is_squad:
-		ui.selected_squad.set_selected(false)
-		ui.selected_squad = null
-		
-	print("squad finish travel : %s" % unit.current_tile)
+	if in_zone:
+		on_grand_map_squad_enter_battle_map(unit, from_tile_id, current_tile_id)
 	
 func _on_grand_map_squad_spotted(_unit :BaseTileUnit):
 	Global.unit_responded(RadioChatters.ENEMY_SPOTTED, player.player_team)
+	
+func on_grand_map_squad_enter_battle_map(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
+	# if currently selected squad then it became unselected
+	if (ui.selected_squad == unit):
+		ui.selected_squad.set_selected(false)
+		ui.selected_squad = null
+		
+	print("entering, spawn at : %s" % get_transit_point_spawn_point(current_tile_id, from_tile_id).name)
 	
 func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
 	
@@ -494,7 +518,7 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 
 func get_tile_path(m :BaseTileMap, from :Vector2, to :Vector2, _is_air :bool = false) -> Array:
 	var paths :Array = []
-	var p :PoolVector2Array = m.get_navigation(from, to, [], true)
+	var p :PoolVector2Array = m.get_navigation(from, to, [], _is_air)
 	for id in p:
 		var pos3 = m.get_tile_instance(id).global_position
 		paths.append(BaseTileUnit.TileUnitPath.new(id, pos3))

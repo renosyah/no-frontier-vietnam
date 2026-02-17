@@ -239,7 +239,9 @@ func _update_navigations():
 	
 	_add_point(_air_navigation, navigation_map)
 	_connect_point(_air_navigation, navigation_map)
-	_set_obstacle(_air_navigation, navigation_map)
+	
+	# temp fix : air nav ignore all obstacle
+	#_set_obstacle(_air_navigation, navigation_map)
 	
 func _add_point(nav :AStar2D, data :Array):
 	for i in data:

@@ -47,5 +47,3 @@ cast_shadow = 0
 mesh = SubResource( 1 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
-
-[connection signal="on_finish_travel" from="." to="." method="_on_squad_on_finish_travel"]

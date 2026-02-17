@@ -24,14 +24,15 @@ editor :
 gameplay menu (mp sync) : 
 	- player profile
 		- player id unique for gameplay (not network)
-		- player display name
-		
-	- join menu
+		- player display name (done)
+		- player display potrait
+
+	- join menu (done)
 		- find game (done)
 		- display list of game found in LAN (done)
 		- join game (done)
 		
-	- lobby
+	- lobby (done)
 		- list player tab
 			- sync map data between host and client (done)
 			- check ready player  (done)
@@ -46,8 +47,11 @@ gameplay menu (mp sync) :
 		
 gameplay entity (mp sync) : 
 	grand map : 
-		- squad
-	
+		- squad (done)
+		- infantry squad : ambush & camp (done)
+		- infantry squad : enter & exit battle map
+		- infantry squad : enter & exit vehicle
+
 	battle map :
 		- soldier
 		- ground vehicle

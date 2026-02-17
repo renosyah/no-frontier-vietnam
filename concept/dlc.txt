@@ -1,0 +1,58 @@
+Base scope : 
+	- map editor
+	- multiplayer pvp & coop focust
+	- finite resource : manpower, ammo & fuel
+	- objective : tile control, capture point & enemy base destruction or manpower depleted
+	- faction : MACV & NVA
+	- infatry variant : radio op, riflement, medic & rpg infatry
+	- infatry ability : Grenade! (riflement) & Lauch Rocket! (rpg infantry)
+	- vehicle : Truck transport (MACV & NVA), MACV m113 & NVA btr-60 & MACV uh1d unarmed
+	- weapon : m16, type56, rpg-2 & m72 law
+	- MACV : elite SOG that cant be spotted in grand map
+	- NVA : bigger infantry squad
+
+expansion idea :
+Operation Rolling Thunder
+	- MACV new division : US marine expeditionary (assault & combine arms focus)
+	- new vehicle class : MACV m48 tank & NVA Chinese type 58 tank
+	- new helicopter : MACV AH cobra attack & NVA mi8 attack/transport
+	- new weapon : m60 Pig, RPD LMG, Dragunov & m14 sniper rifle
+	- infatry variant : Sniper & Machinegunner
+	- new infatry ability : CAS Napalm Drop! (radio operator), Suppresion! (all automatic weapons) & Aimed shot (sniper only)
+	- new support mechanic : MACV CAS f4 with napalm bomb (grand map & battle map)
+	- new base defense : SAM & AAA air defence to fight enemy air asset
+
+Battle of Ia Drang
+	- MACV new division : 1st air cav (infatry & air focus)
+	- NVA new division : 304th NVA army (infatry & assault focus)
+	- new helicopter : MACV UH1C attack variant & UH1D transport with doorgunner
+	- new map : ia drang valley 4 x 4 map, custom made by me
+	- new mechanic : off map artilery support
+	- new mechanic: infatry can be spawn anywhere using transport heli via support menu (MACV)
+	- new mechanic : infantry can be spawn at captured point via support menu (NVA)
+	- new base variant : field base consist dirt helipad, trench & fking tent
+
+Tet Offensive
+	- new faction : ARVN (urban combat focus)
+	- new faction : Vietcong (guerrila tactic)
+	- ARVN new division : ARVN 2nd ranger, 4th Armored Battalion & 53th Mechanized infantry
+	- VC new division : VC 22nd infatry, 53th Armored Battalion
+	- new vehicle class : NVA Soviet T54 tank
+	- infatry variant : millitia, engineer & sapper
+	- new weapon : m3a1, pphs-43, dp-28 MG, SKS & mosin-nagan rifle
+	- new custom map asset : ruin concrete building & urban asset
+	- new map : Hue city 4 x 4 map, custom made by me (again)
+	- sapper : can deploy booby trap up to 4 on each battle map, shot to destroy if revealed
+	- engineer : pasive ability to reveal bobby trap nearby on move
+	- VC millitia infantry : arms with SKS & mosin-nagan rifle
+
+
+
+
+
+
+
+
+
+
+

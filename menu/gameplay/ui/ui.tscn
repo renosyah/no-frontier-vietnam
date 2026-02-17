@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://assets/camera/movable_camera_ui.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/SafeArea/SafeArea.gd" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://assets/user_interface/fonts/montserrat_eb_16.tres" type="DynamicFont" id=5]
 [ext_resource path="res://menu/editor/toggle_button/toggle_button.tscn" type="PackedScene" id=6]
 [ext_resource path="res://assets/user_interface/icons/ambush_setup.png" type="Texture" id=7]
+[ext_resource path="res://assets/user_interface/icons/camp_mode.png" type="Texture" id=8]
 
 [node name="ui" type="Control"]
 anchor_right = 1.0
@@ -90,23 +91,32 @@ margin_bottom = 780.0
 mouse_filter = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer"]
+[node name="squad_option" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer"]
 margin_top = 784.0
 margin_right = 600.0
 margin_bottom = 1024.0
 rect_min_size = Vector2( 0, 240 )
 mouse_filter = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/MarginContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/squad_option"]
 margin_right = 600.0
 margin_bottom = 150.0
 rect_min_size = Vector2( 0, 150 )
+mouse_filter = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="setup_ambush" parent="CanvasLayer/Control/VBoxContainer/MarginContainer2/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 237.0
-margin_right = 362.0
+[node name="setup_camp" parent="CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer" instance=ExtResource( 6 )]
+margin_left = 173.0
+margin_right = 298.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 125, 100 )
+button_image = ExtResource( 8 )
+manual_toggle = true
+
+[node name="setup_ambush" parent="CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer" instance=ExtResource( 6 )]
+margin_left = 302.0
+margin_right = 427.0
 margin_bottom = 150.0
 rect_min_size = Vector2( 125, 100 )
 button_image = ExtResource( 7 )
@@ -119,4 +129,5 @@ margin_bottom = 1024.0
 size_flags_horizontal = 0
 size_flags_vertical = 8
 
-[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/MarginContainer2/HBoxContainer/setup_ambush" to="." method="_on_setup_ambush_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/setup_camp" to="." method="_on_setup_camp_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/setup_ambush" to="." method="_on_setup_ambush_pressed"]

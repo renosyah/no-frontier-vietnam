@@ -9,7 +9,7 @@ class_name BaseTileUnit
 signal on_unit_spotted(unit)
 signal on_unit_selected(unit, selected)
 signal on_current_tile_updated(unit, from_id, to_id)
-signal on_finish_travel(unit)
+signal on_finish_travel(unit, last_id, current_id)
 
 class TileUnitPath:
 	var tile_id :Vector2
@@ -35,6 +35,7 @@ var _paths :Array # [TileUnitPath]
 var _hidden :bool
 var _spotted :bool
 var _current_visible :bool
+var _last_tile :Vector2
 
 puppet var _puppet_current_tile :Vector2
 puppet var _puppet_translation :Vector3
@@ -92,7 +93,7 @@ func master_moving(delta :float) -> void:
 		_paths.pop_front()
 		
 		if _paths.empty():
-			emit_signal("on_finish_travel", self)
+			emit_signal("on_finish_travel", self, _last_tile, current_tile)
 			return
 			
 		_last_to = new_to
@@ -104,6 +105,7 @@ func master_moving(delta :float) -> void:
 	
 	if dist_from > dist_to and current_tile != new_tile:
 		emit_signal("on_current_tile_updated", self, current_tile, new_tile)
+		_last_tile = current_tile
 		current_tile = new_tile
 		
 	translation += pos.direction_to(new_to) * speed * delta
