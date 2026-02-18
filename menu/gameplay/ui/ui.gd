@@ -10,10 +10,17 @@ onready var squad_option = $CanvasLayer/Control/VBoxContainer/squad_option
 onready var setup_camp = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/setup_camp
 onready var setup_ambush = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/setup_ambush
 
+var selected_battle_map_unit :BaseTileUnit setget _on_selected_battle_map_unit
 var selected_squad :BaseSquad setget _on_selected_squad
 var spawned_squad :Array # refrence for BaseGameplay spawned_squad
 var squad_positions :Dictionary = {} # refrence for BaseGameplay squad_positions
 
+func _ready():
+	squad_option.visible = false
+
+func _on_selected_battle_map_unit(v :BaseTileUnit):
+	selected_battle_map_unit = v
+	
 func _on_selected_squad(v :BaseSquad):
 	selected_squad = v
 	squad_option.visible = false

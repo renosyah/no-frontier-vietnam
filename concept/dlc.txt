@@ -44,7 +44,7 @@ Tet Offensive
 	- new map : Hue city 4 x 4 map, custom made by me (again)
 	- sapper : can deploy booby trap up to 4 on each battle map, shot to destroy if revealed
 	- engineer : pasive ability to reveal bobby trap nearby on move
-	- VC millitia infantry : arms with SKS & mosin-nagan rifle
+	- millitia : cheap unit arms with SKS & mosin-nagan rifle
 
 
 

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/body.obj-8e809455142af9327e027dfde723e629.mesh"
+
+[deps]
+
+files=[ "res://.import/body.obj-8e809455142af9327e027dfde723e629.mesh" ]
+
+source_file="res://scenes/entities/units/infantry/body.obj"
+dest_files=[ "res://.import/body.obj-8e809455142af9327e027dfde723e629.mesh", "res://.import/body.obj-8e809455142af9327e027dfde723e629.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

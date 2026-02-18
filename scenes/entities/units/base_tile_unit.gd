@@ -10,6 +10,7 @@ signal on_unit_spotted(unit)
 signal on_unit_selected(unit, selected)
 signal on_current_tile_updated(unit, from_id, to_id)
 signal on_finish_travel(unit, last_id, current_id)
+signal on_unit_dead(unit)
 
 class TileUnitPath:
 	var tile_id :Vector2
@@ -24,22 +25,29 @@ export var team :int = 0
 export var color :Color = Color.white
 export var speed :float = 0.4
 
+# hp
+export var hp :int = 3
+export var max_hp :int = 3
+
 export var is_dead :bool = false
 export var is_selectable :bool = false
 
 var current_tile :Vector2
 
-var _is_selected :bool
-var _last_to :Vector3
-var _paths :Array # [TileUnitPath]
-var _hidden :bool
-var _spotted :bool
-var _current_visible :bool
-var _last_tile :Vector2
+var _is_moving :bool # block some function if this is true
+var _is_selected :bool # allow this unit to be selected or not
 
+var _last_tile :Vector2 # last tile leaved
+var _last_to :Vector3 # las position leave
+var _paths :Array # [TileUnitPath]
+
+var _hidden :bool # permanent invisible
+var _spotted :bool # visible or not, but be overide by _hidden
+var _current_visible :bool # current state of visible 
+
+# multiplayer data to sync
 puppet var _puppet_current_tile :Vector2
 puppet var _puppet_translation :Vector3
-puppet var _puppet_rotation_y :float
 
 func set_paths(v :Array):
 	if _is_master and not v.empty():
@@ -70,6 +78,7 @@ func set_selected(v :bool):
 	_is_selected = v
 	
 remote func _stop():
+	_is_moving = false
 	_paths.clear()
 	
 func _network_timmer_timeout() -> void:
@@ -77,7 +86,6 @@ func _network_timmer_timeout() -> void:
 	
 	if not is_dead and _is_master and _is_online:
 		rset_unreliable("_puppet_translation", global_position)
-		rset_unreliable("_puppet_rotation_y", global_rotation.y)
 		rset_unreliable("_puppet_current_tile", current_tile)
 	
 func master_moving(delta :float) -> void:
@@ -93,6 +101,7 @@ func master_moving(delta :float) -> void:
 		_paths.pop_front()
 		
 		if _paths.empty():
+			_is_moving = false
 			emit_signal("on_finish_travel", self, _last_tile, current_tile)
 			return
 			
@@ -108,7 +117,11 @@ func master_moving(delta :float) -> void:
 		_last_tile = current_tile
 		current_tile = new_tile
 		
-	translation += pos.direction_to(new_to) * speed * delta
+	move_to_path(delta, pos, new_to)
+	_is_moving = true
+	
+func move_to_path(delta :float, pos :Vector3, to :Vector3):
+	translation += pos.direction_to(to) * speed * delta
 	
 func puppet_moving(delta :float) -> void:
 	.puppet_moving(delta)
@@ -116,7 +129,6 @@ func puppet_moving(delta :float) -> void:
 	if is_dead:
 		return
 		
-	rotation.y = lerp_angle(rotation.y, _puppet_rotation_y, delta)
 	translation = _puppet_translation
 	
 	# make sure only send updated
@@ -125,3 +137,21 @@ func puppet_moving(delta :float) -> void:
 		var old = current_tile
 		current_tile = _puppet_current_tile
 		emit_signal("on_current_tile_updated", self, old, current_tile)
+	
+func set_dead():
+	if not is_dead:
+		rpc("_set_dead")
+	
+remotesync func _set_dead():
+	is_dead = true
+	emit_signal("on_unit_dead", self)
+
+
+
+
+
+
+
+
+
+

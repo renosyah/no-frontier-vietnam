@@ -67,11 +67,11 @@ func init_radio_chatter():
 	radio_chatter = preload("res://assets/sounds/radio_chatter/radio_chatters.tscn").instance()
 	add_child(radio_chatter)
 
-func unit_responded(chatter_id :int, team :int):
+func unit_responded(chatter_id :int, team :int, with_static :bool = false):
 	var r = radio_chatter.US_RADIO[chatter_id] if team == TEAM_BLUE else radio_chatter.VIET_RADIO[chatter_id]
 	var k = r.keys()
 	var key = k[randi() % k.size()]
-	radio_chatter.play_radio(key, r[key])
+	radio_chatter.play_radio(key, r[key], with_static)
 
 ##########################################  map editor  ############################################
 # for load and save maps

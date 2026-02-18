@@ -54,6 +54,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/entities/units/base_tile_unit.gd"
 }, {
+"base": "BaseTileUnit",
+"class": "BaseVehicle",
+"language": "GDScript",
+"path": "res://scenes/entities/units/vehicles/base_vehicle.gd"
+}, {
+"base": "BaseSquad",
+"class": "BaseVehicleSquad",
+"language": "GDScript",
+"path": "res://scenes/entities/units/squad/vehicle_squad.gd"
+}, {
 "base": "BaseTileObject",
 "class": "BattleMapTransitPoint",
 "language": "GDScript",
@@ -93,6 +103,11 @@ _global_script_classes=[ {
 "class": "GrandMapFileMission",
 "language": "GDScript",
 "path": "res://data/mission/grand_map_file_mission.gd"
+}, {
+"base": "BaseTileUnit",
+"class": "Infantry",
+"language": "GDScript",
+"path": "res://scenes/entities/units/infantry/infantry.gd"
 }, {
 "base": "InputEventAction",
 "class": "InputEventMultiScreenDrag",
@@ -249,6 +264,8 @@ _global_script_class_icons={
 "BaseTileMap": "",
 "BaseTileObject": "",
 "BaseTileUnit": "",
+"BaseVehicle": "",
+"BaseVehicleSquad": "",
 "BattleMapTransitPoint": "",
 "ClickableFloor": "",
 "ClickableScreen": "",
@@ -257,6 +274,7 @@ _global_script_class_icons={
 "GameplayUi": "",
 "GrandMapFileManifest": "",
 "GrandMapFileMission": "",
+"Infantry": "",
 "InputEventMultiScreenDrag": "",
 "InputEventScreenPinch": "",
 "InputEventScreenTwist": "",

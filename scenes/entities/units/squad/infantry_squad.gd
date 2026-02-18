@@ -12,14 +12,14 @@ var _on_ambush_mode :bool
 var _on_camp_mode :bool
 
 func setup_ambush(v :bool):
-	if is_camp_mode():
+	if _on_camp_mode or _is_moving:
 		return
 		
 	if _is_master:
 		rpc("_setup_ambush", v)
 		
 func setup_camp(v :bool):
-	if is_ambush_mode():
+	if _on_ambush_mode or _is_moving:
 		return
 		
 	_on_camp_mode = v
@@ -43,9 +43,6 @@ func set_paths(v :Array):
 	
 	.set_paths(v)
 	
-	if _is_master and not v.empty():
-		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,team)
-		
 func set_spotted(v :bool):
 	if is_ambush_mode():
 		return

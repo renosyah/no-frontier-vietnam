@@ -9,6 +9,7 @@ onready var _cam :Camera = get_viewport().get_camera()
 onready var _overlay_ui :Control = get_node_or_null(overlay_ui)
 var _floating_icon :FloatingSquadIcon
 
+var members :Array = [] # [ Infantry ]
 
 func _ready():
 	_floating_icon = preload("res://assets/user_interface/icons/floating_icon/floating_icon.tscn").instance()
