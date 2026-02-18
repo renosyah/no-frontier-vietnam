@@ -7,9 +7,31 @@ onready var mesh_instances = [
 	$decoration_icon/MeshInstance3
 ]
 onready var decoration_icon = $decoration_icon
+onready var task_checker = $task_checker
 
 var _on_ambush_mode :bool
 var _on_camp_mode :bool
+
+func task_exiting(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
+	.task_exiting(at_battle_map_id, to_grand_map_id)
+	
+	var _task_completed :bool = false
+	while not _task_completed:
+		
+		var _all_arived :bool = true
+		for i in members:
+			if i.current_tile != at_battle_map_id:
+				_all_arived = false
+				
+			else:
+				i.translation = Vector3(-100, -100, -100)
+				
+		_task_completed = _all_arived
+		
+		task_checker.start()
+		yield(task_checker,"timeout")
+		
+	emit_signal("squad_exit", self, to_grand_map_id)
 
 func setup_ambush(v :bool):
 	if _on_camp_mode or _is_moving:

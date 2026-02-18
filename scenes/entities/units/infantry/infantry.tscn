@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://scenes/entities/units/infantry/head.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/infantry/l_arm.obj" type="ArrayMesh" id=2]
@@ -11,7 +11,8 @@
 [ext_resource path="res://scenes/entities/units/infantry/uniform.tres" type="Material" id=9]
 [ext_resource path="res://scenes/entities/units/infantry/infantry.gd" type="Script" id=10]
 [ext_resource path="res://addons/Godot-Touch-Input-Manager/input_detection.tscn" type="PackedScene" id=11]
-[ext_resource path="res://addons/Godot-Touch-Input-Manager/InputManager.gd" type="Script" id=12]
+[ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=12]
+[ext_resource path="res://assets/tile_highlight/selected_material.tres" type="Material" id=13]
 
 [sub_resource type="Animation" id=5]
 length = 0.001
@@ -719,9 +720,16 @@ start_node = "iddle"
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=2]
 
-[sub_resource type="CapsuleShape" id=11]
-radius = 0.523498
-height = 0.42185
+[sub_resource type="CylinderShape" id=14]
+height = 1.29117
+radius = 0.490382
+
+[sub_resource type="SpatialMaterial" id=12]
+flags_unshaded = true
+albedo_color = Color( 1, 0.984314, 0.972549, 1 )
+
+[sub_resource type="PrismMesh" id=13]
+size = Vector3( 0.2, 0.2, 0.1 )
 
 [node name="infantry" type="Spatial"]
 script = ExtResource( 10 )
@@ -736,6 +744,7 @@ transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.57
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00439346, -1.19209e-07, 0.0357322 )
 mesh = ExtResource( 5 )
 skeleton = NodePath("../../..")
+software_skinning_transform_normals = false
 material/0 = ExtResource( 9 )
 
 [node name="l_arm" type="Spatial" parent="pivot/body"]
@@ -745,6 +754,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.164251, 0.132183, -0.040459 
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.167315, -0.132501, 0.034216 )
 mesh = ExtResource( 2 )
 skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
 material/0 = ExtResource( 7 )
 material/1 = ExtResource( 9 )
 
@@ -755,6 +765,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.164, 0.132652, -0.04 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.179891, -0.130803, 0.0447637 )
 mesh = ExtResource( 4 )
 skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
 material/0 = ExtResource( 7 )
 material/1 = ExtResource( 9 )
 
@@ -764,6 +775,7 @@ material/1 = ExtResource( 9 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00193334, -1.19209e-07, 0.0174155 )
 mesh = ExtResource( 1 )
 skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
 material/0 = ExtResource( 7 )
 material/1 = ExtResource( 8 )
 
@@ -776,6 +788,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.170669, 0 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00702339, 0.173399, 0.030491 )
 mesh = ExtResource( 3 )
 skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
 material/0 = ExtResource( 9 )
 material/1 = ExtResource( 8 )
 
@@ -786,6 +799,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.170669, 0 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00702339, 0.173399, 0.030491 )
 mesh = ExtResource( 6 )
 skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
 material/0 = ExtResource( 9 )
 material/1 = ExtResource( 8 )
 
@@ -801,8 +815,7 @@ anim_player = NodePath("../AnimationPlayer")
 active = true
 parameters/playback = SubResource( 2 )
 
-[node name="input_detection" type="Node" parent="." instance=ExtResource( 11 )]
-script = ExtResource( 12 )
+[node name="input_detection" parent="." instance=ExtResource( 11 )]
 
 [node name="Area" type="Area" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.578656, 0 )
@@ -811,7 +824,19 @@ collision_mask = 0
 monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="Area"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
-shape = SubResource( 11 )
+shape = SubResource( 14 )
+
+[node name="circle" type="MeshInstance" parent="."]
+cast_shadow = 0
+mesh = ExtResource( 12 )
+software_skinning_transform_normals = false
+material/0 = SubResource( 12 )
+
+[node name="arrow" type="MeshInstance" parent="circle"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -0.677451 )
+cast_shadow = 0
+mesh = SubResource( 13 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 13 )
 
 [connection signal="any_gesture" from="input_detection" to="." method="_on_input_detection_any_gesture"]

@@ -1,6 +1,8 @@
 extends BaseTileUnit
 class_name BaseSquad
 
+signal squad_exit(squad, to_grand_map_id)
+
 # MUST SET
 export var overlay_ui :NodePath
 export var squad_icon :StreamTexture
@@ -20,6 +22,9 @@ func _ready():
 	_overlay_ui.add_child(_floating_icon)
 	
 	connect("on_finish_travel", self, "_on_squad_on_finish_travel")
+	
+func task_exiting(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
+	pass
 	
 func set_hidden(v :bool):
 	.set_hidden(v)

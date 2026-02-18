@@ -47,3 +47,6 @@ cast_shadow = 0
 mesh = SubResource( 1 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
+
+[node name="task_checker" type="Timer" parent="."]
+one_shot = true

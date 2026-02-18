@@ -1,19 +1,34 @@
 extends BaseTileUnit
 class_name Infantry
 
+onready var arrow = $circle/arrow
+onready var selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
 onready var animation_state = $AnimationTree.get("parameters/playback")
 onready var input_detection = $input_detection
 onready var area = $Area
+onready var circle = $circle
 
 puppet var _puppet_rotation_y :float
 puppet var _puppet_anim :String
 
 var _current_anim :String = "iddle"
 
-func _ready():
-	if is_selectable:
-		area.connect("input_event", self, "_on_Area_input_event")
+var squad :BaseSquad
 
+func _ready():
+	area.connect("input_event", self, "_on_Area_input_event")
+	arrow.visible = _is_selected
+	circle.set_surface_material(0, Global.spatial_team_colors[team])
+	
+func set_selected(v :bool):
+	.set_selected(v)
+	
+	if not is_selectable:
+		return
+		
+	circle.set_surface_material(0, selected_area_material if _is_selected else Global.spatial_team_colors[team])
+	arrow.visible = _is_selected
+	
 func _network_timmer_timeout() -> void:
 	._network_timmer_timeout()
 	
@@ -51,4 +66,5 @@ func _on_input_detection_any_gesture(_sig ,event):
 		emit_signal("on_unit_selected", self, _is_selected)
 	
 func _on_Area_input_event(camera, event, position, normal, shape_idx):
-	input_detection.check_input(event)
+	if is_selectable:
+		input_detection.check_input(event)

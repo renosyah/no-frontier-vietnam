@@ -2,10 +2,7 @@
 
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://assets/tile_highlight/circle_selection.gd" type="Script" id=2]
-
-[sub_resource type="SpatialMaterial" id=4]
-flags_unshaded = true
-albedo_color = Color( 1, 0.984314, 0.972549, 1 )
+[ext_resource path="res://assets/tile_highlight/selected_material.tres" type="Material" id=3]
 
 [sub_resource type="Animation" id=5]
 length = 0.001
@@ -66,10 +63,11 @@ tracks/1/keys = {
 script = ExtResource( 2 )
 
 [node name="redball_test" type="MeshInstance" parent="."]
+visible = false
 cast_shadow = 0
 mesh = ExtResource( 1 )
 software_skinning_transform_normals = false
-material/0 = SubResource( 4 )
+material/0 = ExtResource( 3 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 5 )
