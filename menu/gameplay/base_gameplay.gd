@@ -585,7 +585,10 @@ func get_tile_path(m :BaseTileMap, from :Vector2, to :Vector2, _is_air :bool = f
 		
 	return paths
 	
-func order_squad_to_enter_battle_map(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
+func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, current_tile_id :Vector2):
+	if not unit is BaseInfantrySquad:
+		return
+	
 	var point :BattleMapTransitPoint = get_transit_point_spawn_point(
 		current_tile_id, from_tile_id
 	)
@@ -612,6 +615,9 @@ func order_squad_to_enter_battle_map(unit :BaseTileUnit, from_tile_id :Vector2, 
 			entry_positions.pop_front()
 			
 func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector2, grand_map_tile_id :Vector2):
+	if not squad is BaseInfantrySquad:
+		return
+	
 	for i in squad.members:
 		var member :Infantry = i
 		member.set_paths(get_tile_path(current_battle_map, member.current_tile, battle_map_tile_id))

@@ -490,7 +490,7 @@ size = Vector3( 0.4, 0.2, 0.1 )
 
 [node name="infantry" type="Spatial"]
 script = ExtResource( 10 )
-speed = 2.0
+speed = 1.3
 
 [node name="pivot" type="Spatial" parent="."]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.267298, 0 )
@@ -540,7 +540,6 @@ material/1 = ExtResource( 7 )
 transform = Transform( 1, 2.91766e-08, 5.0124e-09, -2.91766e-08, 0.942665, 0.333741, 5.0124e-09, -0.333741, 0.942665, 0.00274782, -0.0801899, 0.0178608 )
 
 [node name="leg" type="MeshInstance" parent="pivot/legs/l"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 mesh = ExtResource( 6 )
 skeleton = NodePath("../../../..")
 software_skinning_transform_normals = false
@@ -548,10 +547,9 @@ material/0 = ExtResource( 9 )
 material/1 = ExtResource( 7 )
 
 [node name="r" type="Spatial" parent="pivot/legs"]
-transform = Transform( 1, -7.47047e-08, 4.20141e-08, 7.47047e-08, 0.519415, -0.854522, 4.20141e-08, 0.854522, 0.519415, 0.00274782, -0.0801899, 0.0178608 )
+transform = Transform( 1, -7.47046e-08, 4.20141e-08, 7.47047e-08, 0.519415, -0.854522, 4.2014e-08, 0.854522, 0.519415, 0.00274782, -0.0801899, 0.0178608 )
 
 [node name="leg" type="MeshInstance" parent="pivot/legs/r"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 mesh = ExtResource( 4 )
 skeleton = NodePath("../../../..")
 software_skinning_transform_normals = false

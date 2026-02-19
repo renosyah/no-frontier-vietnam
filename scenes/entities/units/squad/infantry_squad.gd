@@ -17,9 +17,6 @@ func task_exiting(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	
 	var _task_completed :bool = false
 	while not _task_completed:
-		if members.empty():
-			return
-			
 		var _all_arived :bool = true
 		for i in members:
 			if i.current_tile != at_battle_map_id:
