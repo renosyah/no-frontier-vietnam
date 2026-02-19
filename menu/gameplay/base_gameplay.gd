@@ -436,6 +436,7 @@ remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team 
 	squad.current_tile = tile_id
 	squad.team = team
 	squad.overlay_ui = ui.grand_map_overlay_ui.get_path()
+	squad.camera = movable_camera_room.camera.get_path()
 	squad.is_selectable = (player_id == player.player_id)
 	squad.squad_icon = preload("res://assets/user_interface/icons/floating_icon/infantry.png")
 	squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
@@ -539,6 +540,11 @@ func _on_grand_map_squad_spotted(_unit :BaseTileUnit):
 remotesync func _on_grand_map_squad_enter_battle_map(unit :NodePath, from_tile_id :Vector2, current_tile_id :Vector2):
 	on_grand_map_squad_enter_battle_map(get_node_or_null(unit), from_tile_id, current_tile_id )
 	
+func on_grand_map_squad_enter_battle_map(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
+	unit.set_hidden(true)
+	if unit is BaseSquad:
+		order_squad_to_enter_battle_map(unit, from_tile_id, current_tile_id)
+	
 func _on_grand_map_squad_exited(unit :BaseTileUnit, to_grand_map_id :Vector2):
 	unit.set_paths(get_tile_path(grand_map, unit.current_tile, to_grand_map_id))
 	rpc("_on_grand_map_squad_exited_battle_map", unit.get_path())
@@ -546,11 +552,6 @@ func _on_grand_map_squad_exited(unit :BaseTileUnit, to_grand_map_id :Vector2):
 remotesync func _on_grand_map_squad_exited_battle_map(unit :NodePath):
 	var squad :BaseTileUnit = get_node_or_null(unit)
 	squad.set_hidden(false)
-	
-func on_grand_map_squad_enter_battle_map(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
-	unit.set_hidden(true)
-	if unit is BaseSquad:
-		order_squad_to_enter_battle_map(unit, from_tile_id, current_tile_id)
 	
 func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
 	var to_in_zone = to in zoomable_battle_map.keys()

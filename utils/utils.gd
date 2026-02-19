@@ -83,7 +83,7 @@ static func generate_positions(count: int, spacing: float, z :float = 0) -> Arra
 	return positions
 
 static func create_unique_id():
-	var base = str(OS.get_unix_time())
-	return base.sha256_text().substr(0, 16)
+	var base = str(OS.get_ticks_usec())
+	return base.sha256_text().substr(0, 8)
 
 
