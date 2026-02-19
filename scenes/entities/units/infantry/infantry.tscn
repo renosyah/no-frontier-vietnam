@@ -478,8 +478,8 @@ start_node = "iddle"
 [sub_resource type="AnimationNodeStateMachinePlayback" id=19]
 
 [sub_resource type="CylinderShape" id=14]
-height = 1.29117
-radius = 0.490382
+height = 0.648616
+radius = 0.18716
 
 [sub_resource type="SpatialMaterial" id=12]
 flags_unshaded = true
@@ -576,6 +576,7 @@ collision_mask = 0
 monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="Area"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.236412, 0 )
 shape = SubResource( 14 )
 
 [node name="circle" type="MeshInstance" parent="."]
