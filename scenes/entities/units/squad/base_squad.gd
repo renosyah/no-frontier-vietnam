@@ -43,10 +43,10 @@ func moving(_delta):
 	var screen_pos = _cam.unproject_position(pos)
 	_floating_icon.rect_global_position = screen_pos - _floating_icon.rect_pivot_offset
 	
-func set_paths(v :Array):
-	.set_paths(v)
+func move_to(tile_id :Vector2):
+	.move_to(tile_id)
 	
-	if _is_master and not v.empty():
+	if _is_master:
 		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,team)
 		
 func set_selected(v :bool):

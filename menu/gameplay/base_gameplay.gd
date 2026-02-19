@@ -222,14 +222,16 @@ func _on_floor_clicked(pos :Vector3):
 func on_grandmap_clicked_input(tile :TileMapData):
 	if is_instance_valid(ui.selected_squad):
 		var unit :BaseTileUnit = ui.selected_squad
-		unit.set_paths(get_tile_path(grand_map, unit.current_tile, tile.id))
+		unit.tile_map = grand_map
+		unit.move_to(tile.id)
 		show_feedback_move_order(tile.pos + grand_map.global_position)
 		return
 		
 func on_battle_map_clicked_input(tile :TileMapData):
 	if is_instance_valid(ui.selected_battle_map_unit):
 		var unit :BaseTileUnit = ui.selected_battle_map_unit
-		unit.set_paths(get_tile_path(current_battle_map, unit.current_tile, tile.id))
+		unit.tile_map = current_battle_map
+		unit.move_to(tile.id)
 		show_feedback_move_order(tile.pos + current_battle_map.global_position)
 		
 ########################################## selection tile ############################################
@@ -545,9 +547,10 @@ func on_grand_map_squad_enter_battle_map(unit :BaseTileUnit, from_tile_id :Vecto
 	if unit is BaseSquad:
 		order_squad_to_enter_battle_map(unit, from_tile_id, current_tile_id)
 	
-func _on_grand_map_squad_exited(unit :BaseTileUnit, to_grand_map_id :Vector2):
-	unit.set_paths(get_tile_path(grand_map, unit.current_tile, to_grand_map_id))
-	rpc("_on_grand_map_squad_exited_battle_map", unit.get_path())
+func _on_grand_map_squad_exited(squad :BaseTileUnit, to_grand_map_id :Vector2):
+	squad.tile_map = grand_map
+	squad.move_to(to_grand_map_id)
+	rpc("_on_grand_map_squad_exited_battle_map", squad.get_path())
 	
 remotesync func _on_grand_map_squad_exited_battle_map(unit :NodePath):
 	var squad :BaseTileUnit = get_node_or_null(unit)
@@ -590,17 +593,8 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 	else:
 		unit.set_spotted(false)
 
-########################################## utils ############################################
+########################################## squad member control ############################################
 
-func get_tile_path(m :BaseTileMap, from :Vector2, to :Vector2, _is_air :bool = false) -> Array:
-	var paths :Array = []
-	var p :PoolVector2Array = m.get_navigation(from, to, [], _is_air)
-	for id in p:
-		var pos3 = m.get_tile_instance(id).global_position
-		paths.append(BaseTileUnit.TileUnitPath.new(id, pos3))
-		
-	return paths
-	
 func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, current_tile_id :Vector2):
 	if not unit is BaseInfantrySquad:
 		return
@@ -638,7 +632,8 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 	
 	for i in squad.members:
 		var member :Infantry = i
-		member.set_paths(get_tile_path(current_battle_map, member.current_tile, battle_map_tile_id))
+		member.tile_map = battle_map_holder[squad.current_tile]
+		member.move_to(battle_map_tile_id)
 		member.set_selected(false)
 		member.is_selectable = false
 		

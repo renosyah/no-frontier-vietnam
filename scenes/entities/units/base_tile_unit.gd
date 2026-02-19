@@ -19,7 +19,7 @@ class TileUnitPath:
 	func _init(a,b):
 		tile_id = a
 		pos = b
-
+		
 # info
 export var team :int = 0
 export var color :Color = Color.white
@@ -45,14 +45,31 @@ var _hidden :bool # permanent invisible
 var _spotted :bool # visible or not, but be overide by _hidden
 var _current_visible :bool # current state of visible 
 
+var tile_map :BaseTileMap
+
 # multiplayer data to sync
 puppet var _puppet_current_tile :Vector2
 puppet var _puppet_translation :Vector3
 
-func set_paths(v :Array):
-	if _is_master and not v.empty():
-		_paths.clear()
-		_paths.append_array(v)
+func move_to(tile_id :Vector2):
+	if not _is_master or not is_instance_valid(tile_map):
+		return
+		
+	var v :Array = _get_tile_path(tile_id)
+	if v.empty():
+		return
+		
+	_paths.clear()
+	_paths.append_array(v)
+	
+func _get_tile_path(to :Vector2, _is_air :bool = false) -> Array:
+	var paths :Array = []
+	var p :PoolVector2Array = tile_map.get_navigation(current_tile, to, [], _is_air)
+	for id in p:
+		var pos3 = tile_map.get_tile_instance(id).global_position
+		paths.append(TileUnitPath.new(id, pos3))
+		
+	return paths
 	
 func stop():
 	if _is_master:
@@ -117,10 +134,10 @@ func master_moving(delta :float) -> void:
 		_last_tile = current_tile
 		current_tile = new_tile
 		
-	move_to_path(delta, pos, new_to)
+	_move_to_path(delta, pos, new_to)
 	_is_moving = true
 	
-func move_to_path(delta :float, pos :Vector3, to :Vector3):
+func _move_to_path(delta :float, pos :Vector3, to :Vector3):
 	translation += pos.direction_to(to) * speed * delta
 	
 func puppet_moving(delta :float) -> void:
