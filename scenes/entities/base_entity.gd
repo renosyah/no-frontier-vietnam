@@ -20,7 +20,9 @@ func _network_timmer_timeout() -> void:
 ############################################################
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-
+	_is_online = _is_network_running()
+	_is_master = _is_network_master()
+	
 	# add little delay
 	# just in case all its puppet created in time
 	yield(get_tree().create_timer(1),"timeout")
@@ -69,8 +71,6 @@ func _is_network_master() -> bool:
 	return true
 	
 func _setup_network_timer() -> void:
-	_is_online = _is_network_running()
-	_is_master = _is_network_master()
 	
 	# only master can send data
 	# to all their pupets!

@@ -17,17 +17,15 @@ func _ready():
 	_floating_icon = preload("res://assets/user_interface/icons/floating_icon/floating_icon.tscn").instance()
 	_floating_icon.color = Global.flat_team_colors[team]
 	_floating_icon.icon = squad_icon
+	_floating_icon.name = name
 	_floating_icon.is_selectable = is_selectable
 	_floating_icon.connect("on_press", self, "_on_floating_icon_press")
 	_overlay_ui.add_child(_floating_icon)
 	
 	connect("on_finish_travel", self, "_on_squad_on_finish_travel")
 	
-func task_exiting(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
-	pass
-	
-func set_hidden(v :bool):
-	.set_hidden(v)
+func task_exiting(_at_battle_map_id :Vector2, to_grand_map_id :Vector2):
+	emit_signal("squad_exit", self, to_grand_map_id)
 	
 func moving(_delta):
 	.moving(_delta)

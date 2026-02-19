@@ -4,9 +4,9 @@ class_name PlayerData
 var player_network_id :int
 var player_id :String
 var player_name :String
-var player_potrait :int # idx of potrait resource
-var player_rank :int # 0: 2nd LT, 1: 1st LT, 2: Captain
-var player_team :int # 1: macv/us or 2:nva
+var player_potrait :int = 1 # idx of potrait resource
+var player_rank :int = 0 # 0: 2nd LT, 1: 1st LT, 2: Captain
+var player_team :int = 1 # 1: macv/us or 2:nva
 
 
 func from_dictionary(_data : Dictionary):

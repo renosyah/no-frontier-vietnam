@@ -18,7 +18,7 @@ onready var input_detection = $input_detection
 func set_label(v :String):
 	label.text = v
 
-func _on_Area_input_event(camera, event, position, normal, shape_idx):
+func _on_Area_input_event(_camera, event, _position, _normal, _shape_idx):
 	input_detection.check_input(event)
 
 func _on_input_detection_any_gesture(_sig ,event):
