@@ -12,7 +12,7 @@ onready var task_checker = $task_checker
 var _on_ambush_mode :bool
 var _on_camp_mode :bool
 
-func task_exiting(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
+func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	var _task_completed :bool = false
 	while not _task_completed:
 		var _all_arived :bool = true
@@ -28,7 +28,7 @@ func task_exiting(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 		task_checker.start()
 		yield(task_checker,"timeout")
 		
-	.task_exiting(at_battle_map_id, to_grand_map_id)
+	.exit_battle_map(at_battle_map_id, to_grand_map_id)
 
 func setup_ambush(v :bool):
 	if _on_camp_mode or _is_moving:

@@ -224,14 +224,15 @@ func on_grandmap_clicked_input(tile :TileMapData):
 		var unit :BaseTileUnit = ui.selected_squad
 		unit.tile_map = grand_map
 		unit.move_to(tile.id)
+		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.team)
 		show_feedback_move_order(tile.pos + grand_map.global_position)
-		return
 		
 func on_battle_map_clicked_input(tile :TileMapData):
 	if is_instance_valid(ui.selected_battle_map_unit):
 		var unit :BaseTileUnit = ui.selected_battle_map_unit
 		unit.tile_map = current_battle_map
 		unit.move_to(tile.id)
+		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.team)
 		show_feedback_move_order(tile.pos + current_battle_map.global_position)
 		
 ########################################## selection tile ############################################
@@ -445,7 +446,7 @@ remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team 
 	squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
 	squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
 	squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
-	squad.connect("squad_exit", self, "_on_grand_map_squad_exited")
+	squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
 	add_child(squad)
 	
 	squad.set_spotted(team != player.player_team)
@@ -496,12 +497,18 @@ func _on_grand_map_squad_selected(unit :BaseTileUnit, selected :bool):
 		
 	ui.selected_squad = unit if selected else null
 	
+	if selected and unit.player_id == player.player_id:
+		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT, unit.team)
+	
 func _on_battle_map_infantry_selected(unit :BaseTileUnit, selected :bool):
 	if is_instance_valid(ui.selected_battle_map_unit):
 		ui.selected_battle_map_unit.set_selected(false)
 		
 	ui.selected_battle_map_unit = unit if selected else null
 	
+	if selected and unit.player_id == player.player_id:
+		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT, unit.team)
+		
 func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# form of position tracking on map
 	# this will tied to spotting mechanic
@@ -526,6 +533,9 @@ func _on_grand_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2
 	var in_zone = current_tile_id in zoomable_battle_map.keys()
 	unit.set_hidden(in_zone)
 	
+	if unit.player_id == player.player_id:
+		Global.unit_responded(RadioChatters.MOVEMENT, unit.team)
+	
 	if in_zone:
 		# if currently selected squad then it became unselected
 		if (ui.selected_squad == unit):
@@ -547,7 +557,7 @@ func on_grand_map_squad_enter_battle_map(unit :BaseTileUnit, from_tile_id :Vecto
 	if unit is BaseSquad:
 		order_squad_to_enter_battle_map(unit, from_tile_id, current_tile_id)
 	
-func _on_grand_map_squad_exited(squad :BaseTileUnit, to_grand_map_id :Vector2):
+func _on_grand_map_squad_task_exit_battle_map(squad :BaseTileUnit, to_grand_map_id :Vector2):
 	squad.tile_map = grand_map
 	squad.move_to(to_grand_map_id)
 	rpc("_on_grand_map_squad_exited_battle_map", squad.get_path())
@@ -566,7 +576,6 @@ func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vect
 	if grand_map_watchlist_position.has(from):
 		grand_map_watchlist_position.erase(from)
 		
-	
 	if to_in_zone:
 		return
 		
@@ -637,5 +646,5 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 		member.set_selected(false)
 		member.is_selectable = false
 		
-	squad.task_exiting(battle_map_tile_id, grand_map_tile_id)
+	squad.exit_battle_map(battle_map_tile_id, grand_map_tile_id)
 

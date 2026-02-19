@@ -41,6 +41,8 @@ func _move_to_path(delta :float, _pos :Vector3, to :Vector3):
 	var t:Transform = transform.looking_at(to, Vector3.UP)
 	transform = transform.interpolate_with(t, 25 * delta)
 	translation += -transform.basis.z * speed * delta
+	rotation.x = 0
+	rotation.z = 0
 	
 func master_moving(delta :float) -> void:
 	.master_moving(delta)

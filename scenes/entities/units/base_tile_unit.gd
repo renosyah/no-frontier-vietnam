@@ -146,7 +146,7 @@ func puppet_moving(delta :float) -> void:
 	if is_dead:
 		return
 		
-	translation = _puppet_translation
+	translation = translation.linear_interpolate(_puppet_translation, 25 * delta) 
 	
 	# make sure only send updated
 	# this make sure value changes only once
