@@ -49,9 +49,9 @@ onready var US_RADIO = {
 	COMBAT_STATUS:{
 		"Engaging.":preload("res://assets/sounds/radio_chatter/us/COMBAT_STATUS/1.wav"),
 		"Suppressing!":preload("res://assets/sounds/radio_chatter/us/COMBAT_STATUS/2.wav"),
-		"Reloading!":preload("res://assets/sounds/radio_chatter/us/COMBAT_STATUS/3.wav"),
-		"We’re pinned!":preload("res://assets/sounds/radio_chatter/us/COMBAT_STATUS/4.wav"),
-		"Pushing forward!":preload("res://assets/sounds/radio_chatter/us/COMBAT_STATUS/5.wav"),
+		#"Reloading!":preload("res://assets/sounds/radio_chatter/us/COMBAT_STATUS/3.wav"),
+		#"We’re pinned!":preload("res://assets/sounds/radio_chatter/us/COMBAT_STATUS/4.wav"),
+		#"Pushing forward!":preload("res://assets/sounds/radio_chatter/us/COMBAT_STATUS/5.wav"),
 	},
 	ENEMY_SPOTTED:{
 		"Contact!":preload("res://assets/sounds/radio_chatter/us/ENEMY_SPOTTED/1.wav"),
@@ -110,9 +110,9 @@ onready var VIET_RADIO = {
 	COMBAT_STATUS:{
 		"Đang giao chiến.":preload("res://assets/sounds/radio_chatter/viet/COMBAT_STATUS/1.wav"),
 		"Bắn áp chế!":preload("res://assets/sounds/radio_chatter/viet/COMBAT_STATUS/2.wav"),
-		"Nạp đạn!":preload("res://assets/sounds/radio_chatter/viet/COMBAT_STATUS/3.wav"),
-		"Bị ghìm chặt!":preload("res://assets/sounds/radio_chatter/viet/COMBAT_STATUS/4.wav"),
-		"Xung phong!":preload("res://assets/sounds/radio_chatter/viet/COMBAT_STATUS/5.wav"),
+		#"Nạp đạn!":preload("res://assets/sounds/radio_chatter/viet/COMBAT_STATUS/3.wav"),
+		#"Bị ghìm chặt!":preload("res://assets/sounds/radio_chatter/viet/COMBAT_STATUS/4.wav"),
+		#"Xung phong!":preload("res://assets/sounds/radio_chatter/viet/COMBAT_STATUS/5.wav"),
 	},
 	ENEMY_SPOTTED:{
 		"Phát hiện địch!":preload("res://assets/sounds/radio_chatter/viet/ENEMY_SPOTTED/1.wav"),

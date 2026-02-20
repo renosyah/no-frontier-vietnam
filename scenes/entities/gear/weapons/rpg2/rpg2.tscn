@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scenes/entities/gear/weapons/rpg2/rpg2.obj" type="ArrayMesh" id=1]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="SpatialMaterial" id=7]
+albedo_color = Color( 0.470588, 0.231373, 0, 1 )
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.168627, 0.168627, 0.168627, 1 )
+
+[node name="rpg2" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.115, -0.019, 0 )
+cast_shadow = 0
+mesh = ExtResource( 1 )
+software_skinning_transform_normals = false
+material/0 = SubResource( 1 )
+material/1 = SubResource( 7 )
+material/2 = SubResource( 2 )

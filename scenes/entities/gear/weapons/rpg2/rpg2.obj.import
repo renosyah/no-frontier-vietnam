@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/rpg2.obj-8316f980b91a62864987f650045bcf1f.mesh"
+
+[deps]
+
+files=[ "res://.import/rpg2.obj-8316f980b91a62864987f650045bcf1f.mesh" ]
+
+source_file="res://scenes/entities/gear/weapons/rpg2/rpg2.obj"
+dest_files=[ "res://.import/rpg2.obj-8316f980b91a62864987f650045bcf1f.mesh", "res://.import/rpg2.obj-8316f980b91a62864987f650045bcf1f.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true
