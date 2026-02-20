@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/m16.obj-0877013028f1f23440cbff3bac6d2395.mesh"
+
+[deps]
+
+files=[ "res://.import/m16.obj-0877013028f1f23440cbff3bac6d2395.mesh" ]
+
+source_file="res://scenes/entities/gear/weapons/m16/m16.obj"
+dest_files=[ "res://.import/m16.obj-0877013028f1f23440cbff3bac6d2395.mesh", "res://.import/m16.obj-0877013028f1f23440cbff3bac6d2395.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

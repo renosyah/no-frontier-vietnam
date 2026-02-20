@@ -45,7 +45,14 @@ var _hidden :bool # permanent invisible
 var _spotted :bool # visible or not, but be overide by _hidden
 var _current_visible :bool # current state of visible 
 
+# for nav and targeting
 var tile_map :BaseTileMap
+
+# unit_position is refrence
+# change value it also change the root variable value
+# for tracking purposes
+var unit_position :Dictionary = {} # {Vector2 : [BaseTileUnit]}
+var enemy = null # cycle warning set to null
 
 # multiplayer data to sync
 puppet var _puppet_current_tile :Vector2

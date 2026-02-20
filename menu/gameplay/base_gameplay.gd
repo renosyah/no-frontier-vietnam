@@ -495,19 +495,15 @@ func _on_grand_map_squad_selected(unit :BaseTileUnit, selected :bool):
 	if is_instance_valid(ui.selected_squad):
 		ui.selected_squad.set_selected(false)
 		
-	ui.selected_squad = unit if selected else null
-	
-	if selected and unit.player_id == player.player_id:
-		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT, unit.team)
+	if unit.player_id == player.player_id:
+		ui.selected_squad = unit if selected else null
 	
 func _on_battle_map_infantry_selected(unit :BaseTileUnit, selected :bool):
 	if is_instance_valid(ui.selected_battle_map_unit):
 		ui.selected_battle_map_unit.set_selected(false)
 		
-	ui.selected_battle_map_unit = unit if selected else null
-	
-	if selected and unit.player_id == player.player_id:
-		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT, unit.team)
+	if unit.player_id == player.player_id:
+		ui.selected_battle_map_unit = unit if selected else null
 		
 func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# form of position tracking on map
@@ -597,7 +593,6 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 	# set spotted true, only from POV of spotter player
 	if to in grand_map_watchlist_position:
 		unit.set_spotted(true)
-		Global.unit_responded(RadioChatters.ENEMY_SPOTTED, player.player_team)
 		
 	else:
 		unit.set_spotted(false)

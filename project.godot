@@ -253,6 +253,11 @@ _global_script_classes=[ {
 "class": "Utils",
 "language": "GDScript",
 "path": "res://utils/utils.gd"
+}, {
+"base": "Spatial",
+"class": "Weapon",
+"language": "GDScript",
+"path": "res://scenes/entities/gear/weapons/weapon.gd"
 } ]
 _global_script_class_icons={
 "BaseData": "",
@@ -303,7 +308,8 @@ _global_script_class_icons={
 "TileMapData": "",
 "TileMapFileData": "",
 "TileMapUtils": "",
-"Utils": ""
+"Utils": "",
+"Weapon": ""
 }
 
 [application]
