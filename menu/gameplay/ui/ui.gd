@@ -67,7 +67,7 @@ func _on_use_launcher_pressed():
 		return
 		
 	if selected_battle_map_unit is Infantry:
-		selected_battle_map_unit.use_launcher()
+		selected_battle_map_unit.use_launcher(Vector3.ZERO)
 		Global.unit_responded(RadioChatters.COMBAT_STATUS,selected_battle_map_unit.team)
 
 

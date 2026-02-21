@@ -13,9 +13,13 @@ func fire_weapon():
 	
 func stop_firing():
 	queue_task.task_queue.clear()
-	emit_signal("weapon_fired")
 	
 func _bang(_from, _to):
+	if not has_ammo():
+		yield(get_tree(),"idle_frame")
+		emit_signal("weapon_fired")
+		return
+		
 	animation_player.play("bang")
 	yield(animation_player, "animation_finished")
 	emit_signal("weapon_fired")

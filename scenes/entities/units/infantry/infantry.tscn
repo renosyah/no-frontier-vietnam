@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=2]
+[gd_scene load_steps=56 format=2]
 
 [ext_resource path="res://scenes/entities/units/infantry/head.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/infantry/la.obj" type="ArrayMesh" id=2]
@@ -8,12 +8,10 @@
 [ext_resource path="res://scenes/entities/units/infantry/ll.obj" type="ArrayMesh" id=6]
 [ext_resource path="res://scenes/entities/units/infantry/black_material.tres" type="Material" id=7]
 [ext_resource path="res://scenes/entities/units/infantry/skin_color_material.tres" type="Material" id=8]
-[ext_resource path="res://scenes/entities/gear/weapons/rpg2/rpg2.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/entities/units/infantry/infantry.gd" type="Script" id=10]
 [ext_resource path="res://addons/Godot-Touch-Input-Manager/input_detection.tscn" type="PackedScene" id=11]
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://assets/tile_highlight/selected_material.tres" type="Material" id=13]
-[ext_resource path="res://scenes/entities/gear/weapons/m16/m16.tscn" type="PackedScene" id=14]
 [ext_resource path="res://scenes/entities/units/infantry/uniform_khaki.tres" type="Material" id=15]
 
 [sub_resource type="Animation" id=20]
@@ -453,20 +451,6 @@ tracks/15/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ Vector3( 0.466632, -76.922, 3.18402 ) ]
-}
-tracks/16/type = "method"
-tracks/16/path = NodePath(".")
-tracks/16/interp = 1
-tracks/16/loop_wrap = true
-tracks/16/imported = false
-tracks/16/enabled = true
-tracks/16/keys = {
-"times": PoolRealArray( 0.2 ),
-"transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [  ],
-"method": "_on_weapon_aimed"
-} ]
 }
 
 [sub_resource type="Animation" id=32]
@@ -1313,6 +1297,201 @@ tracks/17/keys = {
 "values": [ true ]
 }
 
+[sub_resource type="Animation" id=51]
+resource_name = "reload_weapon"
+tracks/0/type = "value"
+tracks/0/path = NodePath("pivot/legs:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, -60.458, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("pivot/legs:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("pivot/body:translation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("pivot/body:rotation_degrees")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, -60.458, 0 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("pivot/body/l_arm:translation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.3, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0.126867, 0.103677, -0.0153865 ), Vector3( 0.126867, 0.103677, -0.0153865 ), Vector3( 0.126867, 0.103677, -0.0153865 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("pivot/body/l_arm:rotation_degrees")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.2, 0.3, 0.5, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( -20.1653, 97.8276, -80.7206 ), Vector3( -41.716, 58.5095, -12.0875 ), Vector3( -41.716, 2.91947, -12.0875 ), Vector3( -41.716, 58.5095, -12.0875 ), Vector3( -20.1653, 97.8276, -80.7206 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("pivot/body/r_arm:translation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( -0.140139, 0.103212, 0.0237745 ), Vector3( -0.140139, 0.103212, 0.0237745 ), Vector3( -0.140139, 0.103212, 0.0237745 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("pivot/body/r_arm:rotation_degrees")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( -61.3955, 35.6123, 9.70385 ), Vector3( -78.3883, -27.6128, 75.6118 ), Vector3( -61.3955, 35.6123, 9.70385 ) ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("pivot/body/head:translation")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("pivot/body/head:rotation_degrees")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PoolRealArray( 0, 0.2, 0.5, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 59.717, 0 ), Vector3( 19.6293, 59.6713, -0.2643 ), Vector3( 19.6293, 59.6713, -0.2643 ), Vector3( 0, 59.717, 0 ) ]
+}
+tracks/10/type = "value"
+tracks/10/path = NodePath("pivot/legs/l:translation")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0.00274782, -0.0801899, 0.0178608 ) ]
+}
+tracks/11/type = "value"
+tracks/11/path = NodePath("pivot/legs/l:rotation_degrees")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+tracks/12/type = "value"
+tracks/12/path = NodePath("pivot/legs/r:translation")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0.00274782, -0.0801899, 0.0178608 ) ]
+}
+tracks/13/type = "value"
+tracks/13/path = NodePath("pivot/legs/r:rotation_degrees")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+tracks/14/type = "value"
+tracks/14/path = NodePath("pivot/weapon_holder:translation")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( -0.118102, 0.072096, 0.166556 ), Vector3( -0.118102, 0.109224, 0.0969508 ), Vector3( -0.118102, 0.072096, 0.166556 ) ]
+}
+tracks/15/type = "value"
+tracks/15/path = NodePath("pivot/weapon_holder:rotation_degrees")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0.466632, -76.922, 3.18402 ), Vector3( 4.69023, -105.684, 17.8297 ), Vector3( 0.466632, -76.922, 3.18402 ) ]
+}
+
 [sub_resource type="Animation" id=21]
 resource_name = "run_unarm"
 loop = true
@@ -1876,6 +2055,20 @@ tracks/15/keys = {
 "update": 0,
 "values": [ Vector3( 1.02654e-06, -13.755, -11.826 ), Vector3( 0.466632, -76.922, 3.18402 ) ]
 }
+tracks/16/type = "method"
+tracks/16/path = NodePath(".")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/keys = {
+"times": PoolRealArray( 0.3 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "_on_weapon_aimed"
+} ]
+}
 
 [sub_resource type="Animation" id=40]
 resource_name = "use_launcher"
@@ -2149,6 +2342,9 @@ animation = "iddle"
 [sub_resource type="AnimationNodeAnimation" id=27]
 animation = "iddle_hold_weapon"
 
+[sub_resource type="AnimationNodeAnimation" id=52]
+animation = "reload_weapon"
+
 [sub_resource type="AnimationNodeAnimation" id=8]
 animation = "run_unarm"
 
@@ -2171,11 +2367,13 @@ animation = "use_launcher"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=31]
 switch_mode = 2
+auto_advance = true
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=35]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=36]
 switch_mode = 2
+auto_advance = true
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=38]
 
@@ -2195,17 +2393,25 @@ auto_advance = true
 switch_mode = 2
 auto_advance = true
 
+[sub_resource type="AnimationNodeStateMachineTransition" id=53]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=54]
+switch_mode = 2
+auto_advance = true
+
 [sub_resource type="AnimationNodeStateMachine" id=18]
 states/aim_weapon/node = SubResource( 26 )
 states/aim_weapon/position = Vector2( 438, 206 )
 states/exit_aim_weapon/node = SubResource( 34 )
-states/exit_aim_weapon/position = Vector2( 242, 270 )
+states/exit_aim_weapon/position = Vector2( 116, 269 )
 states/fire_weapon/node = SubResource( 46 )
 states/fire_weapon/position = Vector2( 654, 206 )
 states/iddle/node = SubResource( 7 )
 states/iddle/position = Vector2( 72, 55 )
 states/iddle_hold_weapon/node = SubResource( 27 )
 states/iddle_hold_weapon/position = Vector2( 116, 138 )
+states/reload_weapon/node = SubResource( 52 )
+states/reload_weapon/position = Vector2( 438, 284.417 )
 states/run_unarm/node = SubResource( 8 )
 states/run_unarm/position = Vector2( 667, 55 )
 states/run_with_weapon/node = SubResource( 37 )
@@ -2214,9 +2420,9 @@ states/to_aim_weapon/node = SubResource( 28 )
 states/to_aim_weapon/position = Vector2( 242, 206 )
 states/use_launcher/node = SubResource( 41 )
 states/use_launcher/position = Vector2( -144, 138 )
-transitions = [ "iddle", "run_unarm", SubResource( 9 ), "run_unarm", "iddle", SubResource( 10 ), "iddle", "iddle_hold_weapon", SubResource( 29 ), "iddle_hold_weapon", "to_aim_weapon", SubResource( 30 ), "to_aim_weapon", "aim_weapon", SubResource( 31 ), "aim_weapon", "exit_aim_weapon", SubResource( 35 ), "exit_aim_weapon", "iddle_hold_weapon", SubResource( 36 ), "iddle_hold_weapon", "run_with_weapon", SubResource( 38 ), "run_with_weapon", "iddle_hold_weapon", SubResource( 39 ), "iddle_hold_weapon", "iddle", SubResource( 44 ), "aim_weapon", "fire_weapon", SubResource( 47 ), "fire_weapon", "aim_weapon", SubResource( 48 ), "iddle_hold_weapon", "use_launcher", SubResource( 49 ), "use_launcher", "iddle_hold_weapon", SubResource( 50 ) ]
+transitions = [ "iddle", "run_unarm", SubResource( 9 ), "run_unarm", "iddle", SubResource( 10 ), "iddle", "iddle_hold_weapon", SubResource( 29 ), "iddle_hold_weapon", "to_aim_weapon", SubResource( 30 ), "to_aim_weapon", "aim_weapon", SubResource( 31 ), "aim_weapon", "exit_aim_weapon", SubResource( 35 ), "exit_aim_weapon", "iddle_hold_weapon", SubResource( 36 ), "iddle_hold_weapon", "run_with_weapon", SubResource( 38 ), "run_with_weapon", "iddle_hold_weapon", SubResource( 39 ), "iddle_hold_weapon", "iddle", SubResource( 44 ), "aim_weapon", "fire_weapon", SubResource( 47 ), "fire_weapon", "aim_weapon", SubResource( 48 ), "iddle_hold_weapon", "use_launcher", SubResource( 49 ), "use_launcher", "iddle_hold_weapon", SubResource( 50 ), "aim_weapon", "reload_weapon", SubResource( 53 ), "reload_weapon", "aim_weapon", SubResource( 54 ) ]
 start_node = "iddle"
-graph_offset = Vector2( -345.208, -167.003 )
+graph_offset = Vector2( -345.208, 45.417 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=19]
 
@@ -2306,12 +2512,8 @@ material/1 = ExtResource( 7 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.24855e-08, 0.0449767, 0.142818 )
 visible = false
 
-[node name="m16" parent="pivot/weapon_holder" instance=ExtResource( 14 )]
-
 [node name="single_use_weapon" type="Spatial" parent="pivot"]
 visible = false
-
-[node name="rpg2" parent="pivot/single_use_weapon" instance=ExtResource( 9 )]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 20 )
@@ -2320,6 +2522,7 @@ anims/exit_aim_weapon = SubResource( 32 )
 anims/fire_weapon = SubResource( 45 )
 anims/iddle = SubResource( 4 )
 anims/iddle_hold_weapon = SubResource( 23 )
+anims/reload_weapon = SubResource( 51 )
 anims/run_unarm = SubResource( 21 )
 anims/run_with_weapon = SubResource( 33 )
 anims/to_aim_weapon = SubResource( 25 )

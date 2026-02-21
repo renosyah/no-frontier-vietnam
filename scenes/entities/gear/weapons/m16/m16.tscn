@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://scenes/entities/gear/weapons/m16/m16.gd" type="Script" id=1]
+[ext_resource path="res://scenes/entities/gear/weapons/m16/assault_rifle.gd" type="Script" id=1]
 [ext_resource path="res://scenes/entities/gear/weapons/m16/m16.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://addons/queue_task/queue_task.tscn" type="PackedScene" id=4]
 
@@ -101,6 +101,10 @@ tracks/2/keys = {
 
 [node name="m16" type="Spatial"]
 script = ExtResource( 1 )
+ammo = 18
+capacity = 18
+reserve_ammo = 12
+max_reserve_ammo = 420
 
 [node name="queue_task" parent="." instance=ExtResource( 4 )]
 
