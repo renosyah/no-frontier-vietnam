@@ -7,8 +7,9 @@ const uniform_khaki = preload("res://scenes/entities/units/infantry/uniform_khak
 const skin_color_dark = preload("res://scenes/entities/units/infantry/skin_color_dark_material.tres")
 const skin_color = preload("res://scenes/entities/units/infantry/skin_color_material.tres")
 
+const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
+
 onready var arrow = $circle/arrow
-onready var selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
 onready var animation_state = $AnimationTree.get("parameters/playback")
 onready var input_detection = $input_detection
 onready var area = $Area

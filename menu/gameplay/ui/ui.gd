@@ -23,7 +23,13 @@ func _ready():
 	
 func _on_selected_battle_map_unit(v :BaseTileUnit):
 	selected_battle_map_unit = v
-	infantry_option.visible =  is_instance_valid(selected_battle_map_unit)
+	infantry_option.visible = false
+	
+	if is_instance_valid(selected_battle_map_unit):
+		return
+		
+	if selected_squad is InfantrySquad:
+		infantry_option.visible = true
 	
 func _on_selected_squad(v :BaseSquad):
 	selected_squad = v
@@ -32,7 +38,7 @@ func _on_selected_squad(v :BaseSquad):
 	if not is_instance_valid(selected_squad):
 		return
 		
-	if selected_squad is BaseInfantrySquad:
+	if selected_squad is InfantrySquad:
 		squad_option.visible = true
 		setup_ambush.set_toggle_button(selected_squad.is_ambush_mode())
 		setup_camp.set_toggle_button(selected_squad.is_camp_mode())
@@ -41,16 +47,15 @@ func _on_setup_ambush_pressed():
 	if not is_instance_valid(selected_squad):
 		return
 		
-	if selected_squad is BaseInfantrySquad:
+	if selected_squad is InfantrySquad:
 		selected_squad.setup_ambush(not selected_squad.is_ambush_mode())
 		setup_ambush.set_toggle_button(selected_squad.is_ambush_mode())
-	
 	
 func _on_setup_camp_pressed():
 	if not is_instance_valid(selected_squad):
 		return
 		
-	if selected_squad is BaseInfantrySquad:
+	if selected_squad is InfantrySquad:
 		selected_squad.setup_camp(not selected_squad.is_camp_mode())
 		setup_camp.set_toggle_button(selected_squad.is_camp_mode())
 	

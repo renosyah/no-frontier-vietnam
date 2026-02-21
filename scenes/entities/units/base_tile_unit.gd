@@ -69,9 +69,9 @@ func move_to(tile_id :Vector2):
 	_paths.clear()
 	_paths.append_array(v)
 	
-func _get_tile_path(to :Vector2, _is_air :bool = false) -> Array:
+func _get_tile_path(to :Vector2) -> Array:
 	var paths :Array = []
-	var p :PoolVector2Array = tile_map.get_navigation(current_tile, to, [], _is_air)
+	var p :PoolVector2Array = tile_map.get_navigation(current_tile, to, [], false)
 	for id in p:
 		var pos3 = tile_map.get_tile_instance(id).global_position
 		paths.append(TileUnitPath.new(id, pos3))
@@ -121,7 +121,7 @@ func master_moving(delta :float) -> void:
 	var pos :Vector3 = global_position
 	var new_to :Vector3 = _paths.front().pos
 	
-	if  pos.distance_to(new_to) < 0.1:
+	if  pos.distance_to(new_to) < 0.4:
 		_paths.pop_front()
 		
 		if _paths.empty():

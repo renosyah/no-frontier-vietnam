@@ -20,6 +20,7 @@ func _network_timmer_timeout() -> void:
 ############################################################
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	set_process(false)
 	_is_online = _is_network_running()
 	_is_master = _is_network_master()
 	
@@ -27,13 +28,14 @@ func _ready() -> void:
 	# just in case all its puppet created in time
 	yield(get_tree().create_timer(1),"timeout")
 	_setup_network_timer()
-
+	set_process(true)
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta :float) -> void:
-	moving(delta)
-	
 	if not _is_online:
 		return
+	
+	moving(delta)
 	
 	if _is_master:
 		master_moving(delta)

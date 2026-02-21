@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/uh1d.obj-ad9d28a4d8c8b16b28ad6ecd4b63ce90.mesh"
+
+[deps]
+
+files=[ "res://.import/uh1d.obj-ad9d28a4d8c8b16b28ad6ecd4b63ce90.mesh" ]
+
+source_file="res://scenes/entities/units/vehicles/uh1d/uh1d.obj"
+dest_files=[ "res://.import/uh1d.obj-ad9d28a4d8c8b16b28ad6ecd4b63ce90.mesh", "res://.import/uh1d.obj-ad9d28a4d8c8b16b28ad6ecd4b63ce90.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

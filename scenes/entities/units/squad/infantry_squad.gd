@@ -1,5 +1,5 @@
 extends BaseSquad
-class_name BaseInfantrySquad
+class_name InfantrySquad
 
 onready var mesh_instances = [
 	$decoration_icon/MeshInstance, $decoration_icon/MeshInstance2,
@@ -8,6 +8,8 @@ onready var mesh_instances = [
 ]
 onready var decoration_icon = $decoration_icon
 onready var task_checker = $task_checker
+
+var members :Array = [] # [ Infantry ]
 
 var _on_ambush_mode :bool
 var _on_camp_mode :bool

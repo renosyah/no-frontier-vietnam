@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/main_rotor.obj-f48e3965493f90068d18fb5e8060f2b4.mesh"
+
+[deps]
+
+files=[ "res://.import/main_rotor.obj-f48e3965493f90068d18fb5e8060f2b4.mesh" ]
+
+source_file="res://scenes/entities/units/vehicles/uh1d/main_rotor.obj"
+dest_files=[ "res://.import/main_rotor.obj-f48e3965493f90068d18fb5e8060f2b4.mesh", "res://.import/main_rotor.obj-f48e3965493f90068d18fb5e8060f2b4.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true
