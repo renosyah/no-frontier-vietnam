@@ -13,6 +13,7 @@ var squad :BaseSquad
 puppet var _puppet_rotation_y :float
 
 func _ready():
+	margin = 0.4
 	connect("on_current_tile_updated", self, "_on_current_tile_updated")
 	
 func move_to(tile_id :Vector2):

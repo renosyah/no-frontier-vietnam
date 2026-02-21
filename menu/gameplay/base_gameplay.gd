@@ -521,6 +521,8 @@ remotesync func _spawn_grand_map_vehicle(network_id :int, player_id :String, tea
 	
 	vehicle_squad.vehicle = vehicle
 	
+	on_grand_map_squad_spawned(vehicle_squad)
+	
 func on_grand_map_squad_spawned(unit :BaseTileUnit):
 	if not squad_positions.has(unit.current_tile):
 		squad_positions[unit.current_tile] = []

@@ -32,6 +32,8 @@ export var max_hp :int = 3
 export var is_dead :bool = false
 export var is_selectable :bool = false
 
+export var margin :float = 0.1
+
 var current_tile :Vector2
 
 var _is_moving :bool # block some function if this is true
@@ -121,7 +123,7 @@ func master_moving(delta :float) -> void:
 	var pos :Vector3 = global_position
 	var new_to :Vector3 = _paths.front().pos
 	
-	if  pos.distance_to(new_to) < 0.4:
+	if  pos.distance_to(new_to) < margin:
 		_paths.pop_front()
 		
 		if _paths.empty():

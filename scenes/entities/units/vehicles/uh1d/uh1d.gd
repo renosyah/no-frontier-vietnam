@@ -34,6 +34,8 @@ func moving(delta :float) -> void:
 	if engine_run:
 		main_rotor.rotate_y(deg2rad(main_rotor_speed) * delta)
 		back_rotor.rotate_x(deg2rad(tail_rotor_speed) * delta)
+		
+	circle.global_position = global_position * Vector3(1, 0, 1)
 
 func _on_input_detection_any_gesture(_sig ,event):
 	if event is InputEventSingleScreenTap:

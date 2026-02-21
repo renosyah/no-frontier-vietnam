@@ -25,10 +25,10 @@ func _on_selected_battle_map_unit(v :BaseTileUnit):
 	selected_battle_map_unit = v
 	infantry_option.visible = false
 	
-	if is_instance_valid(selected_battle_map_unit):
+	if not is_instance_valid(selected_battle_map_unit):
 		return
 		
-	if selected_squad is InfantrySquad:
+	if selected_battle_map_unit is Infantry:
 		infantry_option.visible = true
 	
 func _on_selected_squad(v :BaseSquad):
