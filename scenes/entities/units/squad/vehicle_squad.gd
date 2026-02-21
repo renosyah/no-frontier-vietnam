@@ -19,7 +19,11 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 				_all_arived = false
 				
 			else:
+				
+				# hide unit
+				# somewhere far LOL
 				i.translation = Vector3(-100, -100, -100)
+				i.set_sync(false)
 				
 		_task_completed = _all_arived
 		

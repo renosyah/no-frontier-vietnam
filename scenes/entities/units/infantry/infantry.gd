@@ -95,8 +95,8 @@ func move_to(tile_id :Vector2):
 	_weapon_aimed = false
 	_weapon.stop_firing()
 	
-func _network_timmer_timeout() -> void:
-	._network_timmer_timeout()
+func sync_update() -> void:
+	.sync_update()
 	
 	if not is_dead and _is_master and _is_online:
 		rset_unreliable("_puppet_rotation_y", global_rotation.y)

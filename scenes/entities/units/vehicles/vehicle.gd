@@ -42,8 +42,8 @@ func _on_current_tile_updated(_unit, _from_id, _to_id):
 	if fuel == 0:
 		stop()
 
-func _network_timmer_timeout() -> void:
-	._network_timmer_timeout()
+func sync_update() -> void:
+	.sync_update()
 	
 	if not is_dead and _is_master and _is_online:
 		rset_unreliable("_puppet_rotation_y", global_rotation.y)

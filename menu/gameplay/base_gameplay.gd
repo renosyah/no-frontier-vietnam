@@ -518,6 +518,7 @@ remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team 
 		infantry.set_hidden(false)
 		infantry.set_spotted(true)
 		infantry.squad = infantry_squad
+		infantry.set_sync(false)
 		
 		infantry_squad.members.append(infantry)
 	
@@ -559,6 +560,7 @@ remotesync func _spawn_grand_map_vehicle(network_id :int, player_id :String, tea
 	vehicle.visible = false
 	vehicle.set_hidden(false)
 	vehicle.set_spotted(true)
+	vehicle.set_sync(false)
 	vehicle.squad = vehicle_squad
 	
 	vehicle_squad.vehicle = vehicle
@@ -704,6 +706,7 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 		vehicle.translation = point_battle_map.get_tile_instance(vehicle.current_tile).global_position
 		vehicle.visible = true
 		vehicle.is_selectable = (vehicle.player_id == player.player_id)
+		vehicle.set_sync(true)
 		vehicle.stop()
 		
 		if not entry_positions.empty():
@@ -726,6 +729,7 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 			infantry.translation = point_battle_map.get_tile_instance(infantry.current_tile).global_position
 			infantry.visible = true
 			infantry.is_selectable = (infantry.player_id == player.player_id)
+			infantry.set_sync(true)
 			infantry.stop()
 			
 			if not entry_positions.empty():

@@ -11,11 +11,26 @@ var player_id :String
 var _network_timmer :Timer
 var _is_online :bool = false
 var _is_master :bool = false
+var _sync :bool = true
 
 ############################################################
 # multiplayer func
+func set_sync(v :bool):
+	if not _is_master:
+		return
+		
+	_sync = v
+	
+	if _is_online:
+		sync_update() # send last update
+
 func _network_timmer_timeout() -> void:
 	_is_online = _is_network_running()
+	if _sync:
+		sync_update()
+	
+func sync_update() -> void:
+	pass
 	
 ############################################################
 # Called when the node enters the scene tree for the first time.
