@@ -11,6 +11,7 @@ onready var setup_camp = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxCon
 onready var setup_ambush = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/setup_ambush
 
 onready var infantry_option = $CanvasLayer/Control/VBoxContainer/infantry_option
+onready var vehicle_option = $CanvasLayer/Control/VBoxContainer/vehicle_option
 
 var selected_battle_map_unit :BaseTileUnit setget _on_selected_battle_map_unit
 var selected_squad :BaseSquad setget _on_selected_squad
@@ -20,16 +21,21 @@ var squad_positions :Dictionary = {} # refrence for BaseGameplay squad_positions
 func _ready():
 	squad_option.visible = false
 	infantry_option.visible = false
+	vehicle_option.visible = false
 	
 func _on_selected_battle_map_unit(v :BaseTileUnit):
 	selected_battle_map_unit = v
 	infantry_option.visible = false
+	vehicle_option.visible = false
 	
 	if not is_instance_valid(selected_battle_map_unit):
 		return
 		
 	if selected_battle_map_unit is Infantry:
 		infantry_option.visible = true
+		
+	if selected_battle_map_unit is Vehicle:
+		vehicle_option.visible = true
 	
 func _on_selected_squad(v :BaseSquad):
 	selected_squad = v
@@ -75,8 +81,10 @@ func _on_use_launcher_pressed():
 		selected_battle_map_unit.use_launcher(Vector3.ZERO)
 		Global.unit_responded(RadioChatters.COMBAT_STATUS,selected_battle_map_unit.team)
 
-
-
-
-
-
+func _on_landing_pressed():
+	if not is_instance_valid(selected_battle_map_unit):
+		return
+		
+	if selected_battle_map_unit is Vehicle:
+		selected_battle_map_unit.drop_passenger()
+		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,selected_battle_map_unit.team)

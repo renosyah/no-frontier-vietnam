@@ -33,9 +33,6 @@ func _get_tile_path(to :Vector2) -> Array:
 	var p :PoolVector2Array = tile_map.get_navigation(current_tile, to, [], vehicle.is_air)
 	for id in p:
 		var pos3 = tile_map.get_tile_instance(id).global_position
-		if vehicle.is_air:
-			pos3.y = 0.3
-			
 		paths.append(TileUnitPath.new(id, pos3))
 		
 	return paths

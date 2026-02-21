@@ -122,6 +122,7 @@ func master_moving(delta :float) -> void:
 		
 	var pos :Vector3 = global_position
 	var new_to :Vector3 = _paths.front().pos
+	new_to.y = pos.y
 	
 	if  pos.distance_to(new_to) < margin:
 		_paths.pop_front()
