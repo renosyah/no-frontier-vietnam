@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/heli.ogg-8ad50deb1cadd3397a3823a94ba8da60.oggstr"
+
+[deps]
+
+source_file="res://assets/sounds/vehicle/heli.ogg"
+dest_files=[ "res://.import/heli.ogg-8ad50deb1cadd3397a3823a94ba8da60.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

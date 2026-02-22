@@ -9,6 +9,13 @@ const skin_color = preload("res://scenes/entities/units/infantry/skin_color_mate
 
 const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
 
+const reload_sound = preload("res://assets/sounds/weapons/reload.wav")
+const shot_sounds = [
+	preload("res://assets/sounds/weapons/shot_1.wav"),
+	preload("res://assets/sounds/weapons/shot_2.wav"),
+	preload("res://assets/sounds/weapons/shot_3.wav")
+]
+
 onready var arrow = $circle/arrow
 onready var animation_state = $AnimationTree.get("parameters/playback")
 onready var input_detection = $input_detection
@@ -16,6 +23,7 @@ onready var area = $Area
 onready var circle = $circle
 onready var weapon_holder = $pivot/weapon_holder
 onready var single_use_weapon = $pivot/single_use_weapon
+onready var audio_stream_player_3d = $AudioStreamPlayer3D
 
 # skin set at 0
 onready var h_arms = [
@@ -145,6 +153,9 @@ remotesync func _fire_weapon(count :int, ammo_remain :bool):
 		_weapon.fire_weapon()
 		
 func _on_weapon_fired():
+	audio_stream_player_3d.stream =  shot_sounds[randi() % shot_sounds.size()]
+	audio_stream_player_3d.play()
+	
 	_current_anim = "fire_weapon"
 	animation_state.travel(_current_anim)
 	
@@ -155,6 +166,10 @@ func reload_weapon():
 	_weapon.reload()
 	_current_anim = "reload_weapon"
 	animation_state.travel(_current_anim)
+	
+func _on_reloading():
+	audio_stream_player_3d.stream = reload_sound
+	audio_stream_player_3d.play()
 	
 func use_launcher(at :Vector3):
 	stop()

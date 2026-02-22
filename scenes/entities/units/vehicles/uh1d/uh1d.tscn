@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/uh1d.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_glass_material.tres" type="Material" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/back_rotor.obj" type="ArrayMesh" id=6]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/main_rotor.obj" type="ArrayMesh" id=7]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/uh1d.gd" type="Script" id=8]
+[ext_resource path="res://assets/sounds/vehicle/heli.ogg" type="AudioStream" id=9]
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=10]
 [ext_resource path="res://addons/Godot-Touch-Input-Manager/input_detection.tscn" type="PackedScene" id=12]
 
@@ -134,8 +135,25 @@ tracks/1/keys = {
 "values": [ Vector3( -0.338146, 0.0752647, -0.0461964 ), Vector3( -0.370649, 0.0752647, -0.0461964 ), Vector3( -0.370649, 0.0752647, -0.651726 ), Vector3( -0.370649, 0.0752647, -0.651726 ), Vector3( -0.370649, 0.0752647, -0.752648 ) ]
 }
 
+[sub_resource type="Animation" id=24]
+resource_name = "foward"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("pivot:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, -180, 0 ), Vector3( 15, -180, 0 ) ]
+}
+
 [sub_resource type="Animation" id=6]
 resource_name = "iddle"
+length = 0.2
 tracks/0/type = "value"
 tracks/0/path = NodePath("pivot/door_l:translation")
 tracks/0/interp = 1
@@ -392,6 +410,7 @@ autoplay = "door_close"
 anims/RESET = SubResource( 3 )
 anims/door_close = SubResource( 5 )
 anims/door_open = SubResource( 4 )
+anims/foward = SubResource( 24 )
 anims/iddle = SubResource( 6 )
 anims/landing = SubResource( 7 )
 anims/take_off = SubResource( 8 )
@@ -409,10 +428,15 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.236412, 0 )
 shape = SubResource( 23 )
 
 [node name="circle" type="MeshInstance" parent="."]
-transform = Transform( 1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 0, -0.162429, 0 )
+transform = Transform( 1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 0, -0.25, 0 )
 cast_shadow = 0
 mesh = ExtResource( 10 )
 software_skinning_transform_normals = false
 material/0 = SubResource( 12 )
 
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 9 )
+autoplay = true
+
+[connection signal="on_finish_travel" from="." to="." method="_on_uh1d_on_finish_travel"]
 [connection signal="any_gesture" from="input_detection" to="." method="_on_input_detection_any_gesture"]

@@ -9,8 +9,11 @@ export var altitude :float
 export var is_air :bool
 
 var squad :BaseSquad
+var passengers :Array
 
+var _on_task :bool
 var _altitude :float
+
 puppet var _puppet_rotation_y :float
 
 func _ready():
@@ -19,13 +22,19 @@ func _ready():
 	connect("on_current_tile_updated", self, "_on_current_tile_updated")
 	
 func move_to(tile_id :Vector2):
-	if fuel == 0:
+	if fuel == 0 or _on_task:
 		return
 	
 	.move_to(tile_id)
 	
 func drop_passenger():
 	pass
+	
+func prepare_take_passenger():
+	pass
+	
+func take_passenger(members :Array):
+	passengers.append_array(members)
 	
 func _get_tile_path(to :Vector2) -> Array:
 	var paths :Array = []

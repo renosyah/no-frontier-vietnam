@@ -1,6 +1,8 @@
 extends BaseSquad
 class_name InfantrySquad
 
+signal on_infatry_squad_task_enter_vehicle(squad, vehicle)
+
 onready var mesh_instances = [
 	$decoration_icon/MeshInstance, $decoration_icon/MeshInstance2,
 	$decoration_icon/MeshInstance4, $decoration_icon/MeshInstance5,
@@ -15,6 +17,9 @@ var _on_ambush_mode :bool
 var _on_camp_mode :bool
 
 func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
+	if not task_checker.is_stopped():
+		return
+		
 	var _task_completed :bool = false
 	while not _task_completed:
 		var _all_arived :bool = true
@@ -36,6 +41,33 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 		
 	.exit_battle_map(at_battle_map_id, to_grand_map_id)
 
+# i cant declare vehicle type class
+# it errr cycle if i do
+func enter_vehicle(at_battle_map_id :Vector2, vehicle):
+	if not task_checker.is_stopped():
+		return
+		
+	var _task_completed :bool = false
+	while not _task_completed:
+		var _all_arived :bool = true
+		for i in members:
+			if i.current_tile != at_battle_map_id:
+				_all_arived = false
+				
+			else:
+				
+				# hide unit
+				# somewhere far LOL
+				i.translation = Vector3(-100, -100, -100)
+				i.set_sync(false)
+				
+		_task_completed = _all_arived
+		
+		task_checker.start()
+		yield(task_checker,"timeout")
+	
+	emit_signal("on_infatry_squad_task_enter_vehicle", self, vehicle)
+	
 func setup_ambush(v :bool):
 	if _on_camp_mode or _is_moving:
 		return
