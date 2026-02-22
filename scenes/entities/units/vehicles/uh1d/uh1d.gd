@@ -7,13 +7,19 @@ var engine_run :bool = true
 export var main_rotor_speed = 900
 export var tail_rotor_speed = 1800
 
+onready var _main_rotor_speed = main_rotor_speed
+onready var _tail_rotor_speed = tail_rotor_speed
+
+onready var _current_main_rotor_speed = main_rotor_speed
+onready var _current_rotor_speed = tail_rotor_speed
+
 onready var main_rotor = $pivot/main_rotor
 onready var back_rotor = $pivot/back_rotor
 onready var input_detection = $input_detection
 onready var circle = $circle
 onready var area = $Area
 onready var animation_player = $AnimationPlayer
-
+onready var pivot = $pivot
 
 func _ready():
 	area.connect("input_event", self, "_on_Area_input_event")
@@ -27,7 +33,23 @@ func set_selected(v :bool):
 		
 	circle.set_surface_material(0, selected_area_material if _is_selected else Global.spatial_team_colors[team])
 	
+func move_to(tile_id :Vector2):
+	.move_to(tile_id)
+	
+	if fuel == 0:
+		_main_rotor_speed = 0
+		_tail_rotor_speed = 0
+		_altitude = 0
+		return
+		
+	_main_rotor_speed = main_rotor_speed
+	_tail_rotor_speed = tail_rotor_speed
+	_altitude = altitude
+		
 func drop_passenger():
+	if fuel == 0:
+		return
+		
 	_altitude = 0
 	animation_player.play("landing")
 	animation_player.play("door_open")
@@ -40,9 +62,11 @@ func moving(delta :float) -> void:
 	.moving(delta)
 	
 	if engine_run:
-		main_rotor.rotate_y(deg2rad(main_rotor_speed) * delta)
-		back_rotor.rotate_x(deg2rad(tail_rotor_speed) * delta)
+		_current_main_rotor_speed = lerp(_current_main_rotor_speed, _main_rotor_speed, 1 * delta)
+		_current_rotor_speed = lerp(_current_rotor_speed, _tail_rotor_speed, 2 * delta)
 		
+	main_rotor.rotate_y(deg2rad(_current_main_rotor_speed) * delta)
+	back_rotor.rotate_x(deg2rad(_current_rotor_speed) * delta)
 
 func _on_input_detection_any_gesture(_sig ,event):
 	if event is InputEventSingleScreenTap:

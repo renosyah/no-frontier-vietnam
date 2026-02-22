@@ -475,7 +475,7 @@ func create_entry_positions(from_tile_id :Vector2, current_tile_id :Vector2, is_
 ########################################## grand map squad ############################################
 
 var squad_positions :Dictionary = {} # [Vector2 : [ BaseTileUnit ] ]
-var spawned_squad :Array = []
+var spawned_squad :Array = [] # for tracking purposes
 
 # this is for spotting mechanic
 var grand_map_watchlist_position :Array = []
@@ -494,13 +494,16 @@ remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team 
 	infantry_squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
 	infantry_squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
 	infantry_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
-	infantry_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
 	infantry_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
 	add_child(infantry_squad)
 	
 	infantry_squad.set_spotted(team != player.player_team)
 	infantry_squad.set_hidden(false)
 	infantry_squad.translation = at
+	
+	# connect signal after set_spotted function called
+	# if not,it will trigger to emit on_unit_spotted
+	infantry_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
 	
 	for i in 4:
 		var infantry:Infantry  = preload("res://scenes/entities/units/infantry/infantry.tscn").instance()
@@ -511,6 +514,7 @@ remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team 
 		infantry.team = team
 		infantry.is_selectable = (player_id == player.player_id)
 		infantry.connect("on_unit_selected", self, "_on_battle_map_unit_selected")
+		infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 		add_child(infantry)
 		
 		infantry.translation = Vector3(-100, -100, -100)
@@ -538,13 +542,16 @@ remotesync func _spawn_grand_map_vehicle(network_id :int, player_id :String, tea
 	vehicle_squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
 	vehicle_squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
 	vehicle_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
-	vehicle_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
 	vehicle_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
 	add_child(vehicle_squad)
 	
 	vehicle_squad.set_spotted(team != player.player_team)
 	vehicle_squad.set_hidden(false)
 	vehicle_squad.translation = at
+	
+	# connect signal after set_spotted function called
+	# if not,it will trigger to emit on_unit_spotted
+	vehicle_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
 	
 	var vehicle :Vehicle = preload("res://scenes/entities/units/vehicles/uh1d/uh1d.tscn").instance()
 	vehicle.player_id = player_id
@@ -554,6 +561,7 @@ remotesync func _spawn_grand_map_vehicle(network_id :int, player_id :String, tea
 	vehicle.team = team
 	vehicle.is_selectable = (player_id == player.player_id)
 	vehicle.connect("on_unit_selected", self, "_on_battle_map_unit_selected")
+	vehicle.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 	add_child(vehicle)
 	
 	vehicle.translation = Vector3(-100, -100, -100)
@@ -598,6 +606,9 @@ func _on_battle_map_unit_selected(unit :BaseTileUnit, selected :bool):
 	if unit.player_id == player.player_id:
 		ui.selected_battle_map_unit = unit if selected else null
 		
+func _on_battle_map_unit_dead(unit :BaseTileUnit):
+	unit.queue_free()
+	
 func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# form of position tracking on map
 	# this will tied to spotting mechanic
@@ -633,8 +644,10 @@ func _on_grand_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2
 		
 		rpc("_on_grand_map_squad_enter_battle_map", unit.get_path(), from_tile_id, current_tile_id)
 	
+# filter only for enemy unit that spotted, not player
 func _on_grand_map_squad_spotted(_unit :BaseTileUnit):
-	Global.unit_responded(RadioChatters.ENEMY_SPOTTED, player.player_team)
+	if _unit.player_id != player.player_id:
+		Global.unit_responded(RadioChatters.ENEMY_SPOTTED, player.player_team)
 	
 # tell all that this squad are entering
 # battle map
@@ -656,7 +669,8 @@ remotesync func _on_grand_map_squad_exited_battle_map(unit :NodePath):
 	squad.set_hidden(false)
 	
 func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
-	var to_in_zone = to in zoomable_battle_map.keys()
+	# check if to is a active battle map tile
+	var to_in_zone = not (to in zoomable_battle_map.keys())
 	
 	# pasive spotting
 	if not grand_map_watchlist_position.has(to) and not to_in_zone:
@@ -665,6 +679,8 @@ func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vect
 	if grand_map_watchlist_position.has(from):
 		grand_map_watchlist_position.erase(from)
 		
+	# ignore check if to is 
+	# a active battle map tile
 	if to_in_zone:
 		return
 		

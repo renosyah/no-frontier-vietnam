@@ -88,6 +88,7 @@ func stop():
 	# call stop, tell master to stop from other peer
 	rpc_id(get_network_master(), "_stop")
 	
+# only mechanic for puppet side only
 func set_spotted(v :bool):
 	if not _is_master and not _hidden:
 		_spotted = v
@@ -168,10 +169,13 @@ func puppet_moving(delta :float) -> void:
 func set_dead():
 	if not is_dead:
 		rpc("_set_dead")
-	
+
+func on_dead():
+	emit_signal("on_unit_dead", self)
+
 remotesync func _set_dead():
 	is_dead = true
-	emit_signal("on_unit_dead", self)
+	on_dead()
 
 
 

@@ -337,6 +337,7 @@ script = ExtResource( 8 )
 speed = 4.0
 hp = 100
 max_hp = 100
+fuel_cost = 0
 altitude = 2.0
 is_air = true
 
