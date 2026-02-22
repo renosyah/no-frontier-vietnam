@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scenes/entities/units/infantry/uniform_khaki.tres" type="Material" id=1]
+[ext_resource path="res://scenes/entities/units/infantry/uniform_green.tres" type="Material" id=2]
+[ext_resource path="res://scenes/entities/gear/bag/bag.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://scenes/entities/gear/weapons/m72/m72law.obj" type="ArrayMesh" id=5]
+
+[node name="bag_5" type="Spatial"]
+
+[node name="bag" type="MeshInstance" parent="."]
+cast_shadow = 0
+mesh = ExtResource( 4 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 0.0283578, 0.999598, 0, -0.999598, 0.0283578, 0, 0, 0, 1, 0.115, -0.0623136, 0 )
+cast_shadow = 0
+mesh = ExtResource( 5 )
+software_skinning_transform_normals = false

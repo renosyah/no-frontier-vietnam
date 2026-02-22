@@ -2461,6 +2461,9 @@ transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.26
 [node name="body" type="Spatial" parent="pivot"]
 transform = Transform( 0.832564, 0, -0.553929, 0, 1, 0, 0.553929, 0, 0.832564, 0, 0, 0 )
 
+[node name="bag" type="Spatial" parent="pivot/body"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 7.72265e-09, 0.0563147, -0.0883368 )
+
 [node name="Body" type="MeshInstance" parent="pivot/body"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00439346, -1.19209e-07, 0.0357322 )
 mesh = ExtResource( 5 )
@@ -2498,6 +2501,9 @@ skeleton = NodePath("../../../..")
 software_skinning_transform_normals = false
 material/0 = ExtResource( 8 )
 material/1 = ExtResource( 7 )
+
+[node name="headgear" type="Spatial" parent="pivot/body/head"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.231466, 0 )
 
 [node name="legs" type="Spatial" parent="pivot"]
 transform = Transform( 0.832564, 0, -0.553929, 0, 1, 0, 0.553929, 0, 0.832564, 0, 0, 0 )

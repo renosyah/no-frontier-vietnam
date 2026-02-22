@@ -142,7 +142,13 @@ onready var static_ambient = $static_ambient
 onready var delays = $delays
 
 func play_radio(text :String, audio :Resource, with_static :bool = false, clear:bool = false):
+	
 	if clear:
+		if queue_task.task_queue.empty():
+			speaker.stream = audio
+			speaker.play()
+			return
+			
 		queue_task.task_queue.clear()
 		
 	queue_task.add_task(self,"_play_radio",[text,audio, with_static])

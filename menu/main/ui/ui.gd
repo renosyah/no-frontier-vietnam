@@ -80,6 +80,7 @@ func _on_join_pressed():
 	player_data.player_id = Utils.create_unique_id()
 	player_data.player_team = 2
 	
+	Global.null_map_data()
 	Global.change_scene("res://menu/join/join.tscn", true, 2)
 	
 func _on_back_pressed():

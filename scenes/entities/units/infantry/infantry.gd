@@ -4,10 +4,27 @@ class_name Infantry
 const uniform_green = preload("res://scenes/entities/units/infantry/uniform_green.tres")
 const uniform_khaki = preload("res://scenes/entities/units/infantry/uniform_khaki.tres")
 
-const skin_color_dark = preload("res://scenes/entities/units/infantry/skin_color_dark_material.tres")
-const skin_color = preload("res://scenes/entities/units/infantry/skin_color_material.tres")
+const skin_colors = [
+	preload("res://scenes/entities/units/infantry/skin_color_material.tres"), # white / asian
+	preload("res://scenes/entities/units/infantry/skin_color_dark_material.tres") # nigga
+]
 
-const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
+const green_bags = [
+	preload("res://scenes/entities/gear/bag/bag_1_green.tscn"),
+	preload("res://scenes/entities/gear/bag/bag_2_green.tscn"),
+	preload("res://scenes/entities/gear/bag/bag_3_green.tscn"),
+	preload("res://scenes/entities/gear/bag/bag_4.tscn"),
+	preload("res://scenes/entities/gear/bag/bag_5_green.tscn"),
+]
+
+const khaki_bags = [
+	preload("res://scenes/entities/gear/bag/bag_1_khaki.tscn"),
+	preload("res://scenes/entities/gear/bag/bag_2_khaki.tscn"),
+	preload("res://scenes/entities/gear/bag/bag_3_khaki.tscn"),
+	preload("res://scenes/entities/gear/bag/bag_4.tscn"),
+	preload("res://scenes/entities/gear/bag/bag_5_khaki.tscn"),
+]
+
 
 const reload_sound = preload("res://assets/sounds/weapons/reload.wav")
 const shot_sounds = [
@@ -15,6 +32,8 @@ const shot_sounds = [
 	preload("res://assets/sounds/weapons/shot_2.wav"),
 	preload("res://assets/sounds/weapons/shot_3.wav")
 ]
+
+const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
 
 onready var arrow = $circle/arrow
 onready var animation_state = $AnimationTree.get("parameters/playback")
@@ -24,24 +43,16 @@ onready var circle = $circle
 onready var weapon_holder = $pivot/weapon_holder
 onready var single_use_weapon = $pivot/single_use_weapon
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
+onready var bag_holder = $pivot/body/bag
+onready var headgear_holder = $pivot/body/head/headgear
 
-# skin set at 0
-onready var h_arms = [
-	$pivot/body/l_arm/a,
-	$pivot/body/r_arm/a,
-	$pivot/body/head/h
-]
-
-# uniform set at 0
-onready var b_leg = [
-	$pivot/body/Body,
-	$pivot/legs/l/leg,
-	$pivot/legs/r/leg
-]
-# uniform set at 1
-onready var arms = [
-	$pivot/body/l_arm/a,
-	$pivot/body/r_arm/a,
+onready var meshes = [
+	$pivot/body/head/h, # head : 0=skin, 1:hair
+	$pivot/body/Body, # body : 0=uniform
+	$pivot/body/l_arm/a, # left arm : 0=skin, 1:uniform
+	$pivot/body/r_arm/a, # right arm : 0=skin, 1:uniform
+	$pivot/legs/l/leg, # left leg :  0:uniform, 1:booth
+	$pivot/legs/r/leg # right leg : 0:uniform, 1:booth
 ]
 
 puppet var _puppet_rotation_y :float
@@ -63,31 +74,71 @@ func _ready():
 	
 	# temps weapon spawn by team
 	var uniform :SpatialMaterial
+	var skin :SpatialMaterial = skin_colors[0]
+	
+	randomize()
 	
 	if team == 1:
 		uniform = uniform_green
+		skin = skin_colors[randi() % skin_colors.size()]
 		_weapon = preload("res://scenes/entities/gear/weapons/m16/m16.tscn").instance()
 		_launcher = preload("res://scenes/entities/gear/weapons/m72/m72law.tscn").instance()
+		bag_holder.add_child(green_bags[randi() % green_bags.size()].instance())
+		headgear_holder.add_child(preload("res://scenes/entities/gear/headgear/us_helm.tscn").instance())
 		
 	if team == 2:
 		uniform = uniform_khaki
 		_weapon = preload("res://scenes/entities/gear/weapons/type56/type56.tscn").instance()
 		_launcher = preload("res://scenes/entities/gear/weapons/rpg2/rpg2.tscn").instance()
+		bag_holder.add_child(khaki_bags[randi() % khaki_bags.size()].instance())
+		headgear_holder.add_child(preload("res://scenes/entities/gear/headgear/nva_hat.tscn").instance())
 		
-	for i in b_leg:
-		var m :MeshInstance = i
-		m.set_surface_material(0, uniform)
-		
-	for i in arms:
-		var m :MeshInstance = i
-		m.set_surface_material(1, uniform)
-		
+	var styles = [0, 1, 2]
+	uniform_style(skin, uniform, styles[randi() % styles.size()])
+	
+	
+	
 	_weapon.is_master = _is_master
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
 	
 	weapon_holder.add_child(_weapon)
 	single_use_weapon.add_child(_launcher)
 	
+func uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
+	
+	# normal
+	if mode == 0:
+		meshes[0].set_surface_material(0, skin)
+		meshes[1].set_surface_material(0, uniform)
+		meshes[2].set_surface_material(0, skin)
+		meshes[2].set_surface_material(1, uniform)
+		meshes[3].set_surface_material(0, skin)
+		meshes[3].set_surface_material(1, uniform)
+		meshes[4].set_surface_material(0, uniform)
+		meshes[5].set_surface_material(0, uniform)
+		
+	# tank top
+	elif mode == 1:
+		meshes[0].set_surface_material(0, skin)
+		meshes[1].set_surface_material(0, uniform)
+		meshes[2].set_surface_material(0, skin)
+		meshes[2].set_surface_material(1, skin)
+		meshes[3].set_surface_material(0, skin)
+		meshes[3].set_surface_material(1, skin)
+		meshes[4].set_surface_material(0, uniform)
+		meshes[5].set_surface_material(0, uniform)
+		
+	# no top
+	elif mode == 2:
+		meshes[0].set_surface_material(0, skin)
+		meshes[1].set_surface_material(0, skin)
+		meshes[2].set_surface_material(0, skin)
+		meshes[2].set_surface_material(1, skin)
+		meshes[3].set_surface_material(0, skin)
+		meshes[3].set_surface_material(1, skin)
+		meshes[4].set_surface_material(0, uniform)
+		meshes[5].set_surface_material(0, uniform)
+		
 func set_selected(v :bool):
 	.set_selected(v)
 	

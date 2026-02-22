@@ -71,7 +71,7 @@ func unit_responded(chatter_id :int, team :int, with_static :bool = false):
 	var r = radio_chatter.US_RADIO[chatter_id] if team == TEAM_BLUE else radio_chatter.VIET_RADIO[chatter_id]
 	var k = r.keys()
 	var key = k[randi() % k.size()]
-	radio_chatter.play_radio(key, r[key], with_static)
+	radio_chatter.play_radio(key, r[key], with_static, true)
 
 ##########################################  map editor  ############################################
 # for load and save maps
@@ -135,6 +135,16 @@ var battle_map_name :String
 var battle_map_data :TileMapFileData
 var battle_map_id :Vector2
 var battle_map_adjacent :Array # [ Vector2 ]
+
+func null_map_data():
+	grand_map_manifest_data = null
+	grand_map_data = null
+	grand_map_mission_data = null
+	battle_map_datas = {}
+	battle_map_name = ""
+	battle_map_data = null
+	battle_map_id = Vector2.ZERO
+	battle_map_adjacent = []
 
 func empty_map_data():
 	grand_map_manifest_data = GrandMapFileManifest.new()

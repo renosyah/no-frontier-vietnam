@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/tent.obj-d6e6fcd4981bc55d608650bfc81e8a65.mesh"
+
+[deps]
+
+files=[ "res://.import/tent.obj-d6e6fcd4981bc55d608650bfc81e8a65.mesh" ]
+
+source_file="res://scenes/entities/gear/bag/tent.obj"
+dest_files=[ "res://.import/tent.obj-d6e6fcd4981bc55d608650bfc81e8a65.mesh", "res://.import/tent.obj-d6e6fcd4981bc55d608650bfc81e8a65.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

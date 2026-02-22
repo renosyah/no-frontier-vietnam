@@ -30,7 +30,11 @@ func move_to(tile_id :Vector2):
 	.move_to(tile_id)
 	
 func drop_passenger():
-	emit_signal("on_vehicle_drop_passenger", self, passengers)
+	if passengers.empty():
+		return
+		
+	emit_signal("on_vehicle_drop_passenger", self, passengers.duplicate())
+	passengers.clear()
 	
 func prepare_take_passenger():
 	pass

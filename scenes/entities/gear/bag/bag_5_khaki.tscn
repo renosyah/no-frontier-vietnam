@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scenes/entities/units/infantry/uniform_khaki.tres" type="Material" id=1]
+[ext_resource path="res://scenes/entities/units/infantry/black_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/entities/gear/bag/bag.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://scenes/entities/gear/bag/tent.obj" type="ArrayMesh" id=4]
+
+[node name="bag_3" type="Spatial"]
+
+[node name="bag" type="MeshInstance" parent="."]
+cast_shadow = 0
+mesh = ExtResource( 3 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 1 )
+material/1 = ExtResource( 2 )
+
+[node name="tent" type="MeshInstance" parent="."]
+transform = Transform( 0.8, 0, 0, 0, -0.558772, -0.572515, 0, 0.572515, -0.558772, 0, -0.102943, -0.00697219 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 1 )
+material/1 = ExtResource( 2 )

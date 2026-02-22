@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/nva_hat.obj-3070a7452b23a964e53863fa7187c13d.mesh"
+
+[deps]
+
+files=[ "res://.import/nva_hat.obj-3070a7452b23a964e53863fa7187c13d.mesh" ]
+
+source_file="res://scenes/entities/gear/headgear/nva_hat.obj"
+dest_files=[ "res://.import/nva_hat.obj-3070a7452b23a964e53863fa7187c13d.mesh", "res://.import/nva_hat.obj-3070a7452b23a964e53863fa7187c13d.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

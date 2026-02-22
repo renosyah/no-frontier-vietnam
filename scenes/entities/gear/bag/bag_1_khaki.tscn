@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/entities/units/infantry/uniform_khaki.tres" type="Material" id=1]
+[ext_resource path="res://scenes/entities/units/infantry/black_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/entities/gear/bag/bag.obj" type="ArrayMesh" id=3]
+
+[node name="bag_1" type="Spatial"]
+
+[node name="bag" type="MeshInstance" parent="."]
+cast_shadow = 0
+mesh = ExtResource( 3 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 1 )
+material/1 = ExtResource( 2 )
