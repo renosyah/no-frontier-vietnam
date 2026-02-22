@@ -45,6 +45,9 @@ func set_selected(v :bool):
 func move_to(tile_id :Vector2):
 	.move_to(tile_id)
 	
+	if fuel == 0 or _on_task:
+		return
+		
 	_main_rotor_speed = main_rotor_speed
 	_tail_rotor_speed = tail_rotor_speed
 	_altitude = altitude
@@ -66,12 +69,11 @@ func drop_passenger():
 	animation_player.play("landing")
 	animation_player.play("door_open")
 	yield(get_tree().create_timer(3),"timeout")
-	animation_player.play("door_close")
-	yield(get_tree().create_timer(1),"timeout")
 	_altitude = altitude
 	
-	_on_task = false
 	.drop_passenger()
+	animation_player.play("door_close")
+	_on_task = false
 	
 func prepare_take_passenger():
 	.prepare_take_passenger()

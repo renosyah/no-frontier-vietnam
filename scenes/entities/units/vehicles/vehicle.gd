@@ -1,6 +1,8 @@
 extends BaseTileUnit
 class_name Vehicle
 
+signal on_vehicle_drop_passenger(vehicle, passengers)
+
 export var fuel_cost :int = 1
 export var fuel :int = 100
 export var max_fuel :int = 100
@@ -9,7 +11,7 @@ export var altitude :float
 export var is_air :bool
 
 var squad :BaseSquad
-var passengers :Array
+var passengers :Array # [ InfantrySquad ]
 
 var _on_task :bool
 var _altitude :float
@@ -28,13 +30,13 @@ func move_to(tile_id :Vector2):
 	.move_to(tile_id)
 	
 func drop_passenger():
-	pass
+	emit_signal("on_vehicle_drop_passenger", self, passengers)
 	
 func prepare_take_passenger():
 	pass
 	
-func take_passenger(members :Array):
-	passengers.append_array(members)
+func take_passenger(squads :Array):
+	passengers.append_array(squads)
 	
 func _get_tile_path(to :Vector2) -> Array:
 	var paths :Array = []
