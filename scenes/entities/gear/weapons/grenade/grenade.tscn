@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scenes/entities/gear/weapons/grenade/grenade.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://scenes/entities/units/infantry/skin_color_dark_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/entities/units/infantry/uniform_green.tres" type="Material" id=3]
+[ext_resource path="res://assets/tile_highlight/contested_area_material.tres" type="Material" id=4]
+
+[node name="grenade" type="Spatial"]
+
+[node name="grenade" type="MeshInstance" parent="."]
+cast_shadow = 0
+mesh = ExtResource( 1 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 2 )
+material/2 = ExtResource( 4 )

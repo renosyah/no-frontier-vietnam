@@ -45,7 +45,7 @@ func set_selected(v :bool):
 func move_to(tile_id :Vector2):
 	.move_to(tile_id)
 	
-	if fuel == 0 or _on_task:
+	if _on_task:
 		return
 		
 	_main_rotor_speed = main_rotor_speed
@@ -58,9 +58,11 @@ func _on_uh1d_on_finish_travel(unit, last_id, current_id):
 	animation_player.play_backwards("foward")
 	
 func drop_passenger():
-	if _on_task:
+	if _on_task or _is_moving or passengers.empty():
 		return
 		
+	pivot.rotation_degrees.x = 0
+	
 	if not tile_map.is_nav_enable(current_tile):
 		return
 		

@@ -1,6 +1,10 @@
 extends BaseSquad
 class_name VehicleSquad
 
+export var fuel_cost :int = 1
+export var fuel :int = 100
+export var max_fuel :int = 100
+
 onready var mesh_instance = $decoration_icon/MeshInstance
 onready var decoration_icon = $decoration_icon
 onready var task_checker = $task_checker
@@ -9,6 +13,19 @@ var vehicle :Vehicle
 
 func _ready():
 	mesh_instance.set_surface_material(0, Global.spatial_team_colors[team])
+	connect("on_current_tile_updated", self, "_on_current_tile_updated")
+	
+func _on_current_tile_updated(_unit, _from_id, _to_id):
+	fuel = clamp(fuel - fuel_cost, 0, max_fuel)
+	
+	if fuel == 0:
+		stop()
+	
+func move_to(tile_id :Vector2):
+	if fuel == 0:
+		return
+	
+	.move_to(tile_id)
 	
 func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	var _task_completed :bool = false

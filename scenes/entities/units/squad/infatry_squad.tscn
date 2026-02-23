@@ -11,6 +11,7 @@ rings = 0
 
 [node name="squad" type="Spatial"]
 script = ExtResource( 1 )
+speed = 0.2
 
 [node name="decoration_icon" type="Spatial" parent="."]
 

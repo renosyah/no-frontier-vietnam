@@ -45,6 +45,7 @@ onready var single_use_weapon = $pivot/single_use_weapon
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
 onready var bag_holder = $pivot/body/bag
 onready var headgear_holder = $pivot/body/head/headgear
+onready var vest_holder = $pivot/body/vest
 
 onready var meshes = [
 	$pivot/body/head/h, # head : 0=skin, 1:hair
@@ -85,6 +86,7 @@ func _ready():
 		_launcher = preload("res://scenes/entities/gear/weapons/m72/m72law.tscn").instance()
 		bag_holder.add_child(green_bags[randi() % green_bags.size()].instance())
 		headgear_holder.add_child(preload("res://scenes/entities/gear/headgear/us_helm.tscn").instance())
+		vest_holder.add_child(preload("res://scenes/entities/gear/vest/vest_1_green.tscn").instance())
 		
 	if team == 2:
 		uniform = uniform_khaki
@@ -92,11 +94,10 @@ func _ready():
 		_launcher = preload("res://scenes/entities/gear/weapons/rpg2/rpg2.tscn").instance()
 		bag_holder.add_child(khaki_bags[randi() % khaki_bags.size()].instance())
 		headgear_holder.add_child(preload("res://scenes/entities/gear/headgear/nva_hat.tscn").instance())
+		vest_holder.add_child(preload("res://scenes/entities/gear/vest/vest_1_khaki.tscn").instance())
 		
 	var styles = [0, 1, 2]
 	uniform_style(skin, uniform, styles[randi() % styles.size()])
-	
-	
 	
 	_weapon.is_master = _is_master
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
@@ -236,6 +237,22 @@ remotesync func _fire_launcher():
 	animation_state.travel(_current_anim)
 	
 func _on_launcher_fired():
+	_launcher_firing = false
+	
+func use_grenade(at :Vector3):
+	stop()
+	_weapon_aimed = false
+	_weapon.stop_firing()
+	
+	if _is_master:
+		rpc("_use_grenade")
+		
+remotesync func _use_grenade():
+	_launcher_firing = true
+	_current_anim = "use_grenade"
+	animation_state.travel(_current_anim)
+	
+func _on_grenade_use():
 	_launcher_firing = false
 	
 func _set_animation():

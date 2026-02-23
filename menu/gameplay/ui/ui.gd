@@ -81,6 +81,14 @@ func _on_use_launcher_pressed():
 		selected_battle_map_unit.use_launcher(Vector3.ZERO)
 		Global.unit_responded(RadioChatters.COMBAT_STATUS,selected_battle_map_unit.team)
 
+func _on_use_grenade_pressed():
+	if not is_instance_valid(selected_battle_map_unit):
+		return
+		
+	if selected_battle_map_unit is Infantry:
+		selected_battle_map_unit.use_grenade(Vector3.ZERO)
+		Global.unit_responded(RadioChatters.COMBAT_STATUS,selected_battle_map_unit.team)
+	
 func _on_landing_pressed():
 	if not is_instance_valid(selected_battle_map_unit):
 		return
@@ -88,3 +96,5 @@ func _on_landing_pressed():
 	if selected_battle_map_unit is Vehicle:
 		selected_battle_map_unit.drop_passenger()
 		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,selected_battle_map_unit.team)
+
+

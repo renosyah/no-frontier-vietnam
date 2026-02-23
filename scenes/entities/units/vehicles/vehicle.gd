@@ -3,12 +3,9 @@ class_name Vehicle
 
 signal on_vehicle_drop_passenger(vehicle, passengers)
 
-export var fuel_cost :int = 1
-export var fuel :int = 100
-export var max_fuel :int = 100
-
 export var altitude :float
 export var is_air :bool
+export var capacity :int = 1
 
 var squad :BaseSquad
 var passengers :Array # [ InfantrySquad ]
@@ -21,10 +18,9 @@ puppet var _puppet_rotation_y :float
 func _ready():
 	margin = 0.4
 	_altitude = altitude
-	connect("on_current_tile_updated", self, "_on_current_tile_updated")
 	
 func move_to(tile_id :Vector2):
-	if fuel == 0 or _on_task:
+	if _on_task:
 		return
 	
 	.move_to(tile_id)
@@ -35,6 +31,9 @@ func drop_passenger():
 		
 	emit_signal("on_vehicle_drop_passenger", self, passengers.duplicate())
 	passengers.clear()
+	
+func have_task():
+	return _on_task
 	
 func prepare_take_passenger():
 	pass
@@ -51,12 +50,6 @@ func _get_tile_path(to :Vector2) -> Array:
 		
 	return paths
 	
-func _on_current_tile_updated(_unit, _from_id, _to_id):
-	fuel = clamp(fuel - fuel_cost, 0, max_fuel)
-	
-	if fuel == 0:
-		stop()
-
 func sync_update() -> void:
 	.sync_update()
 	
