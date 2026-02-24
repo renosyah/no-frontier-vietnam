@@ -13,5 +13,6 @@ speed = 0.2
 position = Vector3( 0, 0, 0 )
 scene_index = 0
 color = Color( 0, 0, 0, 1 )
+unit_voice = 1
 members = [  ]
 team_color_material_index = 0

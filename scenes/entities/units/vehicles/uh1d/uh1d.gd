@@ -67,7 +67,7 @@ func drop_passenger():
 		return
 		
 	_on_task = true
-	_altitude = 0
+	_altitude = 0.15
 	animation_player.play("landing")
 	animation_player.play("door_open")
 	yield(get_tree().create_timer(3),"timeout")
@@ -84,7 +84,7 @@ func prepare_take_passenger():
 		return
 		
 	_on_task = true
-	_altitude = 0
+	_altitude = 0.15
 	animation_player.play("landing")
 	animation_player.play("door_open")
 	

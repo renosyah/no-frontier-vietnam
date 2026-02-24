@@ -24,6 +24,7 @@ class TileUnitPath:
 export var team :int = 0
 export var color :Color = Color.white
 export var speed :float = 0.4
+export var unit_voice :int # 1=us, 2:viet
 
 # hp
 export var hp :int = 3

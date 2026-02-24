@@ -77,8 +77,8 @@ func init_radio_chatter():
 	radio_chatter = preload("res://assets/sounds/radio_chatter/radio_chatters.tscn").instance()
 	add_child(radio_chatter)
 
-func unit_responded(chatter_id :int, team :int, with_static :bool = false):
-	var r = radio_chatter.US_RADIO[chatter_id] if team == 1 else radio_chatter.VIET_RADIO[chatter_id]
+func unit_responded(chatter_id :int, unit_voice :int, with_static :bool = false):
+	var r = radio_chatter.US_RADIO[chatter_id] if unit_voice == 1 else radio_chatter.VIET_RADIO[chatter_id]
 	var k = r.keys()
 	var key = k[randi() % k.size()]
 	radio_chatter.play_radio(key, r[key], with_static, true)

@@ -25,6 +25,7 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	vehicle_squad.team = team
 	vehicle_squad.overlay_ui = overlay_ui_path
 	vehicle_squad.camera = cam_path
+	vehicle_squad.unit_voice = unit_voice
 	vehicle_squad.is_selectable = (player_id == player_data.player_id)
 	vehicle_squad.squad_icon = preload("res://assets/user_interface/icons/floating_icon/uh1d.png")
 	vehicle_squad.color = color

@@ -45,6 +45,7 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	infantry.current_tile = Vector2.ZERO
 	infantry.team = team
 	infantry.is_selectable = (player_id == player_data.player_id)
+	infantry.unit_voice = unit_voice
 	
 	infantry.skin_material = MaterialsIndex.infantry_skin_colors[skin_material_index]
 	infantry.uniform_material = MaterialsIndex.infantry_uniforms[uniform_material_index]

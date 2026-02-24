@@ -34,6 +34,7 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	vehicle.is_air = is_air
 	vehicle.altitude = altitude
 	vehicle.capacity = capacity
+	vehicle.unit_voice = unit_voice
 	vehicle.team_color_material = MaterialsIndex.team_colors[team_color_material_index]
 	vehicle.connect("on_unit_selected", parent, "_on_battle_map_unit_selected")
 	vehicle.connect("on_unit_dead", parent, "_on_battle_map_unit_dead")

@@ -34,6 +34,7 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	infantry_squad.team = team
 	infantry_squad.overlay_ui = overlay_ui_path
 	infantry_squad.camera = cam_path
+	infantry_squad.unit_voice = unit_voice
 	infantry_squad.is_selectable = (player_id == player_data.player_id)
 	infantry_squad.squad_icon = preload("res://assets/user_interface/icons/floating_icon/infantry.png")
 	infantry_squad.team_color_material = MaterialsIndex.team_colors[team_color_material_index]

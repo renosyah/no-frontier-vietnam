@@ -25,6 +25,15 @@ func _process(_delta):
 	if is_instance_valid(current_cam):
 		clickable_floor.translation = current_cam.translation * Vector3(1,0,1)
 		
+		if is_instance_valid(ui.selected_battle_map_unit):
+			var speed = ui.selected_battle_map_unit.speed
+			var pos = ui.selected_battle_map_unit.global_position
+			var cam_y = current_cam.translation.y
+			pos = pos + (Vector3.BACK * (cam_y - pos.y - 1))
+			var new_pos = Vector3(pos.x,cam_y,pos.z)
+			current_cam.translation = current_cam.translation.linear_interpolate(new_pos, speed * _delta)
+			
+			
 	show_tile_by_ray()
 	
 func _notification(what):
@@ -248,12 +257,14 @@ func _on_camera_up_exiting():
 	if current_cam != movable_camera_battle:
 		return
 		
-	hide_battle_map()
+	if is_instance_valid(ui.selected_battle_map_unit):
+		return
+		
 	use_grand_camera()
 	
-	if is_instance_valid(ui.selected_battle_map_unit):
-		ui.selected_battle_map_unit.set_selected(false)
-		ui.selected_battle_map_unit = null
+#	if is_instance_valid(ui.selected_battle_map_unit):
+#		ui.selected_battle_map_unit.set_selected(false)
+#		ui.selected_battle_map_unit = null
 
 ##########################################  floor interaction  ############################################
 
@@ -278,7 +289,7 @@ func on_grandmap_clicked_input(tile :TileMapData):
 		var unit :BaseTileUnit = ui.selected_squad
 		unit.tile_map = grand_map
 		unit.move_to(tile.id)
-		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.team)
+		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.unit_voice)
 		show_feedback_move_order(tile.pos + grand_map.global_position)
 		
 func on_battle_map_clicked_input(tile :TileMapData):
@@ -286,7 +297,7 @@ func on_battle_map_clicked_input(tile :TileMapData):
 		var unit :BaseTileUnit = ui.selected_battle_map_unit
 		unit.tile_map = current_battle_map
 		unit.move_to(tile.id)
-		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.team)
+		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.unit_voice)
 		show_feedback_move_order(tile.pos + current_battle_map.global_position)
 		
 ########################################## selection tile ############################################
@@ -650,7 +661,7 @@ func _on_grand_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2
 	unit.set_hidden(in_zone)
 	
 	if unit.player_id == player.player_id:
-		Global.unit_responded(RadioChatters.MOVEMENT, unit.team)
+		Global.unit_responded(RadioChatters.MOVEMENT, unit.unit_voice)
 	
 	if in_zone:
 		# if currently selected squad then it became unselected
@@ -661,9 +672,9 @@ func _on_grand_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2
 		rpc("_on_grand_map_squad_enter_battle_map", unit.get_path(), from_tile_id, current_tile_id)
 	
 # filter only for enemy unit that spotted, not player
-func _on_grand_map_squad_spotted(_unit :BaseTileUnit):
-	if _unit.player_id != player.player_id:
-		Global.unit_responded(RadioChatters.ENEMY_SPOTTED, player.player_team)
+func _on_grand_map_squad_spotted(unit :BaseTileUnit):
+	if unit.player_id != player.player_id:
+		Global.unit_responded(RadioChatters.ENEMY_SPOTTED, unit.unit_voice)
 	
 # tell all that this squad are entering
 # battle map
