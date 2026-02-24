@@ -6,6 +6,7 @@ signal on_vehicle_drop_passenger(vehicle, passengers)
 export var altitude :float
 export var is_air :bool
 export var capacity :int = 1
+export var team_color_material :SpatialMaterial
 
 var squad :BaseSquad
 var passengers :Array # [ InfantrySquad ]
@@ -62,7 +63,7 @@ func master_moving(_delta :float) -> void:
 	translation.y = lerp(translation.y, _altitude, 2 * _delta)
 	
 # overide move_to_path
-func _move_to_path(delta :float, pos :Vector3, to :Vector3):
+func _move_to_path(delta :float, _pos :Vector3, to :Vector3):
 	if _altitude < (0.5):
 		return
 		

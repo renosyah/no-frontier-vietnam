@@ -1,6 +1,6 @@
 [gd_resource type="Resource" load_steps=2 format=2]
 
-[ext_resource path="res://data/unit_data/infantry/infantry_data.gd" type="Script" id=1]
+[ext_resource path="res://data/unit_data/vehicle/vehicle_data.gd" type="Script" id=1]
 
 [resource]
 script = ExtResource( 1 )
@@ -11,14 +11,9 @@ team = 0
 current_tile = Vector2( 0, 0 )
 speed = 0.0
 position = Vector3( 0, 0, 0 )
-scene_index = 0
+scene_index = 1
 color = Color( 0, 0, 0, 1 )
-skin_material_index = 0
-uniform_material_index = 1
 team_color_material_index = 0
-hat_scene_index = 1
-bag_scene_index = 2
-vest_scene_index = 1
-weapon_scene_index = 1
-launcher_scene_index = 1
-uniform_style = 2
+altitude = 2.0
+is_air = true
+capacity = 1

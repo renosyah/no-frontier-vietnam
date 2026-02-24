@@ -65,31 +65,50 @@ func _on_all_player_ready():
 			
 			var tile_id :Vector2 = bases[data.player_team - 1]
 			
-			var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/macv_squad.tres").duplicate()
+			var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
 			infantry_squad.player_network_id = p.player_network_unique_id
 			infantry_squad.player_id = data.player_id
-			infantry_squad.squad_name = "squad_infantry_%s" % Utils.create_unique_id()
+			infantry_squad.unit_name = "squad_infantry_%s" % Utils.create_unique_id()
 			infantry_squad.team = data.player_team
 			infantry_squad.current_tile = tile_id
-			infantry_squad.speed = 0.4
 			infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
-			infantry_squad.scene_index = 0
-			
+	
 			infantry_squad.members = []
 			for _i in 4:
 				var infantry :InfantryData = preload("res://data/unit_data/infantry/macv_riflement.tres").duplicate()
 				infantry.player_network_id = p.player_network_unique_id
 				infantry.player_id = data.player_id
-				infantry.squad_name = "infantry_%s" % Utils.create_unique_id()
+				infantry.unit_name = "infantry_%s" % Utils.create_unique_id()
 				infantry.team = data.player_team
 				infantry.current_tile = Vector2.ZERO
 				infantry.speed = 1.3
 				infantry.position = Vector3.ZERO
 				infantry.scene_index = 0
-				infantry_squad.append(infantry)
+				infantry_squad.members.append(infantry)
+		
+			rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
 			
-			CONTINUE THIS
-			rpc("_spawn_grand_map_squad", infantry_squad)
+			yield(get_tree().create_timer(1),"timeout")
+			
+			var vehicle_squad :VehicleSquadData = preload("res://data/unit_data/squad/vehicle_squad.tres").duplicate()
+			vehicle_squad.player_network_id = p.player_network_unique_id
+			vehicle_squad.player_id = data.player_id
+			vehicle_squad.unit_name = "vehicle_infantry_%s" % Utils.create_unique_id()
+			vehicle_squad.team = data.player_team
+			vehicle_squad.current_tile = tile_id
+			vehicle_squad.position = grand_map.get_tile_instance(tile_id).global_position
+			
+			var vehicle = preload("res://data/unit_data/vehicle/uh1d.tres").duplicate()
+			vehicle.player_network_id = p.player_network_unique_id
+			vehicle.player_id = data.player_id
+			vehicle.unit_name = "vehicle_%s" % Utils.create_unique_id()
+			vehicle.team = data.player_team
+			vehicle.current_tile = Vector2.ZERO
+			vehicle.position = Vector3.ZERO
+			
+			vehicle_squad.vehicle = vehicle
+			
+			rpc("_spawn_grand_map_vehicle", vehicle_squad.to_bytes())
 			
 ########################################## grand map  ############################################
 
@@ -125,14 +144,14 @@ func setup_base_and_point():
 		var base :BaseTileObject = preload("res://scenes/tile_objects/grand/faction_base.tscn").instance()
 		grand_map.add_child(base)
 		base.translation = grand_map.get_tile_instance(id).translation
-		base.set_color(Global.spatial_team_colors[idx])
+		base.set_color(Global.get_base_material_color(idx, player.player_team))
 		idx += 1
 		
 	for id in grand_map_mission_data.points:
 		var point :BaseTileObject = preload("res://scenes/tile_objects/grand/flag_pole.tscn").instance()
 		grand_map.add_child(point)
 		point.translation = grand_map.get_tile_instance(id).translation
-		point.set_color(Global.spatial_team_colors[Global.TEAM_WHITE])
+		point.set_color(MaterialsIndex.team_colors[0])
 		points[id] = point
 		
 ########################################## camera  ############################################
@@ -497,104 +516,39 @@ var spawned_squad :Array = [] # for tracking purposes
 # this is for spotting mechanic
 var grand_map_watchlist_position :Array = []
 
-remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team :int, tile_id :Vector2, at :Vector3):
-	for squad_id in 3:
-		var infantry_squad :InfantrySquad = preload("res://scenes/entities/units/squad/infatry_squad.tscn").instance()
-		infantry_squad.player_id = player_id
-		infantry_squad.name = "squad_infantry_%s_%s" % [player_id, squad_id]
-		infantry_squad.set_network_master(network_id)
-		infantry_squad.current_tile = tile_id
-		infantry_squad.team = team
-		infantry_squad.overlay_ui = ui.grand_map_overlay_ui.get_path()
-		infantry_squad.camera = movable_camera_room.camera.get_path()
-		infantry_squad.is_selectable = (player_id == player.player_id)
-		infantry_squad.squad_icon = preload("res://assets/user_interface/icons/floating_icon/infantry.png")
-		infantry_squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
-		infantry_squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
-		infantry_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
-		infantry_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
-		
-		if infantry_squad is InfantrySquad:
-			infantry_squad.connect("on_infatry_squad_task_enter_vehicle", self, "_on_grand_map_infatry_squad_task_enter_vehicle")
-		
-		add_child(infantry_squad)
-		
-		infantry_squad.set_spotted(team != player.player_team)
-		infantry_squad.set_hidden(false)
-		infantry_squad.translation = at
-		
-		# connect signal after set_spotted function called
-		# if not,it will trigger to emit on_unit_spotted
-		infantry_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
-		
-		for i in 4:
-			var infantry:Infantry  = preload("res://scenes/entities/units/infantry/infantry.tscn").instance()
-			infantry.player_id = player_id
-			infantry.name = "infantry_%s_%s" % [infantry_squad.name, i]
-			infantry.set_network_master(network_id)
-			infantry.current_tile = Vector2.ZERO
-			infantry.team = team
-			infantry.is_selectable = (player_id == player.player_id)
-			infantry.connect("on_unit_selected", self, "_on_battle_map_unit_selected")
-			infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
-			add_child(infantry)
-			
-			infantry.translation = Vector3(-100, -100, -100)
-			infantry.visible = false
-			infantry.set_hidden(false)
-			infantry.set_spotted(true)
-			infantry.squad = infantry_squad
-			infantry.set_sync(false)
-			
-			infantry_squad.members.append(infantry)
-		
-		on_grand_map_squad_spawned(infantry_squad)
+remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
+	var squad :InfantrySquadData = InfantrySquadData.new()
+	squad.from_bytes(bytes)
+	squad.color = Global.get_team_color(
+		squad.player_id, squad.team, player.player_id, player.player_team
+	)
 	
-remotesync func _spawn_grand_map_vehicle(network_id :int, player_id :String, team :int, tile_id :Vector2, at :Vector3):
-	var vehicle_squad :VehicleSquad = preload("res://scenes/entities/units/squad/vehicle_squad.tscn").instance()
-	vehicle_squad.player_id = player_id
-	vehicle_squad.name = "squad_vehicle_%s" % player_id
-	vehicle_squad.set_network_master(network_id)
-	vehicle_squad.current_tile = tile_id
-	vehicle_squad.team = team
-	vehicle_squad.overlay_ui = ui.grand_map_overlay_ui.get_path()
-	vehicle_squad.camera = movable_camera_room.camera.get_path()
-	vehicle_squad.is_selectable = (player_id == player.player_id)
-	vehicle_squad.squad_icon = preload("res://assets/user_interface/icons/floating_icon/uh1d.png")
-	vehicle_squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
-	vehicle_squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
-	vehicle_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
-	vehicle_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
-	add_child(vehicle_squad)
+	for i in squad.members:
+		var infantry :InfantryData = i
+		infantry.team_color_material_index = Global.get_team_material_color_index(
+			squad.player_id, squad.team, player.player_id, player.player_team
+		)
 	
-	vehicle_squad.set_spotted(team != player.player_team)
-	vehicle_squad.set_hidden(false)
-	vehicle_squad.translation = at
+	var infantry_squad :InfantrySquad = squad.spawn(
+		player, self, ui.grand_map_overlay_ui.get_path(), movable_camera_room.camera.get_path()
+	)
 	
-	# connect signal after set_spotted function called
-	# if not,it will trigger to emit on_unit_spotted
-	vehicle_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
+	on_grand_map_squad_spawned(infantry_squad)
 	
-	var vehicle :Vehicle = preload("res://scenes/entities/units/vehicles/uh1d/uh1d.tscn").instance()
-	vehicle.player_id = player_id
-	vehicle.name = "vehicle_%s" % vehicle_squad.name
-	vehicle.set_network_master(network_id)
-	vehicle.current_tile = Vector2.ZERO
-	vehicle.team = team
-	vehicle.is_selectable = (player_id == player.player_id)
-	vehicle.connect("on_unit_selected", self, "_on_battle_map_unit_selected")
-	vehicle.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
-	vehicle.connect("on_vehicle_drop_passenger", self, "_on_battle_map_vehicle_drop_passenger")
-	add_child(vehicle)
+remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
+	var squad :VehicleSquadData = VehicleSquadData.new()
+	squad.from_bytes(bytes)
+	squad.color = Global.get_team_color(
+		squad.player_id, squad.team, player.player_id, player.player_team
+	)
 	
-	vehicle.translation = Vector3(-100, -100, -100)
-	vehicle.visible = false
-	vehicle.set_hidden(false)
-	vehicle.set_spotted(true)
-	vehicle.set_sync(false)
-	vehicle.squad = vehicle_squad
-	
-	vehicle_squad.vehicle = vehicle
+	squad.vehicle.team_color_material_index = Global.get_team_material_color_index(
+		squad.player_id, squad.team, player.player_id, player.player_team
+	)
+		
+	var vehicle_squad :VehicleSquad = squad.spawn(
+		player, self, ui.grand_map_overlay_ui.get_path(), movable_camera_room.camera.get_path()
+	)
 	
 	on_grand_map_squad_spawned(vehicle_squad)
 	

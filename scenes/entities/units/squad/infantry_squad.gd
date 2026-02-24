@@ -92,7 +92,7 @@ func is_camp_mode() -> bool:
 	
 func _ready():
 	for i in mesh_instances:
-		i.set_surface_material(0, Global.spatial_team_colors[team])
+		i.set_surface_material(0, team_color_material)
 		
 func move_to(tile_id :Vector2):
 	if is_ambush_mode() or _on_camp_mode:

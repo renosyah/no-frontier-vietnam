@@ -7,6 +7,7 @@ signal on_squad_task_exit_battle_map(squad, to_grand_map_id)
 export var overlay_ui :NodePath
 export var squad_icon :StreamTexture
 export var camera :NodePath
+export var team_color_material :SpatialMaterial
 
 onready var _cam :Camera = get_node_or_null(camera)
 onready var _overlay_ui :Control = get_node_or_null(overlay_ui)
@@ -15,7 +16,7 @@ var _floating_icon :FloatingSquadIcon
 
 func _ready():
 	_floating_icon = preload("res://assets/user_interface/icons/floating_icon/floating_icon.tscn").instance()
-	_floating_icon.color = Global.flat_team_colors[team]
+	_floating_icon.color = color
 	_floating_icon.icon = squad_icon
 	_floating_icon.name = name
 	_floating_icon.is_selectable = is_selectable

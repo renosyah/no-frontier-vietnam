@@ -61,7 +61,7 @@ func _ready():
 	bag_holder.add_child(bag_scene.instance())
 	headgear_holder.add_child(hat_scene.instance())
 	vest_holder.add_child(vest_scene.instance())
-	uniform_style(skin_material, uniform_material, uniform_style)
+	set_uniform_style(skin_material, uniform_material, uniform_style)
 	
 	_weapon.is_master = _is_master
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
@@ -69,7 +69,7 @@ func _ready():
 	weapon_holder.add_child(_weapon)
 	single_use_weapon.add_child(_launcher)
 	
-func uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
+func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
 	
 	# normal
 	if mode == 0:

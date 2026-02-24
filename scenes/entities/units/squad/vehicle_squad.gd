@@ -12,7 +12,7 @@ onready var task_checker = $task_checker
 var vehicle :Vehicle
 
 func _ready():
-	mesh_instance.set_surface_material(0, Global.spatial_team_colors[team])
+	mesh_instance.set_surface_material(0, team_color_material)
 	connect("on_current_tile_updated", self, "_on_current_tile_updated")
 	
 func _on_current_tile_updated(_unit, _from_id, _to_id):

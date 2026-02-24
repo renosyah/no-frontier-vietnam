@@ -9,20 +9,30 @@ func _ready():
 	
 ##########################################  team  ############################################
 
-const TEAM_WHITE = 0
-const TEAM_BLUE = 1
-const TEAM_RED = 2
-
-const spatial_team_colors = {
-	TEAM_WHITE :MaterialsIndex.team_colors[0],
-	TEAM_BLUE :MaterialsIndex.team_colors[1],
-	TEAM_RED :MaterialsIndex.team_colors[2],
-}
-const flat_team_colors = {
-	TEAM_WHITE :Color.white,
-	TEAM_BLUE : Color.blue,
-	TEAM_RED :Color.red
-}
+func get_team_color(owner_id :String, team :int, player_id :String, player_team :int):
+	if owner_id == player_id:
+		return Color.blue
+	if owner_id != player_id and team == player_team:
+		return Color.white
+		
+	return Color.red
+	
+func get_team_material_color(owner_id :String, team :int, player_id :String, player_team :int):
+	return MaterialsIndex.team_colors[get_team_material_color_index(owner_id, team, player_id, player_team)]
+	
+func get_team_material_color_index(owner_id :String, team :int, player_id :String, player_team :int):
+	if owner_id == player_id:
+		return 1
+	if owner_id != player_id and team == player_team:
+		return 0
+		
+	return 2
+	
+func get_base_material_color(index :int, player_team :int):
+	if index == player_team:
+		return MaterialsIndex.team_colors[1]
+	return MaterialsIndex.team_colors[2]
+	
 ##########################################  player data  ############################################
 
 const player_data_filepath :String = "player_data.dat"
@@ -68,7 +78,7 @@ func init_radio_chatter():
 	add_child(radio_chatter)
 
 func unit_responded(chatter_id :int, team :int, with_static :bool = false):
-	var r = radio_chatter.US_RADIO[chatter_id] if team == TEAM_BLUE else radio_chatter.VIET_RADIO[chatter_id]
+	var r = radio_chatter.US_RADIO[chatter_id] if team == 1 else radio_chatter.VIET_RADIO[chatter_id]
 	var k = r.keys()
 	var key = k[randi() % k.size()]
 	radio_chatter.play_radio(key, r[key], with_static, true)

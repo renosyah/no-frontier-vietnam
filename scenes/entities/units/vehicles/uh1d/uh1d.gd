@@ -32,7 +32,7 @@ func sync_update() -> void:
 		
 func _ready():
 	area.connect("input_event", self, "_on_Area_input_event")
-	circle.set_surface_material(0, Global.spatial_team_colors[team])
+	circle.set_surface_material(0, team_color_material)
 
 func set_selected(v :bool):
 	.set_selected(v)
@@ -40,7 +40,7 @@ func set_selected(v :bool):
 	if not is_selectable:
 		return
 		
-	circle.set_surface_material(0, selected_area_material if _is_selected else Global.spatial_team_colors[team])
+	circle.set_surface_material(0, selected_area_material if _is_selected else team_color_material)
 	
 func move_to(tile_id :Vector2):
 	.move_to(tile_id)
