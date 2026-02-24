@@ -13,7 +13,7 @@ func get_team_color(owner_id :String, team :int, player_id :String, player_team 
 	if owner_id == player_id:
 		return Color.blue
 	if owner_id != player_id and team == player_team:
-		return Color.white
+		return Color.yellow
 		
 	return Color.red
 	
@@ -24,7 +24,7 @@ func get_team_material_color_index(owner_id :String, team :int, player_id :Strin
 	if owner_id == player_id:
 		return 1
 	if owner_id != player_id and team == player_team:
-		return 0
+		return 3
 		
 	return 2
 	

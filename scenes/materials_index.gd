@@ -14,5 +14,6 @@ const infantry_skin_colors = [
 const team_colors = [
 	preload("res://assets/team_colors/white_color_team.tres"),
 	preload("res://assets/team_colors/blue_color_team.tres"),
-	preload("res://assets/team_colors/red_color_team.tres")
+	preload("res://assets/team_colors/red_color_team.tres"),
+	preload("res://assets/team_colors/yellow_color_team.tres")
 ]

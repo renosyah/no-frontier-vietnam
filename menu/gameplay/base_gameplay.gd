@@ -53,6 +53,9 @@ func _on_all_player_ready():
 	
 	yield(get_tree().create_timer(2),"timeout")
 	
+	var macv_riflement = preload("res://data/unit_data/infantry/macv_riflement.tres")
+	var nva_riflement = preload("res://data/unit_data/infantry/nva_riflement.tres")
+	
 	# test squad
 	if NetworkLobbyManager.is_server():
 		for i in NetworkLobbyManager.get_players():
@@ -72,10 +75,10 @@ func _on_all_player_ready():
 			infantry_squad.team = data.player_team
 			infantry_squad.current_tile = tile_id
 			infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
-	
+			
 			infantry_squad.members = []
 			for _i in 4:
-				var infantry :InfantryData = preload("res://data/unit_data/infantry/macv_riflement.tres").duplicate()
+				var infantry :InfantryData = (nva_riflement if data.player_team != 1 else macv_riflement).duplicate()
 				infantry.player_network_id = p.player_network_unique_id
 				infantry.player_id = data.player_id
 				infantry.unit_name = "infantry_%s" % Utils.create_unique_id()
@@ -88,6 +91,9 @@ func _on_all_player_ready():
 		
 			rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
 			
+			if data.player_team != 1:
+				continue
+				
 			yield(get_tree().create_timer(1),"timeout")
 			
 			var vehicle_squad :VehicleSquadData = preload("res://data/unit_data/squad/vehicle_squad.tres").duplicate()
@@ -473,24 +479,24 @@ func get_transit_point_spawn_point(current_tile_id :Vector2, from_tile_id :Vecto
 	
 func create_entry_positions(from_tile_id :Vector2, current_tile_id :Vector2, is_air :bool = false) -> Array:
 	var entry_positions :Array = []
+	var map_size :int = grand_map_manifest_data.battle_map_size
 	var point :BattleMapTransitPoint = get_transit_point_spawn_point(
 		current_tile_id, from_tile_id
 	)
-	
 	var positions :Array
 	var point_battle_map :BaseTileMap
 	var battle_map_tile_id :Vector2 # for fallback
 	
 	# simplified LOL
 	if is_air:
-		return [[Vector2.ZERO], battle_map_holder[current_tile_id], Vector2.ZERO]
+		battle_map_tile_id = current_tile_id.direction_to(from_tile_id) * map_size
+		return [[battle_map_tile_id], battle_map_holder[current_tile_id], Vector2.ZERO]
 	
 	# for case if squad enter
 	# but no entry point found from direction
 	# of that squad entering
 	# NOT USED NOW
 	if point == null:
-		var map_size :int = grand_map_manifest_data.battle_map_size
 		battle_map_tile_id = from_tile_id.direction_to(current_tile_id) * map_size
 		point_battle_map = battle_map_holder[current_tile_id]
 		positions = TileMapUtils.get_adjacent_tiles(TileMapUtils.get_directions(), battle_map_tile_id, 2)
@@ -519,10 +525,13 @@ var grand_map_watchlist_position :Array = []
 remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 	var squad :InfantrySquadData = InfantrySquadData.new()
 	squad.from_bytes(bytes)
+	
 	squad.color = Global.get_team_color(
 		squad.player_id, squad.team, player.player_id, player.player_team
 	)
-	
+	squad.team_color_material_index = Global.get_team_material_color_index(
+		squad.player_id, squad.team, player.player_id, player.player_team
+	)
 	for i in squad.members:
 		var infantry :InfantryData = i
 		infantry.team_color_material_index = Global.get_team_material_color_index(
@@ -538,14 +547,15 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	var squad :VehicleSquadData = VehicleSquadData.new()
 	squad.from_bytes(bytes)
+	
 	squad.color = Global.get_team_color(
 		squad.player_id, squad.team, player.player_id, player.player_team
 	)
-	
-	squad.vehicle.team_color_material_index = Global.get_team_material_color_index(
+	squad.team_color_material_index = Global.get_team_material_color_index(
 		squad.player_id, squad.team, player.player_id, player.player_team
 	)
-		
+	squad.vehicle.team_color_material_index = squad.team_color_material_index
+	
 	var vehicle_squad :VehicleSquad = squad.spawn(
 		player, self, ui.grand_map_overlay_ui.get_path(), movable_camera_room.camera.get_path()
 	)
@@ -730,6 +740,7 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 		var entry_positions :Array = result[0]
 		var point_battle_map :BaseTileMap = result[1]
 		var battle_map_tile_id :Vector2 = result[2]
+		var center_point :Vector3 = point_battle_map.get_tile_instance(Vector2.ZERO).global_position
 		
 		vehicle.tile_map = point_battle_map
 		vehicle.current_tile = battle_map_tile_id
@@ -746,15 +757,20 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 			
 		vehicle.translation.y = 10.0 if vehicle.is_air else vehicle.translation.y
 		
+		if vehicle.current_tile != Vector2.ZERO:
+			vehicle.look_at(center_point, Vector3.UP)
+			vehicle.global_rotation.x = 0
+			vehicle.global_rotation.z = 0
+				
 	if unit is InfantrySquad:
 		var result :Array = create_entry_positions(from_tile_id, current_tile_id)
 		var entry_positions :Array = result[0]
 		var point_battle_map :BaseTileMap = result[1]
 		var battle_map_tile_id :Vector2 = result[2]
+		var center_point :Vector3 = point_battle_map.get_tile_instance(Vector2.ZERO).global_position
 		
 		for member in unit.members:
 			var infantry :Infantry = member
-			
 			infantry.tile_map = point_battle_map
 			infantry.current_tile = battle_map_tile_id
 			infantry.translation = point_battle_map.get_tile_instance(infantry.current_tile).global_position
@@ -767,6 +783,11 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 				infantry.current_tile = entry_positions.front()
 				infantry.translation = point_battle_map.get_tile_instance(infantry.current_tile).global_position
 				entry_positions.pop_front()
+				
+			if infantry.current_tile != Vector2.ZERO:
+				infantry.look_at(center_point, Vector3.UP)
+				infantry.global_rotation.x = 0
+				infantry.global_rotation.z = 0
 			
 func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector2, grand_map_tile_id :Vector2):
 	if squad is VehicleSquad:
@@ -789,7 +810,7 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 func order_infatry_squad_to_enter_vehicle(infantry :Infantry, vehicle :Vehicle):
 	var has_space :bool = vehicle.capacity > vehicle.passengers.size()
 	var is_enter_tile_valid :bool = infantry.tile_map.is_nav_enable(vehicle.current_tile)
-	if not is_enter_tile_valid or not has_space or vehicle.have_task():
+	if not is_enter_tile_valid or not has_space or vehicle.have_task() or vehicle.is_moving():
 		return
 		
 	var squad :InfantrySquad = infantry.squad

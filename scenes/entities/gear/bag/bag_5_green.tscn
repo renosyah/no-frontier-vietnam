@@ -1,9 +1,15 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scenes/entities/units/infantry/uniform_khaki.tres" type="Material" id=1]
 [ext_resource path="res://scenes/entities/units/infantry/uniform_green.tres" type="Material" id=2]
 [ext_resource path="res://scenes/entities/gear/bag/bag.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://scenes/entities/gear/weapons/m72/m72law.obj" type="ArrayMesh" id=5]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0, 0.196078, 0.00784314, 1 )
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
 
 [node name="bag_5" type="Spatial"]
 
@@ -19,3 +25,5 @@ transform = Transform( 0.0283578, 0.999598, 0, -0.999598, 0.0283578, 0, 0, 0, 1,
 cast_shadow = 0
 mesh = ExtResource( 5 )
 software_skinning_transform_normals = false
+material/0 = SubResource( 1 )
+material/1 = SubResource( 2 )

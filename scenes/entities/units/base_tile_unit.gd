@@ -71,6 +71,9 @@ func move_to(tile_id :Vector2):
 	_paths.clear()
 	_paths.append_array(v)
 	
+func is_moving() -> bool:
+	return _is_moving
+	
 func _get_tile_path(to :Vector2) -> Array:
 	var paths :Array = []
 	var p :PoolVector2Array = tile_map.get_navigation(current_tile, to, [], false)

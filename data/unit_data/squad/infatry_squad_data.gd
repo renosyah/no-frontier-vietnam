@@ -37,6 +37,7 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	infantry_squad.is_selectable = (player_id == player_data.player_id)
 	infantry_squad.squad_icon = preload("res://assets/user_interface/icons/floating_icon/infantry.png")
 	infantry_squad.team_color_material = MaterialsIndex.team_colors[team_color_material_index]
+	infantry_squad.color = color
 	infantry_squad.connect("on_finish_travel", parent ,"_on_grand_map_squad_finish_travel")
 	infantry_squad.connect("on_current_tile_updated", parent, "_on_grand_map_squad_current_tile_updated")
 	infantry_squad.connect("on_unit_selected", parent, "_on_grand_map_squad_selected")
