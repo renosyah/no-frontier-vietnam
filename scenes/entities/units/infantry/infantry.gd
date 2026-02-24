@@ -1,39 +1,23 @@
 extends BaseTileUnit
 class_name Infantry
 
-const uniform_green = preload("res://scenes/entities/units/infantry/uniform_green.tres")
-const uniform_khaki = preload("res://scenes/entities/units/infantry/uniform_khaki.tres")
-
-const skin_colors = [
-	preload("res://scenes/entities/units/infantry/skin_color_material.tres"), # white / asian
-	preload("res://scenes/entities/units/infantry/skin_color_dark_material.tres") # nigga
-]
-
-const green_bags = [
-	preload("res://scenes/entities/gear/bag/bag_1_green.tscn"),
-	preload("res://scenes/entities/gear/bag/bag_2_green.tscn"),
-	preload("res://scenes/entities/gear/bag/bag_3_green.tscn"),
-	preload("res://scenes/entities/gear/bag/bag_4.tscn"),
-	preload("res://scenes/entities/gear/bag/bag_5_green.tscn"),
-]
-
-const khaki_bags = [
-	preload("res://scenes/entities/gear/bag/bag_1_khaki.tscn"),
-	preload("res://scenes/entities/gear/bag/bag_2_khaki.tscn"),
-	preload("res://scenes/entities/gear/bag/bag_3_khaki.tscn"),
-	preload("res://scenes/entities/gear/bag/bag_4.tscn"),
-	preload("res://scenes/entities/gear/bag/bag_5_khaki.tscn"),
-]
-
-
 const reload_sound = preload("res://assets/sounds/weapons/reload.wav")
 const shot_sounds = [
 	preload("res://assets/sounds/weapons/shot_1.wav"),
 	preload("res://assets/sounds/weapons/shot_2.wav"),
 	preload("res://assets/sounds/weapons/shot_3.wav")
 ]
-
 const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
+
+export var skin_material :SpatialMaterial
+export var uniform_material :SpatialMaterial
+export var team_color_material :SpatialMaterial
+export var hat_scene :PackedScene
+export var bag_scene :PackedScene
+export var vest_scene :PackedScene
+export var weapon_scene :PackedScene
+export var launcher_scene :PackedScene
+export var uniform_style :int
 
 onready var arrow = $circle/arrow
 onready var animation_state = $AnimationTree.get("parameters/playback")
@@ -69,35 +53,15 @@ var _launcher :Spatial
 var squad :BaseSquad
 
 func _ready():
-	area.connect("input_event", self, "_on_Area_input_event")
 	arrow.visible = _is_selected
-	circle.set_surface_material(0, Global.spatial_team_colors[team])
+	circle.set_surface_material(0, team_color_material)
 	
-	# temps weapon spawn by team
-	var uniform :SpatialMaterial
-	var skin :SpatialMaterial = skin_colors[0]
-	
-	randomize()
-	
-	if team == 1:
-		uniform = uniform_green
-		skin = skin_colors[randi() % skin_colors.size()]
-		_weapon = preload("res://scenes/entities/gear/weapons/m16/m16.tscn").instance()
-		_launcher = preload("res://scenes/entities/gear/weapons/m72/m72law.tscn").instance()
-		bag_holder.add_child(green_bags[randi() % green_bags.size()].instance())
-		headgear_holder.add_child(preload("res://scenes/entities/gear/headgear/us_helm.tscn").instance())
-		vest_holder.add_child(preload("res://scenes/entities/gear/vest/vest_1_green.tscn").instance())
-		
-	if team == 2:
-		uniform = uniform_khaki
-		_weapon = preload("res://scenes/entities/gear/weapons/type56/type56.tscn").instance()
-		_launcher = preload("res://scenes/entities/gear/weapons/rpg2/rpg2.tscn").instance()
-		bag_holder.add_child(khaki_bags[randi() % khaki_bags.size()].instance())
-		headgear_holder.add_child(preload("res://scenes/entities/gear/headgear/nva_hat.tscn").instance())
-		vest_holder.add_child(preload("res://scenes/entities/gear/vest/vest_1_khaki.tscn").instance())
-		
-	var styles = [0, 1, 2]
-	uniform_style(skin, uniform, styles[randi() % styles.size()])
+	_weapon = weapon_scene.instance()
+	_launcher = launcher_scene.instance()
+	bag_holder.add_child(bag_scene.instance())
+	headgear_holder.add_child(hat_scene.instance())
+	vest_holder.add_child(vest_scene.instance())
+	uniform_style(skin_material, uniform_material, uniform_style)
 	
 	_weapon.is_master = _is_master
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
@@ -146,7 +110,7 @@ func set_selected(v :bool):
 	if not is_selectable:
 		return
 		
-	circle.set_surface_material(0, selected_area_material if _is_selected else Global.spatial_team_colors[team])
+	circle.set_surface_material(0, selected_area_material if _is_selected else team_color_material)
 	arrow.visible = _is_selected
 	
 func move_to(tile_id :Vector2):

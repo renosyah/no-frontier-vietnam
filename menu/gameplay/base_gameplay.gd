@@ -64,11 +64,33 @@ func _on_all_player_ready():
 			data.from_dictionary(p.extra)
 			
 			var tile_id :Vector2 = bases[data.player_team - 1]
-			rpc("_spawn_grand_map_squad", 
-				p.player_network_unique_id, data.player_id,
-				data.player_team, tile_id,
-				grand_map.get_tile_instance(tile_id).global_position
-			)
+			
+			var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/macv_squad.tres").duplicate()
+			infantry_squad.player_network_id = p.player_network_unique_id
+			infantry_squad.player_id = data.player_id
+			infantry_squad.squad_name = "squad_infantry_%s" % Utils.create_unique_id()
+			infantry_squad.team = data.player_team
+			infantry_squad.current_tile = tile_id
+			infantry_squad.speed = 0.4
+			infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
+			infantry_squad.scene_index = 0
+			
+			infantry_squad.members = []
+			for _i in 4:
+				var infantry :InfantryData = preload("res://data/unit_data/infantry/macv_riflement.tres").duplicate()
+				infantry.player_network_id = p.player_network_unique_id
+				infantry.player_id = data.player_id
+				infantry.squad_name = "infantry_%s" % Utils.create_unique_id()
+				infantry.team = data.player_team
+				infantry.current_tile = Vector2.ZERO
+				infantry.speed = 1.3
+				infantry.position = Vector3.ZERO
+				infantry.scene_index = 0
+				infantry_squad.append(infantry)
+			
+			CONTINUE THIS
+			rpc("_spawn_grand_map_squad", infantry_squad)
+			
 ########################################## grand map  ############################################
 
 onready var grand_map_manifest_data :GrandMapFileManifest = Global.grand_map_manifest_data
@@ -527,10 +549,6 @@ remotesync func _spawn_grand_map_squad(network_id :int, player_id :String, team 
 			infantry_squad.members.append(infantry)
 		
 		on_grand_map_squad_spawned(infantry_squad)
-	
-	# chain calling
-	# for testing purposes
-	_spawn_grand_map_vehicle(network_id, player_id, team, tile_id, at)
 	
 remotesync func _spawn_grand_map_vehicle(network_id :int, player_id :String, team :int, tile_id :Vector2, at :Vector3):
 	var vehicle_squad :VehicleSquad = preload("res://scenes/entities/units/squad/vehicle_squad.tscn").instance()

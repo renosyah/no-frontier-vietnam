@@ -14,9 +14,9 @@ const TEAM_BLUE = 1
 const TEAM_RED = 2
 
 const spatial_team_colors = {
-	TEAM_WHITE :preload("res://assets/team_colors/white_color_team.tres"),
-	TEAM_BLUE : preload("res://assets/team_colors/blue_color_team.tres"),
-	TEAM_RED : preload("res://assets/team_colors/red_color_team.tres")
+	TEAM_WHITE :MaterialsIndex.team_colors[0],
+	TEAM_BLUE :MaterialsIndex.team_colors[1],
+	TEAM_RED :MaterialsIndex.team_colors[2],
 }
 const flat_team_colors = {
 	TEAM_WHITE :Color.white,

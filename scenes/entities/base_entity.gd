@@ -21,8 +21,11 @@ func set_sync(v :bool):
 		
 	_sync = v
 	
-	if _is_online:
-		sync_update() # send last update
+	# if sync disable
+	# to make sure your entity got critical
+	# last update to avoid unsync
+	if _is_online and not _sync:
+		last_sync_update() # send last update
 
 func _network_timmer_timeout() -> void:
 	_is_online = _is_network_running()
@@ -30,6 +33,9 @@ func _network_timmer_timeout() -> void:
 		sync_update()
 	
 func sync_update() -> void:
+	pass
+	
+func last_sync_update() -> void:
 	pass
 	
 ############################################################

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://data/unit_data/squad/infatry_squad_data.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+player_network_id = 0
+player_id = ""
+squad_name = ""
+team = 0
+current_tile = Vector2( 0, 0 )
+speed = 0.0
+position = Vector3( 0, 0, 0 )
+scene_index = 0
+members = [  ]

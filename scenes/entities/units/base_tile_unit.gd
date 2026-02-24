@@ -114,7 +114,14 @@ func sync_update() -> void:
 	if not is_dead and _is_master and _is_online:
 		rset_unreliable("_puppet_translation", global_position)
 		rset_unreliable("_puppet_current_tile", current_tile)
+		
+func last_sync_update() -> void:
+	.last_sync_update()
 	
+	if not is_dead and _is_master and _is_online:
+		rset("_puppet_translation", global_position)
+		rset("_puppet_current_tile", current_tile)
+		
 func master_moving(delta :float) -> void:
 	.master_moving(delta)
 	
