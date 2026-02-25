@@ -36,11 +36,14 @@ func _is_camera_enter_down_up():
 		return
 		
 	if target.translation.y <= (min_zoom + 0.1):
+		target.translation.y += 0.5
 		_enable_check = false
 		emit_signal("camera_down")
+		
 		yield(get_tree().create_timer(0.5),"timeout")
 		
 	elif target.translation.y >= (max_zoom - 0.1):
+		target.translation.y -= 0.5
 		_enable_check = false
 		emit_signal("camera_up")
 		yield(get_tree().create_timer(0.5),"timeout")

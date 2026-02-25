@@ -24,7 +24,6 @@ func _ready():
 func _process(_delta):
 	if is_instance_valid(current_cam):
 		clickable_floor.translation = current_cam.translation * Vector3(1,0,1)
-		
 #		if is_instance_valid(ui.selected_battle_map_unit):
 #			var speed = ui.selected_battle_map_unit.speed
 #			var pos = ui.selected_battle_map_unit.global_position
@@ -830,11 +829,18 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 			
 		vehicle.translation.y = 10.0 if vehicle.is_air else vehicle.translation.y
 		
+		if not battle_map_unit_positions[vehicle.tile_map].has(vehicle.current_tile):
+			battle_map_unit_positions[vehicle.tile_map][vehicle.current_tile] = []
+			
+		var pos_datas:Array = battle_map_unit_positions[vehicle.tile_map][vehicle.current_tile]
+		if not pos_datas.has(vehicle):
+			pos_datas.append(vehicle)
+			
 		if vehicle.current_tile != Vector2.ZERO:
 			vehicle.look_at(center_point, Vector3.UP)
 			vehicle.global_rotation.x = 0
 			vehicle.global_rotation.z = 0
-				
+			
 	if unit is InfantrySquad:
 		var result :Array = create_entry_positions(from_tile_id, current_tile_id)
 		var entry_positions :Array = result[0]
@@ -858,6 +864,13 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 				infantry.translation = point_battle_map.get_tile_instance(infantry.current_tile).global_position
 				entry_positions.pop_front()
 				
+			if not battle_map_unit_positions[infantry.tile_map].has(infantry.current_tile):
+				battle_map_unit_positions[infantry.tile_map][infantry.current_tile] = []
+				
+			var pos_datas:Array = battle_map_unit_positions[infantry.tile_map][infantry.current_tile]
+			if not pos_datas.has(infantry):
+				pos_datas.append(infantry)
+			
 			if infantry.current_tile != Vector2.ZERO:
 				infantry.look_at(center_point, Vector3.UP)
 				infantry.global_rotation.x = 0
@@ -866,6 +879,11 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector2, grand_map_tile_id :Vector2):
 	if squad is VehicleSquad:
 		var vehicle :Vehicle = squad.vehicle
+		
+		var pos_datas:Array = battle_map_unit_positions[vehicle.tile_map][vehicle.current_tile]
+		if pos_datas.has(vehicle):
+			pos_datas.erase(vehicle)
+		
 		vehicle.unit_position = {}
 		vehicle.tile_map = battle_map_holder[squad.current_tile]
 		vehicle.move_to(battle_map_tile_id)
@@ -875,6 +893,11 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 	if squad is InfantrySquad:
 		for i in squad.members:
 			var infantry :Infantry = i
+			
+			var pos_datas:Array = battle_map_unit_positions[infantry.tile_map][infantry.current_tile]
+			if pos_datas.has(infantry):
+				pos_datas.erase(infantry)
+			
 			infantry.unit_position = {}
 			infantry.tile_map = battle_map_holder[squad.current_tile]
 			infantry.move_to(battle_map_tile_id)
@@ -892,6 +915,11 @@ func order_infatry_squad_to_enter_vehicle(infantry :Infantry, vehicle :Vehicle):
 	var squad :InfantrySquad = infantry.squad
 	for i in squad.members:
 		var member :Infantry = i
+		
+		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
+		if pos_datas.has(member):
+			pos_datas.erase(member)
+		
 		member.tile_map = battle_map_holder[squad.current_tile]
 		member.move_to(vehicle.current_tile)
 		member.set_selected(false)
@@ -929,6 +957,13 @@ func order_infatry_squad_to_exit_vehicle(unit :InfantrySquad, grand_map_tile_id 
 			infantry.current_tile = entry_positions.front()
 			infantry.translation = point_battle_map.get_tile_instance(infantry.current_tile).global_position
 			entry_positions.pop_front()
+			
+		if not battle_map_unit_positions[infantry.tile_map].has(infantry.current_tile):
+			battle_map_unit_positions[infantry.tile_map][infantry.current_tile] = []
+			
+		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
+		if not pos_datas.has(member):
+			pos_datas.append(member)
 
 
 

@@ -17,7 +17,6 @@ var _altitude :float
 puppet var _puppet_rotation_y :float
 
 func _ready():
-	margin = 0.4
 	_altitude = altitude
 	
 func move_to(tile_id :Vector2):
@@ -69,7 +68,7 @@ func _move_to_path(delta :float, pos :Vector3, to :Vector3):
 		
 	var dir_to :Vector3 = pos.direction_to(to)
 	var t:Transform = transform.looking_at(to, Vector3.UP)
-	transform = transform.interpolate_with(t, 5 * delta)
+	transform = transform.interpolate_with(t, 2 * delta)
 	
 	var foward_dir = (-global_transform.basis.z)
 	if foward_dir.dot(dir_to) > 0.75:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/uh1d.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_glass_material.tres" type="Material" id=2]
@@ -12,16 +12,16 @@
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=10]
 [ext_resource path="res://addons/Godot-Touch-Input-Manager/input_detection.tscn" type="PackedScene" id=12]
 
-[sub_resource type="SpatialMaterial" id=1]
-albedo_color = Color( 0.113725, 0.113725, 0.113725, 1 )
+[sub_resource type="SpatialMaterial" id=29]
+albedo_color = Color( 0.054902, 0.054902, 0.054902, 1 )
 
-[sub_resource type="SpatialMaterial" id=2]
-albedo_color = Color( 0.439216, 0.439216, 0.439216, 1 )
+[sub_resource type="SpatialMaterial" id=30]
+albedo_color = Color( 0.243137, 0.243137, 0.243137, 1 )
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=28]
 length = 0.001
 tracks/0/type = "value"
-tracks/0/path = NodePath("pivot/door_l:translation")
+tracks/0/path = NodePath("pivot:rotation_degrees")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -30,55 +30,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector3( 0.376094, 0.0839181, -0.698595 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("pivot/door_r:translation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( -0.370649, 0.0752647, -0.752648 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("pivot/door_l:rotation_degrees")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
 "values": [ Vector3( 0, 0, 0 ) ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("pivot/door_r:rotation_degrees")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( 0, -180, 0 ) ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("pivot:rotation_degrees")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( 0, 180, 0 ) ]
 }
 
 [sub_resource type="Animation" id=5]
@@ -90,10 +42,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.8, 1 ),
+"times": PoolRealArray( 0, 0.3, 0.4 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0.376094, 0.0839181, -0.698595 ), Vector3( 0.376094, 0.0839181, 0.00785563 ), Vector3( 0.334924, 0.0839181, 0.00785562 ) ]
+"values": [ Vector3( 0.345765, 0.0999496, 0.708807 ), Vector3( 0.345765, 0.0999496, -0.0190899 ), Vector3( 0.345765, 0.0999496, -0.0283787 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("pivot/door_r:translation")
@@ -102,13 +54,13 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.3, 0.5, 0.8, 1 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( -0.370649, 0.0752647, -0.752648 ), Vector3( -0.370649, 0.0752647, -0.651726 ), Vector3( -0.370649, 0.0752647, -0.651726 ), Vector3( -0.370649, 0.0752647, -0.0461964 ), Vector3( -0.338146, 0.0752647, -0.0461964 ) ]
+"values": [ Vector3( -0.370649, 0.103933, 0.654754 ), Vector3( -0.370649, 0.103933, -0.0807252 ), Vector3( -0.370649, 0.103933, -0.090014 ) ]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=25]
 resource_name = "door_open"
 tracks/0/type = "value"
 tracks/0/path = NodePath("pivot/door_l:translation")
@@ -117,10 +69,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.6 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0.334924, 0.0839181, 0.00785562 ), Vector3( 0.376094, 0.0839181, 0.00785563 ), Vector3( 0.376094, 0.0839181, -0.698595 ) ]
+"values": [ Vector3( 0.345765, 0.0999496, -0.0190899 ), Vector3( 0.345765, 0.0999496, 0.708807 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("pivot/door_r:translation")
@@ -129,10 +81,10 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1, 0.4, 0.6, 0.8 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Vector3( -0.338146, 0.0752647, -0.0461964 ), Vector3( -0.370649, 0.0752647, -0.0461964 ), Vector3( -0.370649, 0.0752647, -0.651726 ), Vector3( -0.370649, 0.0752647, -0.651726 ), Vector3( -0.370649, 0.0752647, -0.752648 ) ]
+"values": [ Vector3( -0.370649, 0.103933, -0.0731429 ), Vector3( -0.370649, 0.103933, 0.654754 ) ]
 }
 
 [sub_resource type="Animation" id=24]
@@ -148,12 +100,12 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.2 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, -180, 0 ), Vector3( 15, -180, 0 ) ]
+"values": [ Vector3( 0, 0, 0 ), Vector3( -15, 0, 0 ) ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=27]
 resource_name = "iddle"
-length = 0.2
+length = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath("pivot/door_l:translation")
 tracks/0/interp = 1
@@ -164,10 +116,10 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector3( 0.334924, 0.0839181, 0.00785562 ) ]
+"values": [ Vector3( 0.345765, 0.0999496, -0.0283787 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("pivot/door_l:rotation_degrees")
+tracks/1/path = NodePath("pivot/door_r:translation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -176,10 +128,10 @@ tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0, 0 ) ]
+"values": [ Vector3( -0.370649, 0.103933, -0.090014 ) ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("pivot/door_r:rotation_degrees")
+tracks/2/path = NodePath("pivot:translation")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
@@ -188,158 +140,19 @@ tracks/2/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector3( 0, -180, 0 ) ]
+"values": [ Vector3( 0, 0.4, 0 ) ]
 }
 tracks/3/type = "value"
-tracks/3/path = NodePath("pivot/door_r:translation")
+tracks/3/path = NodePath("pivot:rotation_degrees")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( -0.338146, 0.0752647, -0.0461964 ) ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("pivot:rotation_degrees")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( 0, 180, 0 ) ]
-}
-
-[sub_resource type="Animation" id=7]
-resource_name = "landing"
-length = 1.7
-tracks/0/type = "value"
-tracks/0/path = NodePath("pivot/door_l:translation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( 0.334924, 0.0839181, 0.00785562 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("pivot/door_l:rotation_degrees")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ Vector3( 0, 0, 0 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("pivot/door_r:rotation_degrees")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( 0, -180, 0 ) ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("pivot/door_r:translation")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( -0.338146, 0.0752647, -0.0461964 ) ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("pivot:rotation_degrees")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0, 0.3, 0.5, 1.1, 1.5 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector3( 0, 180, 0 ), Vector3( 0, 180, 0 ), Vector3( -21.803, 180, 0 ), Vector3( -7.675, 180, 0 ), Vector3( 0, 180, 0 ) ]
-}
-
-[sub_resource type="Animation" id=8]
-resource_name = "take_off"
-tracks/0/type = "value"
-tracks/0/path = NodePath("pivot/door_l:translation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( 0.334924, 0.0839181, 0.00785562 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("pivot/door_l:rotation_degrees")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( 0, 0, 0 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("pivot/door_r:rotation_degrees")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( 0, -180, 0 ) ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("pivot/door_r:translation")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Vector3( -0.338146, 0.0752647, -0.0461964 ) ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("pivot:rotation_degrees")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0, 0.4, 0.8, 1 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector3( 0, 180, 0 ), Vector3( 14.921, 180, 0 ), Vector3( 3.571, 180, 0 ), Vector3( 0, 180, 0 ) ]
 }
 
 [sub_resource type="CylinderShape" id=23]
@@ -359,7 +172,7 @@ altitude = 2.0
 is_air = true
 
 [node name="pivot" type="Spatial" parent="."]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.403305, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0 )
 
 [node name="body" type="MeshInstance" parent="pivot"]
 mesh = ExtResource( 1 )
@@ -367,29 +180,29 @@ skeleton = NodePath("../..")
 software_skinning_transform_normals = false
 material/0 = ExtResource( 5 )
 material/1 = ExtResource( 2 )
-material/2 = SubResource( 1 )
-material/3 = SubResource( 2 )
+material/2 = SubResource( 29 )
+material/3 = SubResource( 30 )
 
 [node name="main_rotor" type="MeshInstance" parent="pivot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.88479e-08, 0.605248, -0.215595 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.88479e-08, 0.605248, 0.166045 )
 mesh = ExtResource( 7 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
 
 [node name="back_rotor" type="MeshInstance" parent="pivot"]
-transform = Transform( -0.0127754, 0.999918, -8.85396e-08, -0.999918, -0.0127754, -8.74156e-08, -8.85396e-08, 8.74156e-08, 1, 0.0823781, 0.446419, -2.99256 )
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.0855936, 0.446419, 2.95905 )
 mesh = ExtResource( 6 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
 
 [node name="landing" type="MeshInstance" parent="pivot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00428033, -0.221287, 3.74198e-10 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00428033, -0.221287, -0.368161 )
 mesh = ExtResource( 4 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
 
 [node name="door_l" type="MeshInstance" parent="pivot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.376094, 0.0839181, -0.698595 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.345765, 0.0999496, -0.0283787 )
 mesh = ExtResource( 3 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
@@ -397,7 +210,7 @@ material/0 = ExtResource( 5 )
 material/1 = ExtResource( 2 )
 
 [node name="door_r" type="MeshInstance" parent="pivot"]
-transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -0.370649, 0.0752647, -0.752648 )
+transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -0.370649, 0.103933, -0.090014 )
 mesh = ExtResource( 3 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
@@ -405,14 +218,12 @@ material/0 = ExtResource( 5 )
 material/1 = ExtResource( 2 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-autoplay = "door_close"
-anims/RESET = SubResource( 3 )
+autoplay = "iddle"
+anims/RESET = SubResource( 28 )
 anims/door_close = SubResource( 5 )
-anims/door_open = SubResource( 4 )
+anims/door_open = SubResource( 25 )
 anims/foward = SubResource( 24 )
-anims/iddle = SubResource( 6 )
-anims/landing = SubResource( 7 )
-anims/take_off = SubResource( 8 )
+anims/iddle = SubResource( 27 )
 
 [node name="input_detection" parent="." instance=ExtResource( 12 )]
 
@@ -435,6 +246,7 @@ material/0 = SubResource( 12 )
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource( 9 )
+unit_db = 5.0
 autoplay = true
 
 [connection signal="on_finish_travel" from="." to="." method="_on_uh1d_on_finish_travel"]

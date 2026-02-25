@@ -52,7 +52,8 @@ func move_to(tile_id :Vector2):
 	_tail_rotor_speed = tail_rotor_speed
 	_altitude = altitude
 	
-	animation_player.play("foward")
+	if animation_player.current_animation != "foward":
+		animation_player.play("foward")
 
 func _on_uh1d_on_finish_travel(unit, last_id, current_id):
 	animation_player.play_backwards("foward")
@@ -68,7 +69,6 @@ func drop_passenger():
 		
 	_on_task = true
 	_altitude = 0.15
-	animation_player.play("landing")
 	animation_player.play("door_open")
 	yield(get_tree().create_timer(3),"timeout")
 	_altitude = altitude
@@ -85,7 +85,6 @@ func prepare_take_passenger():
 		
 	_on_task = true
 	_altitude = 0.15
-	animation_player.play("landing")
 	animation_player.play("door_open")
 	
 func take_passenger(_members :Array):
