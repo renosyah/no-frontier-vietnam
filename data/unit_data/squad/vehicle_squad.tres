@@ -15,3 +15,4 @@ scene_index = 1
 color = Color( 0, 0, 0, 1 )
 unit_voice = 1
 team_color_material_index = 0
+squad_icon_index = 1

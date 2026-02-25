@@ -36,9 +36,6 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	vehicle.capacity = capacity
 	vehicle.unit_voice = unit_voice
 	vehicle.team_color_material = MaterialsIndex.team_colors[team_color_material_index]
-	vehicle.connect("on_unit_selected", parent, "_on_battle_map_unit_selected")
-	vehicle.connect("on_unit_dead", parent, "_on_battle_map_unit_dead")
-	vehicle.connect("on_vehicle_drop_passenger", parent, "_on_battle_map_vehicle_drop_passenger")
 	parent.add_child(vehicle)
 	
 	vehicle.translation = Vector3(-100, -100, -100)
@@ -46,4 +43,5 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	vehicle.set_hidden(false)
 	vehicle.set_spotted(true)
 	vehicle.set_sync(false)
+	
 	return vehicle

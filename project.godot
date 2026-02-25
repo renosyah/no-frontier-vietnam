@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node",
+"class": "AssetsIndex",
+"language": "GDScript",
+"path": "res://scenes/assets_index.gd"
+}, {
 "base": "Resource",
 "class": "BaseData",
 "language": "GDScript",
@@ -295,6 +300,7 @@ _global_script_classes=[ {
 "path": "res://scenes/entities/gear/weapons/weapon.gd"
 } ]
 _global_script_class_icons={
+"AssetsIndex": "",
 "BaseData": "",
 "BaseEntity": "",
 "BaseGameplay": "",

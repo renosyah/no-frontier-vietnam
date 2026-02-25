@@ -63,13 +63,18 @@ func master_moving(_delta :float) -> void:
 	translation.y = lerp(translation.y, _altitude, 2 * _delta)
 	
 # overide move_to_path
-func _move_to_path(delta :float, _pos :Vector3, to :Vector3):
+func _move_to_path(delta :float, pos :Vector3, to :Vector3):
 	if _altitude < (0.5):
 		return
 		
+	var dir_to :Vector3 = pos.direction_to(to)
 	var t:Transform = transform.looking_at(to, Vector3.UP)
-	transform = transform.interpolate_with(t, 8 * delta)
-	translation += -transform.basis.z * speed * delta
+	transform = transform.interpolate_with(t, 5 * delta)
+	
+	var foward_dir = (-global_transform.basis.z)
+	if foward_dir.dot(dir_to) > 0.75:
+		translation += dir_to * speed * delta
+		
 	rotation.x = 0
 	rotation.z = 0
 	

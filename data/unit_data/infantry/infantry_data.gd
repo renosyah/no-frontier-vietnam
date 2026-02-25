@@ -57,8 +57,6 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	infantry.launcher_scene = ScenesIndex.launcher[launcher_scene_index]
 	infantry.uniform_style = uniform_style
 	
-	infantry.connect("on_unit_selected", parent, "_on_battle_map_unit_selected")
-	infantry.connect("on_unit_dead", parent, "_on_battle_map_unit_dead")
 	parent.add_child(infantry)
 	
 	infantry.translation = Vector3(-100, -100, -100)

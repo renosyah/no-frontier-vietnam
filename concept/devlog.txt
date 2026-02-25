@@ -1,41 +1,41 @@
 editor : 
 	- required
-		- 3D asset grand tile land tile & water tile (done)
-		- 3D asset battle tile land tile, dirt tile, sand tile & water tile (done)
-		- 3D asset small tree as forest (done)
-		- 3D asset tree & rocks (done)
-		- 3D asset base & capture point (done)
+		- 3D asset grand tile land tile & water tile [DONE]
+		- 3D asset battle tile land tile, dirt tile, sand tile & water tile [DONE]
+		- 3D asset small tree as forest [DONE]
+		- 3D asset tree & rocks [DONE]
+		- 3D asset base & capture point [DONE]
 
 	- grand map
-		- generate empty tiles or load from file (done)
-		- drag and drop tile from ui to map (done)
-		- enable & disable navigation (done)
-		- edit tile -> enter battle map editor (done)
-		- save grand map to file (done)
+		- generate empty tiles or load from file [DONE]
+		- drag and drop tile from ui to map [DONE]
+		- enable & disable navigation [DONE]
+		- edit tile -> enter battle map editor [DONE]
+		- save grand map to file [DONE]
 
 	- battle map
-		- generate empty tiles or load from file (done)
-		- drag and drop tile from ui to map (done)
-		- drag and drop object from ui to map (done)
-		- enable & disable navigation (done)
-		- save battle map to file (done)
-		- back -> grand map editor (done)
+		- generate empty tiles or load from file [DONE]
+		- drag and drop tile from ui to map [DONE]
+		- drag and drop object from ui to map [DONE]
+		- enable & disable navigation [DONE]
+		- save battle map to file [DONE]
+		- back -> grand map editor [DONE]
 		
 gameplay menu (mp sync) : 
 	- player profile
-		- player id unique for gameplay (not network)
-		- player display name (done)
+		- player id unique for gameplay (not network) [DONE]
+		- player display name [DONE]
 		- player display potrait
 
-	- join menu (done)
-		- find game (done)
-		- display list of game found in LAN (done)
-		- join game (done)
+	- join menu
+		- find game [DONE]
+		- display list of game found in LAN [DONE]
+		- join game [DONE]
 		
-	- lobby (done)
+	- lobby
 		- list player tab
-			- sync map data between host and client (done)
-			- check ready player  (done)
+			- sync map data between host and client [DONE]
+			- check ready player  [DONE]
 			
 			
 		- lobby match tab
@@ -43,18 +43,37 @@ gameplay menu (mp sync) :
 			- host setting match : battle map max, faction bases, max squad & faction resource
 			- player choose side
 
-		- go to gameplay menu  (done)
+		- go to gameplay menu  [DONE]
 		
 gameplay entity (mp sync) : 
 	grand map : 
-		- squad (done)
-		- infantry squad : ambush & camp (done)
-		- infantry squad : enter & exit battle map
-		- infantry squad : enter & exit vehicle
+		- squad [DONE]
+		- infantry squad : ambush & camp [DONE]
+		- infantry squad : enter & exit battle map [DONE]
 
 	battle map :
-		- soldier
+		- soldier [DONE]
 		- ground vehicle
 		- transportable ground vehicle
-		- transportable air vehicle
+		- transportable air vehicle [DONE]
 		- base & base building
+		- infantry squad : enter & exit vehicle [DONE]
+		
+combat (mp sync) : 
+	- targeting system
+		- move only [DONE]
+		- active targeting : attack move
+		- passive targeting : attack on enemy move in
+		- command targeting : move close if in range then attack, repeat
+		
+	- soldier
+		- fire weapon burst mode only (3 - 6) [DONE]
+		- fire launcher [DONE]
+		- throw grenade [DONE]
+		- bullet logic : raycast as hit detection & bullet travel for visual
+		- rocket logic : rocket travel for visual then explode at location, area as hit detection
+		- grenade logic : grenade arch travel for visual then explode at location, area as hit detection
+		
+	- vehicle
+		- turret
+		
