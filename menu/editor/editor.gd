@@ -1,5 +1,8 @@
 extends Node
 
+const nav_highlight_scene = preload("res://assets/tile_highlight/nav_highlight.tscn")
+const floating_zoom_in_scene = preload("res://assets/tile_highlight/floating_zoom_in.tscn")
+const floating_no_nav_scene = preload("res://assets/tile_highlight/floating_no_nav.tscn")
 const allow_nav = preload("res://assets/tile_highlight/allow_nav_material.tres")
 const blocked_nav = preload("res://assets/tile_highlight/blocked_nav_material.tres")
 
@@ -11,6 +14,7 @@ onready var selection = $selection
 
 onready var nav_highlight_holder = {}
 onready var battle_map_edited_holder = {}
+onready var battle_map_no_nav_holder = []
 
 # refrence variable, modified this, in global it got modified too
 onready var grand_map_manifest_data = Global.grand_map_manifest_data
@@ -27,8 +31,6 @@ func _ready():
 	ui.save_button.visible = false
 	
 	ui.map_name.text = grand_map_manifest_data.map_name
-	update_base_point_quota()
-	
 	grand_map.setup_border_scale(Vector3.ONE * ((grand_map_manifest_data.map_size * 2) + 1.5))
 	
 	get_tree().set_quit_on_go_back(false)
@@ -66,8 +68,31 @@ func update_base_point_quota():
 		if not grand_map_mission_data.edited_battle_maps[key]:
 			edited_battle_map += 1
 			
+			
+	for i in battle_map_no_nav_holder:
+		i.queue_free()
+		
+	battle_map_no_nav_holder.clear()
+	
+	for i in grand_map_data.tiles:
+		var data :TileMapData = i
+		if not has_valid_adjacent(data):
+			var nonav = floating_no_nav_scene.instance()
+			add_child(nonav)
+			nonav.translation = data.pos
+			battle_map_no_nav_holder.append(nonav)
+		
 	ui.battle_map_edited.text = "%s" % edited_battle_map
-	ui.save_button.visible = mission_esential and edited_map
+	ui.save_button.visible = mission_esential and edited_map and battle_map_no_nav_holder.empty()
+	
+func has_valid_adjacent(data :TileMapData) -> bool:
+	var req :int = 4
+	var nearest :Array = TileMapUtils.get_adjacent_tiles(TileMapUtils.ARROW_DIRECTIONS, data.id, 1)
+	for id in nearest:
+		if not grand_map.is_nav_enable(id):
+			req -= 1
+			
+	return req != 0
 	
 func show_selection(at :Vector3,show :bool):
 	selection.visible = show
@@ -88,7 +113,7 @@ func _on_ui_on_update_tile(data :TileMapData):
 		battle_map_datas[data.id] = TileMapUtils.generate_empty_tile_map(Global.battle_map_size, false)
 		grand_map_mission_data.edited_battle_maps[data.id] = false
 		
-		var edited = preload("res://assets/tile_highlight/floating_question.tscn").instance()
+		var edited = floating_zoom_in_scene.instance()
 		add_child(edited)
 		edited.translation = data.pos
 		battle_map_edited_holder[data.id] = edited
@@ -190,11 +215,12 @@ func _on_grand_map_on_navigation_updated(id :Vector2, data :NavigationData):
 	nav_highlight_holder[id].set_surface_material(0, allow_nav if data.enable else blocked_nav)
 	
 func _on_grand_map_on_map_ready():
+	update_base_point_quota()
 	Global.hide_transition()
 	
 	for i in grand_map_data.navigations:
 		var nav :NavigationData = i
-		var nav_highlight = preload("res://assets/tile_highlight/nav_highlight.tscn").instance()
+		var nav_highlight = nav_highlight_scene.instance()
 		add_child(nav_highlight)
 		
 		var pos = grand_map.get_tile_instance(nav.id).translation
@@ -207,7 +233,7 @@ func _on_grand_map_on_map_ready():
 		var ebms = grand_map_mission_data.edited_battle_maps
 		if ebms.has(nav.id):
 			if not ebms[nav.id]:
-				var edited = preload("res://assets/tile_highlight/floating_question.tscn").instance()
+				var edited = floating_zoom_in_scene.instance()
 				add_child(edited)
 				edited.translation = pos
 				battle_map_edited_holder[nav.id] = edited
@@ -218,10 +244,14 @@ func _on_ui_on_toggle_nav(show):
 
 func _on_ui_on_zoom_tile(pos):
 	show_selection(Vector3.ZERO, false)
-	var tile = grand_map.get_closes_tile(pos)
+	var tile :TileMapData = grand_map.get_closes_tile(pos)
 	if not battle_map_datas.has(tile.id):
 		return
-	
+		
+	# what, wanna edit fking water?
+	if tile.tile_type == 2:
+		return
+		
 	var battle_map_adjacent = TileMapUtils.get_adjacent_tiles(
 		TileMapUtils.ARROW_DIRECTIONS,
 		Vector2.ZERO, 1
