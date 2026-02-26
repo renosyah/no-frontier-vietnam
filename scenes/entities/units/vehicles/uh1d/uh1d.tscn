@@ -32,6 +32,30 @@ tracks/0/keys = {
 "update": 0,
 "values": [ Vector3( 0, 0, 0 ) ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("pivot/door_r:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( -0.34, 0.104, -0.09 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("pivot/door_l:translation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0.34, 0.1, -0.028 ) ]
+}
 
 [sub_resource type="Animation" id=5]
 resource_name = "door_close"
@@ -45,7 +69,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.3, 0.4 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0.345765, 0.0999496, 0.708807 ), Vector3( 0.345765, 0.0999496, -0.0190899 ), Vector3( 0.345765, 0.0999496, -0.0283787 ) ]
+"values": [ Vector3( 0.345765, 0.0999496, 0.708807 ), Vector3( 0.345765, 0.0999496, -0.0190899 ), Vector3( 0.34, 0.1, -0.028 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("pivot/door_r:translation")
@@ -57,7 +81,7 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 0.3, 0.4 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( -0.370649, 0.103933, 0.654754 ), Vector3( -0.370649, 0.103933, -0.0807252 ), Vector3( -0.370649, 0.103933, -0.090014 ) ]
+"values": [ Vector3( -0.370649, 0.103933, 0.654754 ), Vector3( -0.370649, 0.103933, -0.0807252 ), Vector3( -0.34, 0.104, -0.09 ) ]
 }
 
 [sub_resource type="Animation" id=25]
@@ -116,7 +140,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector3( 0.345765, 0.0999496, -0.0283787 ) ]
+"values": [ Vector3( 0.34, 0.1, -0.028 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("pivot/door_r:translation")
@@ -128,7 +152,7 @@ tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector3( -0.370649, 0.103933, -0.090014 ) ]
+"values": [ Vector3( -0.34, 0.104, -0.09 ) ]
 }
 tracks/2/type = "value"
 tracks/2/path = NodePath("pivot:translation")
@@ -202,7 +226,7 @@ skeleton = NodePath("../..")
 software_skinning_transform_normals = false
 
 [node name="door_l" type="MeshInstance" parent="pivot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.345765, 0.0999496, -0.0283787 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34, 0.1, -0.028 )
 mesh = ExtResource( 3 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
@@ -210,7 +234,7 @@ material/0 = ExtResource( 5 )
 material/1 = ExtResource( 2 )
 
 [node name="door_r" type="MeshInstance" parent="pivot"]
-transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -0.370649, 0.103933, -0.090014 )
+transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -0.34, 0.104, -0.09 )
 mesh = ExtResource( 3 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false

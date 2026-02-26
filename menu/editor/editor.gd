@@ -86,6 +86,9 @@ func update_base_point_quota():
 	ui.save_button.visible = mission_esential and edited_map and battle_map_no_nav_holder.empty()
 	
 func has_valid_adjacent(data :TileMapData) -> bool:
+	if data.tile_type != 1:
+		return true
+		
 	var req :int = 4
 	var nearest :Array = TileMapUtils.get_adjacent_tiles(TileMapUtils.ARROW_DIRECTIONS, data.id, 1)
 	for id in nearest:

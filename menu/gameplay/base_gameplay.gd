@@ -851,11 +851,11 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 			vehicle.look_at(center_point, Vector3.UP)
 			vehicle.global_rotation.x = 0
 			vehicle.global_rotation.z = 0
+			vehicle.translation = vehicle.translation + (vehicle.transform.basis.z * 10)
+			vehicle.move_to(vehicle.current_tile)
 			
-			if vehicle.is_air:
-				vehicle.translation = vehicle.translation + (vehicle.transform.basis.z * 10)
-				vehicle.translation.y = 10.0
-				vehicle.move_to(vehicle.current_tile)
+		if vehicle.is_air:
+			vehicle.translation.y = 10.0
 			
 	if unit is InfantrySquad:
 		var result :Array = create_entry_positions(from_tile_id, current_tile_id)
