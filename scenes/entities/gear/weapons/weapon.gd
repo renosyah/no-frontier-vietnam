@@ -21,6 +21,9 @@ func fire_weapon():
 	if is_master:
 		ammo = clamp(ammo - 1, 0, capacity)
 	
+func firing() -> bool:
+	return false
+	
 func has_ammo():
 	return ammo > 0
 	

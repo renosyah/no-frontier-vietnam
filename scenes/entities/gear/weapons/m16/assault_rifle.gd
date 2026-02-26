@@ -13,16 +13,18 @@ func fire_weapon():
 func stop_firing():
 	queue_task.task_queue.clear()
 	
+func firing() -> bool:
+	return not queue_task.task_queue.empty()
+	
 func _bang(_from, _to):
-	if not has_ammo():
-		yield(get_tree(),"idle_frame")
-		emit_signal("weapon_fired")
-		return
+	if is_master:
+		if not has_ammo():
+			yield(get_tree(), "idle_frame")
+			return
+			
+		ammo = clamp(ammo - 1, 0, capacity)
 		
 	animation_player.play("bang")
 	yield(animation_player, "animation_finished")
-	
-	if is_master:
-		ammo = clamp(ammo - 1, 0, capacity)
 	
 	emit_signal("weapon_fired")

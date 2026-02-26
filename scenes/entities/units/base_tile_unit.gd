@@ -32,7 +32,7 @@ export var max_hp :int = 3
 
 export var is_dead :bool = false
 export var is_selectable :bool = false
-
+export var is_combatan :bool = true
 export var margin :float = 0.1
 
 var current_tile :Vector2
@@ -56,15 +56,24 @@ var tile_map :BaseTileMap
 # for tracking purposes
 var unit_position :Dictionary = {} # {Vector2 : [BaseTileUnit]}
 var enemy = null # cycle warning set to null
+var spotting_range :int = 2
+var attack_move :bool
 
 # multiplayer data to sync
 puppet var _puppet_current_tile :Vector2
 puppet var _puppet_translation :Vector3
 
+func _ready():
+	if is_combatan:
+		Global.connect("on_global_tick", self, "_on_global_tick")
+		connect("on_current_tile_updated", self, "_on_current_tile_updated")
+
 func move_to(tile_id :Vector2):
 	if not _is_master or not is_instance_valid(tile_map):
 		return
 		
+	enemy = null
+	
 	var v :Array = _get_tile_path(tile_id)
 	if v.empty():
 		return
@@ -129,10 +138,18 @@ func last_sync_update() -> void:
 func master_moving(delta :float) -> void:
 	.master_moving(delta)
 	
-	if is_dead or _paths.empty():
+	if is_dead:
 		return
 		
 	var pos :Vector3 = global_position
+	if is_instance_valid(enemy):
+		var enemy_pos :Vector3 = enemy.global_position
+		_on_enemy_in_range(delta, pos, enemy_pos)
+		return
+	
+	if _paths.empty():
+		return
+	
 	var new_to :Vector3 = _paths.front().pos
 	new_to.y = pos.y
 	
@@ -162,6 +179,9 @@ func master_moving(delta :float) -> void:
 func _move_to_path(delta :float, pos :Vector3, to :Vector3):
 	translation += pos.direction_to(to) * speed * delta
 	
+func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
+	pass
+	
 func puppet_moving(delta :float) -> void:
 	.puppet_moving(delta)
 	
@@ -177,10 +197,61 @@ func puppet_moving(delta :float) -> void:
 		current_tile = _puppet_current_tile
 		emit_signal("on_current_tile_updated", self, old, current_tile)
 	
+# for active enemy spotting
+func _on_global_tick():
+	if _is_moving:
+		return
+		
+	scan_area()
+	
+func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
+	if attack_move:
+		scan_area()
+	
+func scan_area():
+	enemy = null
+	
+	if spotting_range == 0 or unit_position.empty():
+		return
+		
+	var near :Array = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.get_directions(), current_tile, spotting_range
+	)
+	for pos in near:
+		if not unit_position.has(pos):
+			continue
+			
+		var unit_positions :Array = unit_position[pos]
+		if unit_positions.empty():
+			continue
+			
+		for unit in unit_positions:
+			if unit.team != team:
+				enemy = unit
+				return
+	
+func take_damage(damage :int):
+	if is_dead:
+		return
+		
+	hp = clamp(hp - damage, 0, max_hp)
+	rpc_unreliable("_taking_damage", damage, hp)
+	
+	if hp <= 0:
+		set_dead()
+	
+remotesync func _taking_damage(damage :int, hp: int):
+	hp = hp
+	taking_damage(damage, hp, max_hp)
+	
+func taking_damage(damage :int, hp: int, max_hp :int):
+	pass
+	
 func set_dead():
 	if not is_dead:
 		rpc("_set_dead")
-
+		is_dead = true # safeguard, make faster
+		
 func on_dead():
 	emit_signal("on_unit_dead", self)
 

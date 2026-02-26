@@ -6,6 +6,25 @@ func _ready():
 	init_save_load_map()
 	setup_transition()
 	init_radio_chatter()
+	setup_tick()
+	
+##########################################  tick  ############################################
+
+signal on_global_tick
+
+var _tick :Timer
+
+func setup_tick():
+	_tick = Timer.new()
+	_tick.wait_time = 1
+	_tick.one_shot = true
+	_tick.connect("timeout", self, "_on_tick")
+	add_child(_tick)
+	_tick.start()
+	
+func _on_tick():
+	emit_signal("on_global_tick")
+	_tick.start()
 	
 ##########################################  team  ############################################
 

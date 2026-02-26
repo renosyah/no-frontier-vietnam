@@ -192,6 +192,7 @@ script = ExtResource( 8 )
 speed = 4.0
 hp = 100
 max_hp = 100
+is_combatan = false
 altitude = 2.0
 is_air = true
 
@@ -214,7 +215,7 @@ skeleton = NodePath("../..")
 software_skinning_transform_normals = false
 
 [node name="back_rotor" type="MeshInstance" parent="pivot"]
-transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.0855936, 0.446419, 2.95905 )
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.0855936, 0.446419, 2.85929 )
 mesh = ExtResource( 6 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false

@@ -30,6 +30,7 @@ onready var audio_stream_player_3d = $AudioStreamPlayer3D
 onready var bag_holder = $pivot/body/bag
 onready var headgear_holder = $pivot/body/head/headgear
 onready var vest_holder = $pivot/body/vest
+onready var attack_time = $attack_time
 
 onready var meshes = [
 	$pivot/body/head/h, # head : 0=skin, 1:hair
@@ -118,6 +119,7 @@ func move_to(tile_id :Vector2):
 	
 	_weapon_aimed = false
 	_weapon.stop_firing()
+	attack_time.stop()
 	
 func sync_update() -> void:
 	.sync_update()
@@ -133,6 +135,22 @@ func _move_to_path(delta :float, _pos :Vector3, to :Vector3):
 	translation += -transform.basis.z * speed * delta
 	rotation.x = 0
 	rotation.z = 0
+	
+func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
+	._on_enemy_in_range(delta, pos, enemy_pos)
+	
+	enemy_pos.y = pos.y
+	var t:Transform = transform.looking_at(enemy_pos, Vector3.UP)
+	transform = transform.interpolate_with(t, 25 * delta)
+	
+	var dir_to :Vector3 = pos.direction_to(enemy_pos)
+	var foward_dir :Vector3 = (-global_transform.basis.z)
+	var is_align :bool = foward_dir.dot(dir_to) > 0.85
+	
+	if attack_time.is_stopped():
+		fire_weapon()
+		attack_time.wait_time = rand_range(2, 8)
+		attack_time.start()
 	
 func master_moving(delta :float) -> void:
 	.master_moving(delta)
@@ -153,22 +171,32 @@ func fire_weapon():
 	_weapon_aimed = true
 	
 func _on_weapon_aimed():
-	if _is_master:
-		if not _weapon.has_ammo():
-			reload_weapon()
-			return
+	if not _is_master or _weapon.firing():
+		return
 		
-		var burst_count = min(int(rand_range(3, 6)), _weapon.ammo)
-		rpc("_fire_weapon", burst_count, _weapon.ammo)
+	if not _weapon.has_ammo():
+		reload_weapon()
+		return
 		
-remotesync func _fire_weapon(count :int, ammo_remain :bool):
-	if not _is_master:
-		_weapon.ammo = ammo_remain
+	# master just do it here
+	var burst_count = min(int(rand_range(3, 6)), _weapon.ammo)
+	for i in burst_count: 
+		_weapon.fire_weapon()
+		
+	rpc_unreliable("_fire_weapon", burst_count) # fire for puppet
 	
+remotesync func _fire_weapon(count :int):
+	if _is_master:
+		return
+		
 	for i in count:
 		_weapon.fire_weapon()
 		
 func _on_weapon_fired():
+	if not _weapon.has_ammo() and _is_master:
+		reload_weapon()
+		return
+		
 	audio_stream_player_3d.stream =  shot_sounds[randi() % shot_sounds.size()]
 	audio_stream_player_3d.play()
 	
@@ -176,12 +204,10 @@ func _on_weapon_fired():
 	animation_state.travel(_current_anim)
 	
 func reload_weapon():
-	if not _is_master:
-		return
-		
-	_weapon.reload()
-	_current_anim = "reload_weapon"
-	animation_state.travel(_current_anim)
+	if _is_master:
+		_weapon.reload()
+		_current_anim = "reload_weapon"
+		animation_state.travel(_current_anim)
 	
 func _on_reloading():
 	audio_stream_player_3d.stream = reload_sound
@@ -243,7 +269,19 @@ func puppet_moving(delta :float) -> void:
 	
 	if not _launcher_firing:
 		animation_state.travel(_puppet_anim)
-
+		
+	
+func on_dead():
+	# called later after
+	# animation finished
+	#.on_dead()
+	
+	_current_anim = "die_hold_weapon"
+	animation_state.travel(_current_anim)
+	
+func _on_dead_animation_finished():
+	.on_dead()
+	
 func _on_input_detection_any_gesture(_sig ,event):
 	if event is InputEventSingleScreenTap:
 		set_selected(not _is_selected)
