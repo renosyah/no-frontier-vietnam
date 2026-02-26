@@ -25,17 +25,19 @@ func _ready():
 	
 func _on_selected_battle_map_unit(v :BaseTileUnit):
 	selected_battle_map_unit = v
+	
+	var is_set :bool = is_instance_valid(selected_battle_map_unit)
+	movable_camera_ui.detect_in_out = not is_set
+	
 	infantry_option.visible = false
 	vehicle_option.visible = false
 	
-	if not is_instance_valid(selected_battle_map_unit):
-		return
-		
-	if selected_battle_map_unit is Infantry:
-		infantry_option.visible = true
-		
-	if selected_battle_map_unit is Vehicle:
-		vehicle_option.visible = true
+	if is_set:
+		if selected_battle_map_unit is Infantry:
+			infantry_option.visible = true
+			
+		if selected_battle_map_unit is Vehicle:
+			vehicle_option.visible = true
 	
 func _on_selected_squad(v :BaseSquad):
 	selected_squad = v

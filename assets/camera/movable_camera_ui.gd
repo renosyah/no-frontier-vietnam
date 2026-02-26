@@ -13,6 +13,7 @@ export var max_zoom :float = 6
 
 export var center_pos :Vector3 = Vector3(0, 0, 2)
 export var camera_limit_bound :Vector3  = Vector3(3, 0, 2)
+export var detect_in_out :bool
 
 var move_speed := 0.018
 var zoom_speed := 0.02
@@ -32,6 +33,9 @@ var _enable_check :bool = true
 onready var _use_mouse :bool = OS.get_name() in is_dekstop
 
 func _is_camera_enter_down_up():
+	if not detect_in_out:
+		return
+		
 	if not _enable_check:
 		return
 		

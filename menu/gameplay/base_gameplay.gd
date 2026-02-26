@@ -198,6 +198,7 @@ func use_grand_camera():
 	ui.movable_camera_ui.max_zoom = 5
 	ui.movable_camera_ui.camera_limit_bound = Vector3( map_size + 1, 0, map_size + 3)
 	ui.movable_camera_ui.center_pos = grand_map.global_position
+	ui.movable_camera_ui.detect_in_out = true
 	
 	ui.grand_map_overlay_ui.visible = true
 	
@@ -570,7 +571,7 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 		var infantry :Infantry = i
 		#infantry.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 		infantry.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
-		infantry.connect("on_unit_selected", self, "_on_battle_map_unit_selected")
+		infantry.connect("on_unit_selected", self, "_on_battle_map_infantry_selected")
 		#infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 		
 	on_grand_map_squad_spawned(infantry_squad)
@@ -603,7 +604,7 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	var vehicle :Vehicle = vehicle_squad.vehicle
 	#vehicle.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 	vehicle.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
-	vehicle.connect("on_unit_selected", self, "_on_battle_map_unit_selected")
+	vehicle.connect("on_unit_selected", self, "_on_battle_map_vehicle_selected")
 	#vehicle.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 	vehicle.connect("on_vehicle_drop_passenger", self, "_on_battle_map_vehicle_drop_passenger")
 	
@@ -671,7 +672,9 @@ func _on_grand_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2
 # filter only for enemy unit that spotted, not player
 func _on_grand_map_squad_spotted(unit :BaseTileUnit):
 	if unit.player_id != player.player_id:
-		Global.unit_responded(RadioChatters.ENEMY_SPOTTED, unit.unit_voice)
+		# do something like sow warning to UI
+		# and make player aware these squad are threat
+		pass
 	
 remotesync func _on_grand_map_squad_enter_battle_map(unit :NodePath, from_tile_id :Vector2, current_tile_id :Vector2):
 	on_grand_map_squad_enter_battle_map(get_node_or_null(unit), from_tile_id, current_tile_id )
@@ -756,14 +759,23 @@ func _on_battle_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2
 		
 	unit_pos[to].append(unit)
 	
-func _on_battle_map_unit_selected(unit :BaseTileUnit, selected :bool):
+func _on_battle_map_infantry_selected(unit :Infantry, selected :bool):
 	var player_unit :bool = unit.player_id == player.player_id
-	var is_vehicle :bool = unit is Vehicle
+	if is_instance_valid(ui.selected_battle_map_unit):
+		ui.selected_battle_map_unit.set_selected(false)
+		
+	if player_unit:
+		ui.selected_battle_map_unit = unit if selected else null
+		
+func _on_battle_map_vehicle_selected(vehicle :Vehicle, selected :bool):
+	var player_unit :bool = vehicle.player_id == player.player_id
 	
 	if is_instance_valid(ui.selected_battle_map_unit):
+		
+		# condition enter vehicle if current unit is infantry
+		# and target unit selected is vehicle
 		var is_infantry = ui.selected_battle_map_unit is Infantry
-		if player_unit and is_vehicle and is_infantry:
-			var vehicle :Vehicle = unit
+		if player_unit and is_infantry:
 			order_infatry_squad_to_enter_vehicle(ui.selected_battle_map_unit, vehicle)
 			
 			ui.selected_battle_map_unit.set_selected(false)
@@ -774,7 +786,7 @@ func _on_battle_map_unit_selected(unit :BaseTileUnit, selected :bool):
 		ui.selected_battle_map_unit.set_selected(false)
 		
 	if player_unit:
-		ui.selected_battle_map_unit = unit if selected else null
+		ui.selected_battle_map_unit = vehicle if selected else null
 		
 func _on_battle_map_unit_dead(unit :BaseTileUnit):
 	pass
@@ -827,8 +839,7 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 			vehicle.translation = point_battle_map.get_tile_instance(vehicle.current_tile).global_position
 			entry_positions.pop_front()
 			
-		vehicle.translation.y = 10.0 if vehicle.is_air else vehicle.translation.y
-		
+		# add to spotting mechanic
 		if not battle_map_unit_positions[vehicle.tile_map].has(vehicle.current_tile):
 			battle_map_unit_positions[vehicle.tile_map][vehicle.current_tile] = []
 			
@@ -840,6 +851,11 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 			vehicle.look_at(center_point, Vector3.UP)
 			vehicle.global_rotation.x = 0
 			vehicle.global_rotation.z = 0
+			
+			if vehicle.is_air:
+				vehicle.translation = vehicle.translation + (vehicle.transform.basis.z * 10)
+				vehicle.translation.y = 10.0
+				vehicle.move_to(vehicle.current_tile)
 			
 	if unit is InfantrySquad:
 		var result :Array = create_entry_positions(from_tile_id, current_tile_id)
@@ -864,6 +880,7 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 				infantry.translation = point_battle_map.get_tile_instance(infantry.current_tile).global_position
 				entry_positions.pop_front()
 				
+			# add to spotting mechanic
 			if not battle_map_unit_positions[infantry.tile_map].has(infantry.current_tile):
 				battle_map_unit_positions[infantry.tile_map][infantry.current_tile] = []
 				
@@ -894,6 +911,7 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 		for i in squad.members:
 			var infantry :Infantry = i
 			
+			# remove from spotting mechanic
 			var pos_datas:Array = battle_map_unit_positions[infantry.tile_map][infantry.current_tile]
 			if pos_datas.has(infantry):
 				pos_datas.erase(infantry)
@@ -916,6 +934,7 @@ func order_infatry_squad_to_enter_vehicle(infantry :Infantry, vehicle :Vehicle):
 	for i in squad.members:
 		var member :Infantry = i
 		
+		# remove from spotting mechanic
 		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
 		if pos_datas.has(member):
 			pos_datas.erase(member)
@@ -961,6 +980,7 @@ func order_infatry_squad_to_exit_vehicle(unit :InfantrySquad, grand_map_tile_id 
 		if not battle_map_unit_positions[infantry.tile_map].has(infantry.current_tile):
 			battle_map_unit_positions[infantry.tile_map][infantry.current_tile] = []
 			
+		# add to spotting mechanic
 		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
 		if not pos_datas.has(member):
 			pos_datas.append(member)
