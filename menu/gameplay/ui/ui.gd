@@ -12,6 +12,9 @@ onready var setup_ambush = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxC
 
 onready var infantry_option = $CanvasLayer/Control/VBoxContainer/infantry_option
 onready var vehicle_option = $CanvasLayer/Control/VBoxContainer/vehicle_option
+onready var spawn_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_infantry
+onready var spawn_heli = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_heli
+onready var spawn_bot_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer2/spawn_bot_infantry
 
 var selected_battle_map_unit :BaseTileUnit setget _on_selected_battle_map_unit
 var selected_squad :BaseSquad setget _on_selected_squad
@@ -19,6 +22,7 @@ var spawned_squad :Array # refrence for BaseGameplay spawned_squad
 var squad_positions :Dictionary = {} # refrence for BaseGameplay squad_positions
 
 func _ready():
+	spawn_bot_infantry.visible = NetworkLobbyManager.is_server()
 	squad_option.visible = false
 	infantry_option.visible = false
 	vehicle_option.visible = false
@@ -34,7 +38,8 @@ func _on_selected_battle_map_unit(v :BaseTileUnit):
 	
 	if is_set:
 		if selected_battle_map_unit is Infantry:
-			infantry_option.visible = true
+			#infantry_option.visible = true
+			pass
 			
 		if selected_battle_map_unit is Vehicle:
 			vehicle_option.visible = true
@@ -98,5 +103,11 @@ func _on_landing_pressed():
 	if selected_battle_map_unit is Vehicle:
 		selected_battle_map_unit.drop_passenger()
 		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,selected_battle_map_unit.team)
-
+	
+	
+func _on_dead_pressed():
+	if not is_instance_valid(selected_battle_map_unit):
+		return
+		
+	selected_battle_map_unit.set_dead()
 

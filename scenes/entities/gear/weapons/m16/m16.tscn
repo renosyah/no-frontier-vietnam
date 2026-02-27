@@ -105,6 +105,7 @@ ammo = 18
 capacity = 18
 reserve_ammo = 420
 max_reserve_ammo = 420
+dispersion = 0.23
 
 [node name="queue_task" parent="." instance=ExtResource( 4 )]
 

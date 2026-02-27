@@ -34,7 +34,7 @@ export var is_dead :bool = false
 export var is_selectable :bool = false
 export var is_combatan :bool = true
 export var margin :float = 0.1
-
+export var spotting_range :int = 2
 var current_tile :Vector2
 
 var _is_moving :bool # block some function if this is true
@@ -56,7 +56,6 @@ var tile_map :BaseTileMap
 # for tracking purposes
 var unit_position :Dictionary = {} # {Vector2 : [BaseTileUnit]}
 var enemy = null # cycle warning set to null
-var spotting_range :int = 2
 var attack_move :bool
 
 # multiplayer data to sync
@@ -199,19 +198,26 @@ func puppet_moving(delta :float) -> void:
 	
 # for active enemy spotting
 func _on_global_tick():
+	if not _is_master:
+		return
+		
+	if is_instance_valid(enemy):
+		if enemy.is_dead:
+			enemy = null
+			
 	if _is_moving:
 		return
 		
 	scan_area()
 	
 func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
-	if attack_move:
+	if attack_move and _is_master:
 		scan_area()
 	
 func scan_area():
 	enemy = null
 	
-	if spotting_range == 0 or unit_position.empty():
+	if unit_position.empty():
 		return
 		
 	var near :Array = TileMapUtils.get_adjacent_tiles(
@@ -259,7 +265,9 @@ remotesync func _set_dead():
 	is_dead = true
 	on_dead()
 
-
+# just for decoration
+func clone_mesh() -> Spatial:
+	return null
 
 
 

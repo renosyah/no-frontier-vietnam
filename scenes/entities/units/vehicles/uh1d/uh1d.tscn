@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/uh1d.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_glass_material.tres" type="Material" id=2]
@@ -10,13 +10,17 @@
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/uh1d.gd" type="Script" id=8]
 [ext_resource path="res://assets/sounds/vehicle/heli.ogg" type="AudioStream" id=9]
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=10]
-[ext_resource path="res://addons/Godot-Touch-Input-Manager/input_detection.tscn" type="PackedScene" id=12]
+[ext_resource path="res://assets/unit_hit_register/heli_hit_register.tscn" type="PackedScene" id=11]
+[ext_resource path="res://assets/tile_highlight/contested_area_material.tres" type="Material" id=12]
 
 [sub_resource type="SpatialMaterial" id=29]
 albedo_color = Color( 0.054902, 0.054902, 0.054902, 1 )
 
 [sub_resource type="SpatialMaterial" id=30]
 albedo_color = Color( 0.243137, 0.243137, 0.243137, 1 )
+
+[sub_resource type="SpatialMaterial" id=32]
+albedo_color = Color( 0.117647, 0.117647, 0.117647, 1 )
 
 [sub_resource type="Animation" id=28]
 length = 0.001
@@ -55,6 +59,71 @@ tracks/2/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ Vector3( 0.34, 0.1, -0.028 ) ]
+}
+
+[sub_resource type="Animation" id=31]
+resource_name = "dead"
+tracks/0/type = "value"
+tracks/0/path = NodePath("pivot/door_l:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0.34, 0.1, -0.028 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("pivot/door_r:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( -0.34, 0.104, -0.09 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("pivot:translation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0.4, 0 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("pivot:rotation_degrees")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 0, 360, 0 ) ]
+}
+tracks/4/type = "method"
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 1 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "_on_crashes"
+} ]
 }
 
 [sub_resource type="Animation" id=5]
@@ -179,10 +248,6 @@ tracks/3/keys = {
 "values": [ Vector3( 0, 0, 0 ) ]
 }
 
-[sub_resource type="CylinderShape" id=23]
-height = 0.648616
-radius = 0.586769
-
 [sub_resource type="SpatialMaterial" id=12]
 flags_unshaded = true
 albedo_color = Color( 1, 0.984314, 0.972549, 1 )
@@ -213,12 +278,16 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.88479e-08, 0.605248, 0.16604
 mesh = ExtResource( 7 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
+material/0 = SubResource( 32 )
+material/1 = ExtResource( 12 )
 
 [node name="back_rotor" type="MeshInstance" parent="pivot"]
 transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.0855936, 0.446419, 2.85929 )
 mesh = ExtResource( 6 )
 skeleton = NodePath("../..")
 software_skinning_transform_normals = false
+material/0 = SubResource( 32 )
+material/1 = ExtResource( 12 )
 
 [node name="landing" type="MeshInstance" parent="pivot"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00428033, -0.221287, -0.368161 )
@@ -245,22 +314,13 @@ material/1 = ExtResource( 2 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "iddle"
 anims/RESET = SubResource( 28 )
+anims/dead = SubResource( 31 )
 anims/door_close = SubResource( 5 )
 anims/door_open = SubResource( 25 )
 anims/foward = SubResource( 24 )
 anims/iddle = SubResource( 27 )
 
-[node name="input_detection" parent="." instance=ExtResource( 12 )]
-
-[node name="Area" type="Area" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.578656, 0 )
-collision_layer = 4
-collision_mask = 0
-monitorable = false
-
-[node name="CollisionShape" type="CollisionShape" parent="Area"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.236412, 0 )
-shape = SubResource( 23 )
+[node name="heli_hit_register" parent="." instance=ExtResource( 11 )]
 
 [node name="circle" type="MeshInstance" parent="."]
 transform = Transform( 1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 0, -0.25, 0 )
@@ -275,4 +335,4 @@ unit_db = 5.0
 autoplay = true
 
 [connection signal="on_finish_travel" from="." to="." method="_on_uh1d_on_finish_travel"]
-[connection signal="any_gesture" from="input_detection" to="." method="_on_input_detection_any_gesture"]
+[connection signal="on_click" from="heli_hit_register" to="." method="_on_heli_hit_register_on_click"]

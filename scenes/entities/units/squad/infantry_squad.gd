@@ -113,3 +113,11 @@ func set_hidden(v :bool):
 	.set_hidden(v)
 	
 	decoration_icon.visible = _current_visible
+	
+func _on_member_dead(unit):
+	if members.has(unit):
+		members.erase(unit)
+	
+	if members.empty():
+		emit_signal("on_squad_destroyed", self)
+	

@@ -3,6 +3,7 @@ extends Node
 func _ready():
 	SaveLoad.ensure_dir("user://%s/" % map_dir)
 	load_player_data()
+	monitor_network()
 	init_save_load_map()
 	setup_transition()
 	init_radio_chatter()
@@ -58,6 +59,13 @@ const player_data_filepath :String = "player_data.dat"
 var player_data :PlayerData
 var player_potrait :PlayerPotrait
 
+func monitor_network():
+	Network.connect("server_player_connected", self, "_on_player_connected")
+	Network.connect("client_player_connected", self, "_on_player_connected")
+	
+func _on_player_connected(player_network_unique_id :int):
+	player_data.player_network_id = player_network_unique_id
+
 func load_player_data():
 	player_potrait = preload("res://assets/user_interface/player_potraits/player_potrait.tscn").instance()
 	add_child(player_potrait)
@@ -74,6 +82,8 @@ func load_player_data():
 	
 	else:
 		player_data.from_dictionary(data)
+		
+		
 		
 ##########################################  transisiion  ############################################
 var transition :CanvasLayer

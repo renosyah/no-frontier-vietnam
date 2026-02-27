@@ -15,12 +15,11 @@ onready var _current_rotor_speed = tail_rotor_speed
 
 onready var main_rotor = $pivot/main_rotor
 onready var back_rotor = $pivot/back_rotor
-onready var input_detection = $input_detection
 onready var circle = $circle
-onready var area = $Area
 onready var animation_player = $AnimationPlayer
 onready var pivot = $pivot
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
+onready var heli_hit_register = $heli_hit_register
 
 puppet var _puppet_rotation_x :float # foward tilt sync
 
@@ -31,7 +30,7 @@ func sync_update() -> void:
 		rset_unreliable("_puppet_rotation_x", pivot.global_rotation.x)
 		
 func _ready():
-	area.connect("input_event", self, "_on_Area_input_event")
+	heli_hit_register.unit = self
 	circle.set_surface_material(0, team_color_material)
 
 func set_selected(v :bool):
@@ -110,14 +109,33 @@ func puppet_moving(delta :float) -> void:
 	if not is_dead:
 		pivot.global_rotation.x = lerp_angle(pivot.global_rotation.x, _puppet_rotation_x, 25 * delta)
 		
-func _on_input_detection_any_gesture(_sig ,event):
-	if event is InputEventSingleScreenTap:
-		set_selected(not _is_selected)
-		emit_signal("on_unit_selected", self, _is_selected)
-	
-func _on_Area_input_event(_camera, event, _position, _normal, _shape_idx):
-	if is_selectable:
-		input_detection.check_input(event)
+func _on_heli_hit_register_on_click():
+	if is_dead:
+		return
 		
+	set_selected(not _is_selected)
+	emit_signal("on_unit_selected", self, _is_selected)
+	
+func on_dead():
+	#.on_dead() # called after animation dead fininish
+	audio_stream_player_3d.stop()
+	circle.visible = false
+	
+	_altitude = 0
+	_main_rotor_speed = 0
+	_tail_rotor_speed = 0
+	
+	animation_player.play("dead")
+
+func _on_crashes():
+	.on_dead()
+	
+func clone_mesh():
+	#.clone_mesh()
+	
+	var new_pivot = Utils.clone_spatial(pivot)
+	new_pivot.name = "dead_%s" % new_pivot.name
+	return new_pivot
+
 
 

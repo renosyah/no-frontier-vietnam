@@ -1,4 +1,4 @@
-[gd_scene load_steps=64 format=2]
+[gd_scene load_steps=63 format=2]
 
 [ext_resource path="res://scenes/entities/units/infantry/head.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/infantry/la.obj" type="ArrayMesh" id=2]
@@ -10,9 +10,9 @@
 [ext_resource path="res://scenes/entities/units/infantry/skin_color_material.tres" type="Material" id=8]
 [ext_resource path="res://scenes/entities/gear/weapons/grenade/grenade.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/entities/units/infantry/infantry.gd" type="Script" id=10]
-[ext_resource path="res://addons/Godot-Touch-Input-Manager/input_detection.tscn" type="PackedScene" id=11]
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://assets/tile_highlight/selected_material.tres" type="Material" id=13]
+[ext_resource path="res://assets/unit_hit_register/infantry_hit_register.tscn" type="PackedScene" id=14]
 [ext_resource path="res://scenes/entities/units/infantry/uniform_khaki.tres" type="Material" id=15]
 
 [sub_resource type="Animation" id=20]
@@ -667,10 +667,10 @@ tracks/14/loop_wrap = true
 tracks/14/imported = false
 tracks/14/enabled = true
 tracks/14/keys = {
-"times": PoolRealArray( 0, 0.1 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0, 0.1, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0.0117962, 0.00791287, 0.128019 ), Vector3( 0.0117962, -0.254497, 0.128019 ) ]
+"values": [ Vector3( 0.0117962, 0.00791287, 0.128019 ), Vector3( 0.0117962, -0.254497, 0.243826 ), Vector3( 0.0117962, -0.254497, 0.243826 ) ]
 }
 tracks/15/type = "value"
 tracks/15/path = NodePath("pivot/weapon_holder:rotation_degrees")
@@ -679,10 +679,10 @@ tracks/15/loop_wrap = true
 tracks/15/imported = false
 tracks/15/enabled = true
 tracks/15/keys = {
-"times": PoolRealArray( 0, 0.1 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 1.02654e-06, -13.755, -11.826 ), Vector3( 0, 0, 0 ) ]
+"values": [ Vector3( 1.02654e-06, -13.755, -11.826 ), Vector3( 29.143, 7.26006e-07, 2.79288e-06 ), Vector3( 82.292, 89.9999, 89.9999 ), Vector3( 84.185, 180, 180 ) ]
 }
 tracks/16/type = "value"
 tracks/16/path = NodePath("pivot/single_use_weapon:visible")
@@ -3021,10 +3021,6 @@ graph_offset = Vector2( -345.208, -13.606 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=19]
 
-[sub_resource type="CylinderShape" id=14]
-height = 0.648616
-radius = 0.294277
-
 [sub_resource type="SpatialMaterial" id=12]
 flags_unshaded = true
 albedo_color = Color( 1, 0.984314, 0.972549, 1 )
@@ -3035,6 +3031,7 @@ size = Vector3( 0.4, 0.2, 0.1 )
 [node name="infantry" type="Spatial"]
 script = ExtResource( 10 )
 speed = 1.3
+spotting_range = 4
 
 [node name="pivot" type="Spatial" parent="."]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.267298, 0 )
@@ -3145,17 +3142,7 @@ anim_player = NodePath("../AnimationPlayer")
 active = true
 parameters/playback = SubResource( 19 )
 
-[node name="input_detection" parent="." instance=ExtResource( 11 )]
-
-[node name="Area" type="Area" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.578656, 0 )
-collision_layer = 4
-collision_mask = 0
-monitorable = false
-
-[node name="CollisionShape" type="CollisionShape" parent="Area"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.288232, 0 )
-shape = SubResource( 14 )
+[node name="infantry_hit_register" parent="." instance=ExtResource( 14 )]
 
 [node name="circle" type="MeshInstance" parent="."]
 transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0 )
@@ -3177,5 +3164,4 @@ unit_db = 5.0
 [node name="attack_time" type="Timer" parent="."]
 one_shot = true
 
-[connection signal="any_gesture" from="input_detection" to="." method="_on_input_detection_any_gesture"]
-[connection signal="input_event" from="Area" to="." method="_on_Area_input_event"]
+[connection signal="on_click" from="infantry_hit_register" to="." method="_on_infantry_hit_register_on_click"]

@@ -86,4 +86,7 @@ static func create_unique_id():
 	var base = str(OS.get_ticks_usec())
 	return base.sha256_text().substr(0, 8)
 
-
+static func clone_spatial(original: Spatial) -> Spatial:
+	var copy = original.duplicate(true)
+	copy.global_transform = original.global_transform
+	return copy

@@ -2,6 +2,7 @@ extends BaseTileUnit
 class_name BaseSquad
 
 signal on_squad_task_exit_battle_map(squad, to_grand_map_id)
+signal on_squad_destroyed(squad)
 
 # MUST SET
 export var overlay_ui :NodePath
@@ -22,6 +23,9 @@ func _ready():
 	_floating_icon.is_selectable = is_selectable
 	_floating_icon.connect("on_press", self, "_on_floating_icon_press")
 	_overlay_ui.add_child(_floating_icon)
+	
+func _exit_tree():
+	_floating_icon.queue_free()
 	
 func exit_battle_map(_at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	emit_signal("on_squad_task_exit_battle_map", self, to_grand_map_id)

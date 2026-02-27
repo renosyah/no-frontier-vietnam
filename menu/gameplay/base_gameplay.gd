@@ -56,102 +56,16 @@ func _on_leave():
 	
 func _on_all_player_ready():
 	Global.hide_transition()
-	
-	var bases = grand_map_mission_data.bases
-	
-	yield(get_tree().create_timer(2),"timeout")
-	
-	var macv_riflement = preload("res://data/unit_data/infantry/macv_riflement.tres")
-	var nva_riflement = preload("res://data/unit_data/infantry/nva_riflement.tres")
-	
 	# test squad
-	if NetworkLobbyManager.is_server():
-		for i in NetworkLobbyManager.get_players():
-			
-			yield(get_tree().create_timer(1),"timeout")
-			
-			var p :NetworkPlayer = i
-			var data :PlayerData = PlayerData.new()
-			data.from_dictionary(p.extra)
-			
-			var tile_id :Vector2 = bases[data.player_team - 1]
-			
-			var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
-			infantry_squad.player_network_id = p.player_network_unique_id
-			infantry_squad.player_id = data.player_id
-			infantry_squad.unit_name = "squad_infantry_%s" % Utils.create_unique_id()
-			infantry_squad.team = data.player_team
-			infantry_squad.current_tile = tile_id
-			infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
-			
-			infantry_squad.members = []
-			for _i in 4:
-				var infantry :InfantryData = (nva_riflement if data.player_team != 1 else macv_riflement).duplicate()
-				infantry.player_network_id = p.player_network_unique_id
-				infantry.player_id = data.player_id
-				infantry.unit_name = "infantry_%s" % Utils.create_unique_id()
-				infantry.team = data.player_team
-				infantry.current_tile = Vector2.ZERO
-				infantry.speed = 1.3
-				infantry.position = Vector3.ZERO
-				infantry.scene_index = 0
-				infantry_squad.members.append(infantry)
-		
-			rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
-			
-			if data.player_team != 1:
-				continue
-				
-			yield(get_tree().create_timer(1),"timeout")
-			
-			var vehicle_squad :VehicleSquadData = preload("res://data/unit_data/squad/vehicle_squad.tres").duplicate()
-			vehicle_squad.player_network_id = p.player_network_unique_id
-			vehicle_squad.player_id = data.player_id
-			vehicle_squad.unit_name = "vehicle_infantry_%s" % Utils.create_unique_id()
-			vehicle_squad.team = data.player_team
-			vehicle_squad.current_tile = tile_id
-			vehicle_squad.position = grand_map.get_tile_instance(tile_id).global_position
-			
-			var vehicle = preload("res://data/unit_data/vehicle/uh1d.tres").duplicate()
-			vehicle.player_network_id = p.player_network_unique_id
-			vehicle.player_id = data.player_id
-			vehicle.unit_name = "vehicle_%s" % Utils.create_unique_id()
-			vehicle.team = data.player_team
-			vehicle.current_tile = Vector2.ZERO
-			vehicle.position = Vector3.ZERO
-			
-			vehicle_squad.vehicle = vehicle
-			
-			rpc("_spawn_grand_map_vehicle", vehicle_squad.to_bytes())
-			
-	spawn_dummy(bases, nva_riflement)
+#	if NetworkLobbyManager.is_server():
+#		for i in NetworkLobbyManager.get_players():
+#			yield(get_tree().create_timer(1),"timeout")
+#			var p :NetworkPlayer = i
+#			var data :PlayerData = PlayerData.new()
+#			data.from_dictionary(p.extra)
+#
+#	spawn_dummy(bases, nva_riflement)
 
-func spawn_dummy(bases, nva_riflement):
-	var tile_id :Vector2 = bases[1]
-	
-	var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
-	infantry_squad.player_network_id = 1
-	infantry_squad.player_id = "abc"
-	infantry_squad.unit_name = "squad_infantry_%s" % Utils.create_unique_id()
-	infantry_squad.team = 2
-	infantry_squad.current_tile = tile_id
-	infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
-	
-	infantry_squad.members = []
-	for _i in 4:
-		var infantry :InfantryData = nva_riflement.duplicate()
-		infantry.player_network_id = 1
-		infantry.player_id = "abc"
-		infantry.unit_name = "infantry_%s" % Utils.create_unique_id()
-		infantry.team = 2
-		infantry.current_tile = Vector2.ZERO
-		infantry.speed = 1.3
-		infantry.position = Vector3.ZERO
-		infantry.scene_index = 0
-		infantry_squad.members.append(infantry)
-
-	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
-	
 ########################################## grand map  ############################################
 
 onready var grand_map_manifest_data :GrandMapFileManifest = Global.grand_map_manifest_data
@@ -266,7 +180,90 @@ func setup_ui():
 	ui.spawned_squad = spawned_squad
 	ui.squad_positions = squad_positions
 	
+	ui.spawn_infantry.connect("pressed", self, "_on_spawn_infantry")
+	ui.spawn_heli.connect("pressed", self, "_on_spawn_heli_press")
+	ui.spawn_bot_infantry.connect("pressed", self, "_on_spawn_bot_infantry")
+	
 	use_grand_camera()
+	
+func _on_spawn_infantry():
+	var macv_riflement = preload("res://data/unit_data/infantry/macv_riflement.tres")
+	var nva_riflement = preload("res://data/unit_data/infantry/nva_riflement.tres")
+	var bases = grand_map_mission_data.bases
+	var tile = bases[player.player_team - 1]
+	
+	var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
+	infantry_squad.player_network_id = player.player_network_id
+	infantry_squad.player_id = player.player_id
+	infantry_squad.unit_name = "squad_infantry_%s" % Utils.create_unique_id()
+	infantry_squad.team = player.player_team
+	infantry_squad.current_tile = tile
+	infantry_squad.position = grand_map.get_tile_instance(tile).global_position
+	
+	infantry_squad.members = []
+	for i in 4:
+		var infantry :InfantryData = (nva_riflement if player.player_team != 1 else macv_riflement).duplicate()
+		infantry.player_network_id = player.player_network_id
+		infantry.player_id = player.player_id
+		infantry.unit_name = "infantry_%s_%s" % [Utils.create_unique_id(), i]
+		infantry.team = player.player_team
+		infantry.current_tile = Vector2.ZERO
+		infantry.speed = 1.3
+		infantry.position = Vector3.ZERO
+		infantry.scene_index = 0
+		infantry_squad.members.append(infantry)
+	
+	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
+	
+func _on_spawn_heli_press():
+	var bases = grand_map_mission_data.bases
+	var tile = bases[player.player_team - 1]
+	var vehicle_squad :VehicleSquadData = preload("res://data/unit_data/squad/vehicle_squad.tres").duplicate()
+	vehicle_squad.player_network_id = player.player_network_id
+	vehicle_squad.player_id = player.player_id
+	vehicle_squad.unit_name = "squad_vehicle_%s" % Utils.create_unique_id()
+	vehicle_squad.team = player.player_team
+	vehicle_squad.current_tile = tile
+	vehicle_squad.position = grand_map.get_tile_instance(tile).global_position
+	
+	var vehicle = preload("res://data/unit_data/vehicle/uh1d.tres").duplicate()
+	vehicle.player_network_id = player.player_network_id
+	vehicle.player_id = player.player_id
+	vehicle.unit_name = "vehicle_%s" % Utils.create_unique_id()
+	vehicle.team = player.player_team
+	vehicle.current_tile = Vector2.ZERO
+	vehicle.position = Vector3.ZERO
+	
+	vehicle_squad.vehicle = vehicle
+	
+	rpc("_spawn_grand_map_vehicle", vehicle_squad.to_bytes())
+	
+func _on_spawn_bot_infantry():
+	var tile_id :Vector2 = grand_map_mission_data.points[0]
+	
+	var id = Utils.create_unique_id()
+	var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
+	infantry_squad.player_network_id = 1
+	infantry_squad.player_id = id
+	infantry_squad.unit_name = "squad_infantry_%s" % Utils.create_unique_id()
+	infantry_squad.team = 3
+	infantry_squad.current_tile = tile_id
+	infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
+	
+	infantry_squad.members = []
+	for i in 6:
+		var infantry :InfantryData = preload("res://data/unit_data/infantry/nva_riflement.tres").duplicate()
+		infantry.player_network_id = 1
+		infantry.player_id = id
+		infantry.unit_name = "infantry_%s_%s" % [Utils.create_unique_id(), i]
+		infantry.team = 3
+		infantry.current_tile = Vector2.ZERO
+		infantry.speed = 1.3
+		infantry.position = Vector3.ZERO
+		infantry.scene_index = 0
+		infantry_squad.members.append(infantry)
+		
+	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
 	
 func _on_camera_down_zoom_in():
 	if current_cam != movable_camera_room:
@@ -324,6 +321,7 @@ func on_battle_map_clicked_input(tile :TileMapData):
 	if is_instance_valid(ui.selected_battle_map_unit):
 		var unit :BaseTileUnit = ui.selected_battle_map_unit
 		unit.tile_map = current_battle_map
+		unit.attack_move = true
 		unit.move_to(tile.id)
 		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.unit_voice)
 		show_feedback_move_order(tile.pos + current_battle_map.global_position)
@@ -590,6 +588,7 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 	infantry_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
 	infantry_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
 	infantry_squad.connect("on_infatry_squad_task_enter_vehicle", self, "_on_grand_map_infatry_squad_task_enter_vehicle")
+	infantry_squad.connect("on_squad_destroyed", self, "_on_grand_map_squad_squad_destroyed")
 	
 	# connect signal after set_spotted function called
 	# if not,it will trigger to emit on_unit_spotted
@@ -600,7 +599,8 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 		#infantry.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 		infantry.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
 		infantry.connect("on_unit_selected", self, "_on_battle_map_infantry_selected")
-		#infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
+		infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
+		infantry.connect("on_unit_dead", infantry_squad, "_on_member_dead")
 		
 	on_grand_map_squad_spawned(infantry_squad)
 	
@@ -624,6 +624,7 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	vehicle_squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
 	vehicle_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
 	vehicle_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
+	vehicle_squad.connect("on_squad_destroyed", self, "_on_grand_map_squad_squad_destroyed")
 	
 	# connect signal after set_spotted function called
 	# if not,it will trigger to emit on_unit_spotted
@@ -633,7 +634,8 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	#vehicle.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 	vehicle.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
 	vehicle.connect("on_unit_selected", self, "_on_battle_map_vehicle_selected")
-	#vehicle.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
+	vehicle.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
+	vehicle.connect("on_unit_dead", vehicle_squad, "_on_vehicle_dead")
 	vehicle.connect("on_vehicle_drop_passenger", self, "_on_battle_map_vehicle_drop_passenger")
 	
 	on_grand_map_squad_spawned(vehicle_squad)
@@ -707,16 +709,43 @@ func _on_grand_map_squad_spotted(unit :BaseTileUnit):
 remotesync func _on_grand_map_squad_enter_battle_map(unit :NodePath, from_tile_id :Vector2, current_tile_id :Vector2):
 	on_grand_map_squad_enter_battle_map(get_node_or_null(unit), from_tile_id, current_tile_id )
 	
-func on_grand_map_squad_enter_battle_map(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
+func on_grand_map_squad_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, current_tile_id :Vector2):
 	unit.set_hidden(true)
-	if unit is BaseSquad:
-		order_squad_to_enter_battle_map(unit, from_tile_id, current_tile_id)
+	order_squad_to_enter_battle_map(unit, from_tile_id, current_tile_id)
 	
-func _on_grand_map_squad_task_exit_battle_map(squad :BaseTileUnit, to_grand_map_id :Vector2):
+func _on_grand_map_squad_task_exit_battle_map(squad :BaseSquad, to_grand_map_id :Vector2):
 	squad.tile_map = grand_map
 	squad.move_to(to_grand_map_id)
-
+	
+	if squad is VehicleSquad:
+		var vehicle :Vehicle = squad.vehicle
+		
+		# remove from spotting mechanic
+		var pos_datas:Array = battle_map_unit_positions[vehicle.tile_map][vehicle.current_tile]
+		if pos_datas.has(vehicle):
+			pos_datas.erase(vehicle)
+			
+	if squad is InfantrySquad:
+		for i in squad.members:
+			var infantry :Infantry = i
+			
+			# remove from spotting mechanic
+			var pos_datas:Array = battle_map_unit_positions[infantry.tile_map][infantry.current_tile]
+			if pos_datas.has(infantry):
+				pos_datas.erase(infantry)
+				
+func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
+	squad.queue_free()
+	
 func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicle):
+	for i in squad.members:
+		var member :Infantry = i
+		
+		# remove from spotting mechanic
+		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
+		if pos_datas.has(member):
+			pos_datas.erase(member)
+			
 	if vehicle is Vehicle:
 		vehicle.take_passenger([squad])
 	
@@ -761,6 +790,7 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 ########################################## battle map unit ############################################
 
 var battle_map_unit_positions :Dictionary = {} # { BaseTileMap (battle map):{Vector2:[ BaseTileUnit ] }}
+var dead_bodies :Array = []
 	
 func _on_battle_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
 	if not battle_map_unit_positions.has(unit.tile_map):
@@ -812,7 +842,26 @@ func _on_battle_map_vehicle_selected(vehicle :Vehicle, selected :bool):
 		ui.selected_battle_map_unit = vehicle if selected else null
 		
 func _on_battle_map_unit_dead(unit :BaseTileUnit):
-	pass
+	if ui.selected_battle_map_unit == unit:
+		ui.selected_battle_map_unit.set_selected(false)
+		ui.selected_battle_map_unit = null
+		
+	# remove from spotting mechanic
+	var pos_datas:Array = battle_map_unit_positions[unit.tile_map][unit.current_tile]
+	if pos_datas.has(unit):
+		pos_datas.erase(unit)
+		
+	var dead_body = unit.clone_mesh()
+	add_child(dead_body)
+	dead_bodies.append(dead_body)
+	
+	if dead_bodies.size() > 15:
+		var f = dead_bodies.front()
+		f.queue_free()
+		dead_bodies.pop_front()
+		
+	yield(get_tree(),"idle_frame")
+	unit.queue_free()
 	
 func _on_battle_map_vehicle_drop_passenger(vehicle :Vehicle, passengers :Array):
 	var vehicle_squad :VehicleSquad = vehicle.squad
@@ -924,10 +973,6 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 	if squad is VehicleSquad:
 		var vehicle :Vehicle = squad.vehicle
 		
-		var pos_datas:Array = battle_map_unit_positions[vehicle.tile_map][vehicle.current_tile]
-		if pos_datas.has(vehicle):
-			pos_datas.erase(vehicle)
-			
 		vehicle.attack_move = false
 		vehicle.unit_position = {}
 		vehicle.tile_map = battle_map_holder[squad.current_tile]
@@ -962,12 +1007,6 @@ func order_infatry_squad_to_enter_vehicle(infantry :Infantry, vehicle :Vehicle):
 	var squad :InfantrySquad = infantry.squad
 	for i in squad.members:
 		var member :Infantry = i
-		
-		# remove from spotting mechanic
-		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
-		if pos_datas.has(member):
-			pos_datas.erase(member)
-			
 		member.attack_move = false
 		member.tile_map = battle_map_holder[squad.current_tile]
 		member.move_to(vehicle.current_tile)

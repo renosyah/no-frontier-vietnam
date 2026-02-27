@@ -19,10 +19,9 @@ export var weapon_scene :PackedScene
 export var launcher_scene :PackedScene
 export var uniform_style :int
 
+onready var pivot = $pivot
 onready var arrow = $circle/arrow
 onready var animation_state = $AnimationTree.get("parameters/playback")
-onready var input_detection = $input_detection
-onready var area = $Area
 onready var circle = $circle
 onready var weapon_holder = $pivot/weapon_holder
 onready var single_use_weapon = $pivot/single_use_weapon
@@ -31,6 +30,7 @@ onready var bag_holder = $pivot/body/bag
 onready var headgear_holder = $pivot/body/head/headgear
 onready var vest_holder = $pivot/body/vest
 onready var attack_time = $attack_time
+onready var infantry_hit_register = $infantry_hit_register
 
 onready var meshes = [
 	$pivot/body/head/h, # head : 0=skin, 1:hair
@@ -44,8 +44,8 @@ onready var meshes = [
 puppet var _puppet_rotation_y :float
 puppet var _puppet_anim :String
 
-var _weapon_aimed :bool
-var _launcher_firing :bool
+var _weapon_aimed :bool # this force anim to focus on fire mode
+var _launcher_firing :bool # this force anim to focus on fire mode
 
 var _current_anim :String = "iddle"
 var _weapon :Weapon
@@ -66,9 +66,12 @@ func _ready():
 	
 	_weapon.is_master = _is_master
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
+	_weapon.unit_owner = self
 	
 	weapon_holder.add_child(_weapon)
 	single_use_weapon.add_child(_launcher)
+	
+	infantry_hit_register.unit = self
 	
 func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
 	
@@ -130,6 +133,10 @@ func sync_update() -> void:
 		
 # overide move_to_path
 func _move_to_path(delta :float, _pos :Vector3, to :Vector3):
+	_weapon_aimed = false
+	if not attack_time.is_stopped():
+		attack_time.stop()
+	
 	var t:Transform = transform.looking_at(to, Vector3.UP)
 	transform = transform.interpolate_with(t, 25 * delta)
 	translation += -transform.basis.z * speed * delta
@@ -139,8 +146,9 @@ func _move_to_path(delta :float, _pos :Vector3, to :Vector3):
 func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	._on_enemy_in_range(delta, pos, enemy_pos)
 	
-	enemy_pos.y = pos.y
-	var t:Transform = transform.looking_at(enemy_pos, Vector3.UP)
+	var look = enemy_pos
+	look.y = pos.y
+	var t:Transform = transform.looking_at(look, Vector3.UP)
 	transform = transform.interpolate_with(t, 25 * delta)
 	
 	var dir_to :Vector3 = pos.direction_to(enemy_pos)
@@ -148,6 +156,7 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	var is_align :bool = foward_dir.dot(dir_to) > 0.85
 	
 	if attack_time.is_stopped():
+		_weapon.shot_at = enemy_pos
 		fire_weapon()
 		attack_time.wait_time = rand_range(2, 8)
 		attack_time.start()
@@ -162,8 +171,6 @@ func master_moving(delta :float) -> void:
 	animation_state.travel(_current_anim)
 	
 func fire_weapon():
-	stop()
-	
 	if _weapon_aimed:
 		_on_weapon_aimed()
 		return
@@ -183,16 +190,20 @@ func _on_weapon_aimed():
 	for i in burst_count: 
 		_weapon.fire_weapon()
 		
-	rpc_unreliable("_fire_weapon", burst_count) # fire for puppet
+	rpc_unreliable("_fire_weapon", burst_count, _weapon.shot_at) # fire for puppet
 	
-remotesync func _fire_weapon(count :int):
+remotesync func _fire_weapon(count :int, _shot_at :Vector3):
 	if _is_master:
 		return
 		
+	_weapon.shot_at = _shot_at
 	for i in count:
 		_weapon.fire_weapon()
 		
 func _on_weapon_fired():
+	if is_dead:
+		return
+		
 	if not _weapon.has_ammo() and _is_master:
 		reload_weapon()
 		return
@@ -270,25 +281,28 @@ func puppet_moving(delta :float) -> void:
 	if not _launcher_firing:
 		animation_state.travel(_puppet_anim)
 		
+func clone_mesh():
+	#.clone_mesh()
+	
+	var new_pivot = Utils.clone_spatial(pivot)
+	new_pivot.name = "dead_%s" % new_pivot.name
+	return new_pivot
 	
 func on_dead():
 	# called later after
 	# animation finished
 	#.on_dead()
 	
+	circle.visible = false
 	_current_anim = "die_hold_weapon"
 	animation_state.travel(_current_anim)
 	
 func _on_dead_animation_finished():
 	.on_dead()
 	
-func _on_input_detection_any_gesture(_sig ,event):
-	if event is InputEventSingleScreenTap:
-		set_selected(not _is_selected)
-		emit_signal("on_unit_selected", self, _is_selected)
-	
-func _on_Area_input_event(_camera, event, _position, _normal, _shape_idx):
-	if is_selectable:
-		input_detection.check_input(event)
+func _on_infantry_hit_register_on_click():
+	if is_dead:
+		return
 		
-
+	set_selected(not _is_selected)
+	emit_signal("on_unit_selected", self, _is_selected)
