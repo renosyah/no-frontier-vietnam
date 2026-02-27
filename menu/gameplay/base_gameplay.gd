@@ -212,7 +212,20 @@ func _on_spawn_infantry():
 		infantry.position = Vector3.ZERO
 		infantry.scene_index = 0
 		infantry_squad.members.append(infantry)
-	
+		
+		if player.player_team == 1:
+			var style = [0,1,2]
+			var skin = [0, 1]
+			var hats = [0, 2]
+			var bags = [0,1,2,3,4,9]
+			var vests = [0, 2]
+			
+			infantry.skin_material_index = skin[randi() % 2]
+			infantry.hat_scene_index = hats[randi() % 2]
+			infantry.bag_scene_index = bags[randi() % 6]
+			infantry.vest_scene_index = vests[randi() % 2]
+			infantry.uniform_style = style[randi() % 3]
+			
 	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
 	
 func _on_spawn_heli_press():
@@ -850,13 +863,15 @@ func _on_battle_map_unit_dead(unit :BaseTileUnit):
 		ui.selected_battle_map_unit.set_selected(false)
 		ui.selected_battle_map_unit = null
 		
+	var battle_map :BaseTileMap = unit.tile_map
+		
 	# remove from spotting mechanic
 	var pos_datas:Array = battle_map_unit_positions[unit.tile_map][unit.current_tile]
 	if pos_datas.has(unit):
 		pos_datas.erase(unit)
 		
 	var dead_body = unit.clone_mesh()
-	add_child(dead_body)
+	battle_map.add_child(dead_body)
 	dead_bodies.append(dead_body)
 	
 	if dead_bodies.size() > 15:

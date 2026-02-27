@@ -23,10 +23,13 @@ const bags = [
 	preload("res://scenes/entities/gear/bag/bag_2_khaki.tscn"),
 	preload("res://scenes/entities/gear/bag/bag_3_khaki.tscn"),
 	preload("res://scenes/entities/gear/bag/bag_5_khaki.tscn"),
+	
+	preload("res://scenes/entities/gear/bag/no_bag.tscn")
 ]
 const vests = [
 	preload("res://scenes/entities/gear/vest/vest_1_green.tscn"),
-	preload("res://scenes/entities/gear/vest/vest_1_khaki.tscn")
+	preload("res://scenes/entities/gear/vest/vest_1_khaki.tscn"),
+	preload("res://scenes/entities/gear/vest/no_vest.tscn")
 ]
 const weapons = [
 	preload("res://scenes/entities/gear/weapons/m16/m16.tscn"),
@@ -38,7 +41,8 @@ const launcher = [
 ]
 const hats = [
 	preload("res://scenes/entities/gear/headgear/us_helm.tscn"),
-	preload("res://scenes/entities/gear/headgear/nva_hat.tscn")
+	preload("res://scenes/entities/gear/headgear/nva_hat.tscn"),
+	preload("res://scenes/entities/gear/headgear/no_hat.tscn")
 ]
 
 

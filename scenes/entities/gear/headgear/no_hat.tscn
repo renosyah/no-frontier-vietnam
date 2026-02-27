@@ -1,0 +1,6 @@
+[gd_scene format=2]
+
+[node name="us_helm" type="MeshInstance"]
+visible = false
+cast_shadow = 0
+software_skinning_transform_normals = false
