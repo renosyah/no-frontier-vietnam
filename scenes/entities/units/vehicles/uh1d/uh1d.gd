@@ -44,7 +44,7 @@ func set_selected(v :bool):
 func move_to(tile_id :Vector2):
 	.move_to(tile_id)
 	
-	if _on_task:
+	if _on_task or is_dead:
 		return
 		
 	_main_rotor_speed = main_rotor_speed

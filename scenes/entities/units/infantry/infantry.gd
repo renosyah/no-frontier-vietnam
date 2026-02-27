@@ -120,6 +120,9 @@ func set_selected(v :bool):
 func move_to(tile_id :Vector2):
 	.move_to(tile_id)
 	
+	if is_dead:
+		return
+	
 	_weapon_aimed = false
 	_weapon.stop_firing()
 	attack_time.stop()

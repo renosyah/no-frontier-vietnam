@@ -68,6 +68,9 @@ func _ready():
 		connect("on_current_tile_updated", self, "_on_current_tile_updated")
 
 func move_to(tile_id :Vector2):
+	if is_dead:
+		return
+		
 	if not _is_master or not is_instance_valid(tile_map):
 		return
 		

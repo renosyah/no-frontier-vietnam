@@ -20,7 +20,7 @@ func _ready():
 	_altitude = altitude
 	
 func move_to(tile_id :Vector2):
-	if _on_task:
+	if _on_task or is_dead:
 		return
 	
 	.move_to(tile_id)

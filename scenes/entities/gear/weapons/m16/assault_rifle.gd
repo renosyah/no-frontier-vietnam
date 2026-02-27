@@ -21,9 +21,7 @@ func _get_ready_bullet() -> BaseProjectile:
 
 # override
 func fire_weapon():
-	var pos = barrel.global_position
-	var to = barrel.global_position + (-barrel.global_transform.basis.z * 10)
-	queue_task.add_task(self, "_bang", [pos, to])
+	queue_task.add_task(self, "_bang")
 	
 func _on_weapon_fired():
 	shot_from = barrel.global_position
@@ -40,11 +38,11 @@ func _on_fire_at(pos :Vector3):
 	
 	var bullet = _get_ready_bullet()
 	if bullet != null:
-		bullet.translation = global_position
+		bullet.translation = shot_from
 		bullet.to = pos
 		bullet.launch()
 		
-func _bang(_from, _to):
+func _bang():
 	if is_master:
 		if not has_ammo():
 			yield(get_tree(), "idle_frame")

@@ -122,7 +122,7 @@ material/1 = SubResource( 2 )
 material/2 = SubResource( 7 )
 
 [node name="barrel" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.491393, 0.0190436, -0.00188911 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.484337, 0.0148102, -0.000207991 )
 
 [node name="bang" type="MeshInstance" parent="."]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0.50941, 0.0160117, 0 )
