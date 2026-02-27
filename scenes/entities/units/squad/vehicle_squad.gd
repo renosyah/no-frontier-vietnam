@@ -17,7 +17,7 @@ func _ready():
 func _on_current_tile_updated(_unit, _from_id, _to_id):
 	._on_current_tile_updated(_unit, _from_id, _to_id)
 	
-	fuel = clamp(fuel - fuel_cost, 0, max_fuel)
+	fuel = int(clamp(fuel - fuel_cost, 0, max_fuel))
 	
 	if fuel == 0:
 		stop()
@@ -42,7 +42,6 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 				# somewhere far LOL
 				i.translation = Vector3(-100, -100, -100)
 				i.set_sync(false)
-				i.visible = false
 				
 		_task_completed = _all_arived
 		

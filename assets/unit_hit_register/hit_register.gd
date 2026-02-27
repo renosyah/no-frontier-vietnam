@@ -18,6 +18,6 @@ func _on_input_detection_any_gesture(_sig ,event):
 	if event is InputEventSingleScreenTap:
 		emit_signal("on_click")
 		
-func _on_hit_register_input_event(camera, event, position, normal, shape_idx):
+func _on_hit_register_input_event(_camera, event, _position, _normal, _shape_idx):
 	if unit.is_selectable:
 		input_detection.check_input(event)

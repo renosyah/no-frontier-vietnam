@@ -60,7 +60,6 @@ func enter_vehicle(at_battle_map_id :Vector2, vehicle):
 				# somewhere far LOL
 				i.translation = Vector3(-100, -100, -100)
 				i.set_sync(false)
-				i.visible = false
 				
 		_task_completed = _all_arived
 		

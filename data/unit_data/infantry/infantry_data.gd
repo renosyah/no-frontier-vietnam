@@ -37,7 +37,7 @@ func to_dictionary() -> Dictionary :
 	_data["i1"] = uniform_style
 	return _data
 	
-func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:NodePath):
+func spawn(player_data :PlayerData, parent, _overlay_ui_path:NodePath, _cam_path:NodePath):
 	var infantry:Infantry  = ScenesIndex.battle_map_unit_scenes[scene_index].instance()
 	infantry.player_id = player_id
 	infantry.name = unit_name

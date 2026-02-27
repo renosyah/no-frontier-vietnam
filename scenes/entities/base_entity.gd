@@ -7,6 +7,9 @@ class_name BaseEntity
 # owner
 var player_id :String
 
+# performace
+var _visibility_notifier :VisibilityNotifier
+
 # misc network
 var _network_timmer :Timer
 var _is_online :bool = false
@@ -36,13 +39,25 @@ func sync_update() -> void:
 	pass
 	
 func last_sync_update() -> void:
+	
 	pass
+func _on_camera_entered(_camera: Camera):
+	visible = true
+	
+func _on_camera_exited(_camera: Camera):
+	visible = false
 	
 ############################################################
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	_is_online = _is_network_running()
 	_is_master = _is_network_master()
+	
+	_visibility_notifier = VisibilityNotifier.new()
+	_visibility_notifier.max_distance = 20
+	_visibility_notifier.connect("camera_entered", self, "_on_camera_entered")
+	_visibility_notifier.connect("camera_exited", self , "_on_camera_exited")
+	add_child(_visibility_notifier)
 	
 	# add little delay
 	# just in case all its puppet created in time

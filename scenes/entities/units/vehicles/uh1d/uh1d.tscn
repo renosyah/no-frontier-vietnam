@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/uh1d.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_glass_material.tres" type="Material" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=10]
 [ext_resource path="res://assets/unit_hit_register/heli_hit_register.tscn" type="PackedScene" id=11]
 [ext_resource path="res://assets/tile_highlight/contested_area_material.tres" type="Material" id=12]
+[ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_no_glass_material.tres" type="Material" id=13]
 
 [sub_resource type="SpatialMaterial" id=29]
 albedo_color = Color( 0.054902, 0.054902, 0.054902, 1 )
@@ -59,6 +60,54 @@ tracks/2/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ Vector3( 0.34, 0.1, -0.028 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("pivot/door_l:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("pivot/door_r:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("pivot/body:material/1")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ ExtResource( 2 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("pivot/landing:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [sub_resource type="Animation" id=31]
@@ -124,6 +173,54 @@ tracks/4/keys = {
 "args": [  ],
 "method": "_on_crashes"
 } ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("pivot/door_l:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.9 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("pivot/door_r:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.9 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("pivot/body:material/1")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0, 0.9 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ ExtResource( 2 ), ExtResource( 13 ) ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("pivot/landing:visible")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PoolRealArray( 0, 0.9 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
 }
 
 [sub_resource type="Animation" id=5]
@@ -255,8 +352,8 @@ albedo_color = Color( 1, 0.984314, 0.972549, 1 )
 [node name="uh1d" type="Spatial"]
 script = ExtResource( 8 )
 speed = 4.0
-hp = 100
-max_hp = 100
+hp = 15
+max_hp = 15
 is_combatan = false
 altitude = 2.0
 is_air = true

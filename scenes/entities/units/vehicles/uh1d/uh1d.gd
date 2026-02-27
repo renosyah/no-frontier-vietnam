@@ -54,7 +54,7 @@ func move_to(tile_id :Vector2):
 	if animation_player.current_animation != "foward":
 		animation_player.play("foward")
 
-func _on_uh1d_on_finish_travel(unit, last_id, current_id):
+func _on_uh1d_on_finish_travel(_unit, _last_id, _current_id):
 	animation_player.play_backwards("foward")
 	
 func drop_passenger():
@@ -132,9 +132,12 @@ func _on_crashes():
 	
 func clone_mesh():
 	#.clone_mesh()
-	
+	var fire = preload("res://scenes/entities/props/fire_burning/fire.tscn").instance()
+	pivot.add_child(fire)
 	var new_pivot = Utils.clone_spatial(pivot)
 	new_pivot.name = "dead_%s" % new_pivot.name
+	new_pivot.rotation_degrees += Vector3.ONE * rand_range(-0.15, 0.15)
+	new_pivot.translation.y = 0.2
 	return new_pivot
 
 

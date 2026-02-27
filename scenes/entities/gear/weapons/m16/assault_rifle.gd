@@ -25,6 +25,10 @@ func fire_weapon():
 	var to = barrel.global_position + (-barrel.global_transform.basis.z * 10)
 	queue_task.add_task(self, "_bang", [pos, to])
 	
+func _on_weapon_fired():
+	shot_from = barrel.global_position
+	._on_weapon_fired()
+	
 func stop_firing():
 	queue_task.task_queue.clear()
 	
@@ -46,7 +50,7 @@ func _bang(_from, _to):
 			yield(get_tree(), "idle_frame")
 			return
 			
-		ammo = clamp(ammo - 1, 0, capacity)
+		ammo = int(clamp(ammo - 1, 0, capacity))
 		
 	animation_player.play("bang")
 	yield(animation_player, "animation_finished")

@@ -46,7 +46,7 @@ var _paths :Array # [TileUnitPath]
 
 var _hidden :bool # permanent invisible
 var _spotted :bool # visible or not, but be overide by _hidden
-var _current_visible :bool # current state of visible 
+var _current_visible :bool # current state of visible, this dont set value to visible
 
 # for nav and targeting
 var tile_map :BaseTileMap
@@ -178,7 +178,7 @@ func master_moving(delta :float) -> void:
 func _move_to_path(delta :float, pos :Vector3, to :Vector3):
 	translation += pos.direction_to(to) * speed * delta
 	
-func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
+func _on_enemy_in_range(_delta :float, _pos :Vector3, _enemy_pos :Vector3):
 	pass
 	
 func puppet_moving(delta :float) -> void:
@@ -240,24 +240,29 @@ func take_damage(damage :int):
 	if is_dead:
 		return
 		
-	hp = clamp(hp - damage, 0, max_hp)
+	hp = int(clamp(hp - damage, 0, max_hp))
 	rpc_unreliable("_taking_damage", damage, hp)
 	
 	if hp <= 0:
 		set_dead()
 	
-remotesync func _taking_damage(damage :int, hp: int):
-	hp = hp
+remotesync func _taking_damage(damage :int, hp_left: int):
+	hp = hp_left
 	taking_damage(damage, hp, max_hp)
 	
-func taking_damage(damage :int, hp: int, max_hp :int):
+func taking_damage(_damage :int, _hp: int, _max_hp :int):
 	pass
 	
-func set_dead():
-	if not is_dead:
+func set_dead(use_rpc :bool = true):
+	if is_dead:
+		return
+	
+	if use_rpc:
 		rpc("_set_dead")
-		is_dead = true # safeguard, make faster
-		
+	else:
+		_set_dead()
+	is_dead = true # safeguard, make faster
+	
 func on_dead():
 	emit_signal("on_unit_dead", self)
 

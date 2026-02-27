@@ -82,3 +82,16 @@ func puppet_moving(delta :float) -> void:
 	
 	if not is_dead:
 		rotation.y = lerp_angle(rotation.y, _puppet_rotation_y, 25 * delta)
+		
+func on_dead():
+	.on_dead()
+	
+	if passengers.empty():
+		return
+	
+	# all onboard fking dead
+	for i in passengers:
+		var passenger :InfantrySquad = i
+		for m in passenger.members:
+			m.set_dead(false) # call without rpc
+	

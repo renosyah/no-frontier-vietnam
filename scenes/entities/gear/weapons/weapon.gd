@@ -12,6 +12,7 @@ export var dispersion :float = 0.3
 export var is_master :bool
 
 var unit_owner
+var shot_from :Vector3
 var shot_at :Vector3
 
 func _ready():
@@ -21,8 +22,7 @@ func _on_weapon_fired():
 	var to = random_point_around(shot_at, dispersion)
 	
 	if is_master:
-		var pos = global_position
-		var result :Dictionary = get_world().direct_space_state.intersect_ray(pos, to, [unit_owner], 1, false, true)
+		var result :Dictionary = get_world().direct_space_state.intersect_ray(shot_from, to, [unit_owner], 1, false, true)
 		if result.empty():
 			return
 			
@@ -32,7 +32,7 @@ func _on_weapon_fired():
 			
 	_on_fire_at(to)
 	
-func _on_fire_at(pos :Vector3):
+func _on_fire_at(_pos :Vector3):
 	pass
 	
 func random_point_around(position: Vector3, radius: float) -> Vector3:
@@ -54,7 +54,7 @@ func reload():
 	
 func fire_weapon():
 	if is_master:
-		ammo = clamp(ammo - 1, 0, capacity)
+		ammo = int(clamp(ammo - 1, 0, capacity))
 	
 func firing() -> bool:
 	return false

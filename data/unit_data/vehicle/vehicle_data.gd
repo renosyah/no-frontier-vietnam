@@ -22,7 +22,7 @@ func to_dictionary() -> Dictionary :
 	return _data
 	
 	
-func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:NodePath) -> Vehicle:
+func spawn(player_data :PlayerData, parent, _overlay_ui_path:NodePath, _cam_path:NodePath) -> Vehicle:
 	var vehicle :Vehicle = ScenesIndex.battle_map_unit_scenes[scene_index].instance()
 	vehicle.player_id = player_id
 	vehicle.name = unit_name

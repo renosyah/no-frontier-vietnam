@@ -151,11 +151,11 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	var t:Transform = transform.looking_at(look, Vector3.UP)
 	transform = transform.interpolate_with(t, 25 * delta)
 	
-	var dir_to :Vector3 = pos.direction_to(enemy_pos)
+	var dir_to :Vector3 = pos.direction_to(look)
 	var foward_dir :Vector3 = (-global_transform.basis.z)
 	var is_align :bool = foward_dir.dot(dir_to) > 0.85
 	
-	if attack_time.is_stopped():
+	if is_align and attack_time.is_stopped():
 		_weapon.shot_at = enemy_pos
 		fire_weapon()
 		attack_time.wait_time = rand_range(2, 8)
@@ -224,7 +224,7 @@ func _on_reloading():
 	audio_stream_player_3d.stream = reload_sound
 	audio_stream_player_3d.play()
 	
-func use_launcher(at :Vector3):
+func use_launcher(_at :Vector3):
 	stop()
 	_weapon_aimed = false
 	_weapon.stop_firing()
@@ -240,7 +240,7 @@ remotesync func _fire_launcher():
 func _on_launcher_fired():
 	_launcher_firing = false
 	
-func use_grenade(at :Vector3):
+func use_grenade(_at :Vector3):
 	stop()
 	_weapon_aimed = false
 	_weapon.stop_firing()

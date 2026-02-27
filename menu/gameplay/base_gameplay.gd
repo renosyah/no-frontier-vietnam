@@ -241,7 +241,7 @@ func _on_spawn_heli_press():
 func _on_spawn_bot_infantry():
 	var tile_id :Vector2 = grand_map_mission_data.points[0]
 	
-	var id = Utils.create_unique_id()
+	var id = "BOT_1"
 	var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
 	infantry_squad.player_network_id = 1
 	infantry_squad.player_id = id
@@ -792,9 +792,8 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 var battle_map_unit_positions :Dictionary = {} # { BaseTileMap (battle map):{Vector2:[ BaseTileUnit ] }}
 var dead_bodies :Array = []
 	
-func _on_battle_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
-	if not battle_map_unit_positions.has(unit.tile_map):
-		return
+func _on_battle_map_squad_finish_travel(_unit :BaseTileUnit, _from_tile_id :Vector2, _current_tile_id :Vector2):
+	pass
 	
 func _on_battle_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	if not battle_map_unit_positions.has(unit.tile_map):
@@ -972,6 +971,8 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector2, grand_map_tile_id :Vector2):
 	if squad is VehicleSquad:
 		var vehicle :Vehicle = squad.vehicle
+		if vehicle.have_task():
+			return
 		
 		vehicle.attack_move = false
 		vehicle.unit_position = {}
