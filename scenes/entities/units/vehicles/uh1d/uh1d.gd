@@ -1,6 +1,8 @@
 extends Vehicle
 
 const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
+const explode_sound = preload("res://assets/sounds/vehicle/explode.wav")
+const burning = preload("res://assets/sounds/vehicle/burning.ogg")
 
 var engine_run :bool = true
 
@@ -118,7 +120,9 @@ func _on_heli_hit_register_on_click():
 	
 func on_dead():
 	#.on_dead() # called after animation dead fininish
-	audio_stream_player_3d.stop()
+	audio_stream_player_3d.stream = explode_sound
+	audio_stream_player_3d.play()
+	
 	circle.visible = false
 	
 	_altitude = 0
@@ -132,12 +136,18 @@ func _on_crashes():
 	
 func clone_mesh():
 	#.clone_mesh()
+	var dup = audio_stream_player_3d.duplicate()
+	dup.stream = burning
+	dup.play()
+	
 	var fire = preload("res://scenes/entities/props/fire_burning/fire.tscn").instance()
 	pivot.add_child(fire)
 	var new_pivot = Utils.clone_spatial(pivot)
 	new_pivot.name = "dead_%s" % new_pivot.name
 	new_pivot.rotation_degrees += Vector3.ONE * rand_range(-0.15, 0.15)
 	new_pivot.translation.y = 0.2
+	new_pivot.add_child(dup)
+	
 	return new_pivot
 
 

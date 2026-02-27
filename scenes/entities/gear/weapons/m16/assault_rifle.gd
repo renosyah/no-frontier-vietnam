@@ -1,5 +1,7 @@
 extends Weapon
 
+const bullet_scene = preload("res://scenes/entities/projectiles/bullet/bullet.tscn")
+
 onready var barrel = $barrel
 onready var animation_player = $AnimationPlayer
 onready var queue_task = $queue_task
@@ -7,8 +9,8 @@ onready var queue_task = $queue_task
 var bullets :Array = []
 
 func _ready():
-	for i in 10:
-		var bullet = preload("res://scenes/entities/projectiles/bullet/bullet.tscn").instance()
+	for i in 32:
+		var bullet = bullet_scene.instance()
 		add_child(bullet)
 		bullets.append(bullet)
 

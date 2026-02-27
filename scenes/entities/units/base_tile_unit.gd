@@ -145,6 +145,11 @@ func master_moving(delta :float) -> void:
 		
 	var pos :Vector3 = global_position
 	if is_instance_valid(enemy):
+		if enemy.is_dead:
+			enemy = null
+			_on_enemy_dead()
+			return
+			
 		var enemy_pos :Vector3 = enemy.global_position
 		_on_enemy_in_range(delta, pos, enemy_pos)
 		return
@@ -182,6 +187,9 @@ func _move_to_path(delta :float, pos :Vector3, to :Vector3):
 	translation += pos.direction_to(to) * speed * delta
 	
 func _on_enemy_in_range(_delta :float, _pos :Vector3, _enemy_pos :Vector3):
+	pass
+	
+func _on_enemy_dead():
 	pass
 	
 func puppet_moving(delta :float) -> void:

@@ -9,7 +9,8 @@ height = 0.2
 
 [sub_resource type="SpatialMaterial" id=2]
 flags_unshaded = true
-albedo_color = Color( 0.913725, 0.686275, 0, 1 )
+flags_vertex_lighting = true
+albedo_color = Color( 0.913725, 0.52549, 0, 1 )
 
 [node name="bullet" type="Spatial"]
 script = ExtResource( 1 )

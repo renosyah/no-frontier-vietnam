@@ -588,6 +588,7 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 	infantry_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
 	infantry_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
 	infantry_squad.connect("on_infatry_squad_task_enter_vehicle", self, "_on_grand_map_infatry_squad_task_enter_vehicle")
+	infantry_squad.connect("on_infantry_squad_member_died", self, "_on_grand_map_infantry_squad_member_died")
 	infantry_squad.connect("on_squad_destroyed", self, "_on_grand_map_squad_squad_destroyed")
 	
 	# connect signal after set_spotted function called
@@ -733,7 +734,11 @@ func _on_grand_map_squad_task_exit_battle_map(squad :BaseSquad, to_grand_map_id 
 			var pos_datas:Array = battle_map_unit_positions[infantry.tile_map][infantry.current_tile]
 			if pos_datas.has(infantry):
 				pos_datas.erase(infantry)
-				
+
+func _on_grand_map_infantry_squad_member_died(squad :BaseSquad, unit :Infantry):
+	if unit.player_id == player.player_id:
+		Global.unit_responded(RadioChatters.CASUALTY, unit.unit_voice)
+		
 func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
 	squad.queue_free()
 	

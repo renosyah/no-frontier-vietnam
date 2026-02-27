@@ -1,6 +1,7 @@
 extends BaseSquad
 class_name InfantrySquad
 
+signal on_infantry_squad_member_died(squad, member)
 signal on_infatry_squad_task_enter_vehicle(squad, vehicle)
 
 onready var mesh_instances = [
@@ -116,7 +117,10 @@ func set_hidden(v :bool):
 func _on_member_dead(unit):
 	if members.has(unit):
 		members.erase(unit)
-	
+		
 	if members.empty():
 		emit_signal("on_squad_destroyed", self)
+		return
+		
+	emit_signal("on_infantry_squad_member_died", self , unit)
 	

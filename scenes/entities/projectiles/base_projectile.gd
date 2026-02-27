@@ -2,9 +2,9 @@ extends Spatial
 class_name BaseProjectile
 
 export var to :Vector3
-export var speed :float = 8.0
+export var speed :float = 12.0
 export var is_ready :bool = true
-export var max_range :float = 10
+export var max_range :float = 5.0
 
 var dir :Vector3
 var travel_distance :float = 0

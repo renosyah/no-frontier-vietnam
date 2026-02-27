@@ -20,6 +20,7 @@ func _ready():
 
 func _on_weapon_fired():
 	var to = random_point_around(shot_at, dispersion)
+	_on_fire_at(to)
 	
 	if is_master:
 		var result :Dictionary = get_world().direct_space_state.intersect_ray(shot_from, to, [unit_owner], 1, false, true)
@@ -30,8 +31,6 @@ func _on_weapon_fired():
 			var hr :HitRegister = result["collider"]
 			hr.unit.take_damage(damage)
 			
-	_on_fire_at(to)
-	
 func _on_fire_at(_pos :Vector3):
 	pass
 	

@@ -86,7 +86,7 @@ func _get_enemy(battle_map :BaseTileMap) -> BaseTileUnit:
 			
 		for i in unit_positions[id]:
 			var unit :BaseTileUnit = i
-			if unit != self and unit.team != team:
+			if unit.team != team:
 				return i
 				
 	return null

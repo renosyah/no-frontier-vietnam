@@ -136,10 +136,6 @@ func sync_update() -> void:
 		
 # overide move_to_path
 func _move_to_path(delta :float, _pos :Vector3, to :Vector3):
-	_weapon_aimed = false
-	if not attack_time.is_stopped():
-		attack_time.stop()
-	
 	var t:Transform = transform.looking_at(to, Vector3.UP)
 	transform = transform.interpolate_with(t, 25 * delta)
 	translation += -transform.basis.z * speed * delta
@@ -163,6 +159,14 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 		fire_weapon()
 		attack_time.wait_time = rand_range(2, 8)
 		attack_time.start()
+	
+func _on_enemy_dead():
+	._on_enemy_dead()
+	
+	_weapon_aimed = false
+	_weapon.stop_firing()
+	if not attack_time.is_stopped():
+		attack_time.stop()
 	
 func master_moving(delta :float) -> void:
 	.master_moving(delta)
