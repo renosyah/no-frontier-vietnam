@@ -157,7 +157,7 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	if is_align and attack_time.is_stopped():
 		_weapon.shot_at = enemy_pos
 		fire_weapon()
-		attack_time.wait_time = rand_range(2, 8)
+		attack_time.wait_time = rand_range(1, 4)
 		attack_time.start()
 	
 func _on_enemy_dead():
@@ -165,6 +165,7 @@ func _on_enemy_dead():
 	
 	_weapon_aimed = false
 	_weapon.stop_firing()
+	
 	if not attack_time.is_stopped():
 		attack_time.stop()
 	
@@ -193,7 +194,7 @@ func _on_weapon_aimed():
 		return
 		
 	# master just do it here
-	var burst_count = min(int(rand_range(3, 6)), _weapon.ammo)
+	var burst_count = min(int(rand_range(3, 4)), _weapon.ammo)
 	for i in burst_count: 
 		_weapon.fire_weapon()
 		

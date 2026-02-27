@@ -753,6 +753,10 @@ func _on_grand_map_infantry_squad_member_died(squad :BaseSquad, unit :Infantry):
 		Global.unit_responded(RadioChatters.CASUALTY, unit.unit_voice)
 		
 func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
+	if squad_positions[squad.current_tile].has(squad):
+		squad_positions[squad.current_tile].erase(squad)
+		
+	yield(get_tree(),"idle_frame")
 	squad.queue_free()
 	
 func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicle):
@@ -871,7 +875,8 @@ func _on_battle_map_unit_dead(unit :BaseTileUnit):
 		pos_datas.erase(unit)
 		
 	var dead_body = unit.clone_mesh()
-	battle_map.add_child(dead_body)
+	add_child(dead_body)
+	
 	dead_bodies.append(dead_body)
 	
 	if dead_bodies.size() > 15:

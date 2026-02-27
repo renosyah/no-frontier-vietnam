@@ -22,4 +22,4 @@ bag_scene_index = 7
 vest_scene_index = 1
 weapon_scene_index = 1
 launcher_scene_index = 1
-uniform_style = 2
+uniform_style = 0

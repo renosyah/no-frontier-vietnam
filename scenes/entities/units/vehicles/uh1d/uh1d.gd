@@ -72,6 +72,9 @@ func drop_passenger():
 	_altitude = 0.15
 	animation_player.play("door_open")
 	yield(get_tree().create_timer(3),"timeout")
+	if is_dead:
+		return
+		
 	_altitude = altitude
 	
 	.drop_passenger()
@@ -142,6 +145,7 @@ func clone_mesh():
 	
 	var fire = preload("res://scenes/entities/props/fire_burning/fire.tscn").instance()
 	pivot.add_child(fire)
+	
 	var new_pivot = Utils.clone_spatial(pivot)
 	new_pivot.name = "dead_%s" % new_pivot.name
 	new_pivot.rotation_degrees += Vector3.ONE * rand_range(-0.15, 0.15)
