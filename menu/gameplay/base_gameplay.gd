@@ -217,12 +217,12 @@ func _on_spawn_infantry():
 			var style = [0,1,2]
 			var skin = [0, 1]
 			var hats = [0, 2]
-			var bags = [0,1,2,3,4,9]
+			var bags = [0,1,2,3,9]
 			var vests = [0, 2]
 			
 			infantry.skin_material_index = skin[randi() % 2]
 			infantry.hat_scene_index = hats[randi() % 2]
-			infantry.bag_scene_index = bags[randi() % 6]
+			infantry.bag_scene_index = 4 if (i == 0) else bags[randi() % 5]
 			infantry.vest_scene_index = vests[randi() % 2]
 			infantry.uniform_style = style[randi() % 3]
 			
@@ -287,6 +287,7 @@ func _on_camera_down_zoom_in():
 		return
 		
 	set_current_battle_map(tile.id)
+	
 	if is_instance_valid(ui.selected_squad):
 		ui.selected_squad.set_selected(false)
 		ui.selected_squad = null
@@ -299,6 +300,7 @@ func _on_camera_up_exiting():
 		return
 		
 	use_grand_camera()
+	hide_battle_map()
 	
 #	if is_instance_valid(ui.selected_battle_map_unit):
 #		ui.selected_battle_map_unit.set_selected(false)
@@ -431,7 +433,7 @@ func setup_battle_map():
 remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	if battle_map_holder.has(id):
 		return
-		
+	
 	var battle_map = preload("res://scenes/maps/battle/battle_map.tscn").instance()
 	battle_map.connect("on_map_ready", self, "_on_battle_map_ready", [id, battle_map])
 	battle_map.name = "battle_map_%s" % id
@@ -441,7 +443,7 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	battle_map.generate_from_data(battle_map_datas[id])
 	battle_map_holder[id] = battle_map
 	battle_map.visible = false
-		
+
 	if not battle_map_unit_positions.has(battle_map):
 		battle_map_unit_positions[battle_map] = {}
 		
@@ -469,6 +471,7 @@ func get_closes_zoomable_battle_map(from :Vector3) -> TileMapData:
 	return current # TileMapData
 	
 func set_current_battle_map(battle_map_id :Vector2):
+	
 	current_battle_map = battle_map_holder[battle_map_id]
 	current_battle_map.visible = true
 	grand_map.visible = false
@@ -476,13 +479,28 @@ func set_current_battle_map(battle_map_id :Vector2):
 	use_battle_camera(current_battle_map.global_position)
 	ground_table.translation = current_battle_map.global_position + Vector3(0, -0.4, -1)
 	
+	if dead_bodies_holder.has(current_battle_map):
+		for i in dead_bodies_holder[current_battle_map]:
+			i.visible = true
+	
 func hide_battle_map():
 	for i in battle_map_holder.values():
 		i.visible = false
-	
+		
+		if dead_bodies_holder.has(i):
+			for ded in dead_bodies_holder[i]:
+				ded.visible = false
+				
 func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	create_transit_point(tile_id, battle_map)
 	
+	var mission = grand_map_mission_data
+	if tile_id in mission.points:
+		var caches = preload("res://scenes/entities/props/weapon_caches/weapon_caches.tscn").instance()
+		battle_map.add_child(caches)
+		caches.global_position = battle_map.get_tile_instance(Vector2.ZERO).global_position
+		battle_map.enable_nav(Vector2.ZERO, false)
+		
 ########################################## battle map transit point ############################################
 
 # to despawn unit in battle map to enter back at grand map
@@ -760,6 +778,7 @@ func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
 	squad.queue_free()
 	
 func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicle):
+	var is_vehicle_ok :bool = is_instance_valid(vehicle)
 	for i in squad.members:
 		var member :Infantry = i
 		
@@ -767,7 +786,10 @@ func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicl
 		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
 		if pos_datas.has(member):
 			pos_datas.erase(member)
-			
+	
+	if not is_vehicle_ok:
+		return
+		
 	if vehicle is Vehicle:
 		vehicle.take_passenger([squad])
 	
@@ -812,7 +834,7 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 ########################################## battle map unit ############################################
 
 var battle_map_unit_positions :Dictionary = {} # { BaseTileMap (battle map):{Vector2:[ BaseTileUnit ] }}
-var dead_bodies :Array = []
+var dead_bodies_holder :Dictionary ={}
 	
 func _on_battle_map_squad_finish_travel(_unit :BaseTileUnit, _from_tile_id :Vector2, _current_tile_id :Vector2):
 	pass
@@ -867,8 +889,6 @@ func _on_battle_map_unit_dead(unit :BaseTileUnit):
 		ui.selected_battle_map_unit.set_selected(false)
 		ui.selected_battle_map_unit = null
 		
-	var battle_map :BaseTileMap = unit.tile_map
-		
 	# remove from spotting mechanic
 	var pos_datas:Array = battle_map_unit_positions[unit.tile_map][unit.current_tile]
 	if pos_datas.has(unit):
@@ -877,12 +897,17 @@ func _on_battle_map_unit_dead(unit :BaseTileUnit):
 	var dead_body = unit.clone_mesh()
 	add_child(dead_body)
 	
-	dead_bodies.append(dead_body)
+	# add dead body to holder
+	if not dead_bodies_holder.has(unit.tile_map):
+		dead_bodies_holder[unit.tile_map] = []
+		
+	dead_bodies_holder[unit.tile_map].append(dead_body)
 	
-	if dead_bodies.size() > 15:
-		var f = dead_bodies.front()
+	# limit 15 dead per battle map
+	if dead_bodies_holder[unit.tile_map].size() > 15:
+		var f = dead_bodies_holder[unit.tile_map].front()
 		f.queue_free()
-		dead_bodies.pop_front()
+		dead_bodies_holder[unit.tile_map].pop_front()
 		
 	yield(get_tree(),"idle_frame")
 	unit.queue_free()

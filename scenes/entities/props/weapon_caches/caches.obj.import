@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/caches.obj-88fe32f2d855788179bf20a89b5e9cd1.mesh"
+
+[deps]
+
+files=[ "res://.import/caches.obj-88fe32f2d855788179bf20a89b5e9cd1.mesh" ]
+
+source_file="res://scenes/entities/props/weapon_caches/caches.obj"
+dest_files=[ "res://.import/caches.obj-88fe32f2d855788179bf20a89b5e9cd1.mesh", "res://.import/caches.obj-88fe32f2d855788179bf20a89b5e9cd1.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

@@ -31,6 +31,8 @@ onready var headgear_holder = $pivot/body/head/headgear
 onready var vest_holder = $pivot/body/vest
 onready var attack_time = $attack_time
 onready var infantry_hit_register = $infantry_hit_register
+onready var blood = $blood
+
 
 onready var meshes = [
 	$pivot/body/head/h, # head : 0=skin, 1:hair
@@ -67,11 +69,13 @@ func _ready():
 	_weapon.is_master = _is_master
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
 	_weapon.unit_owner = self
+	_weapon.team = team
 	
 	weapon_holder.add_child(_weapon)
 	single_use_weapon.add_child(_launcher)
 	
 	infantry_hit_register.unit = self
+	
 	
 func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
 	
@@ -122,10 +126,11 @@ func move_to(tile_id :Vector2):
 	
 	if is_dead:
 		return
-	
+		
 	_weapon_aimed = false
 	_weapon.stop_firing()
 	attack_time.stop()
+	
 	
 func sync_update() -> void:
 	.sync_update()
@@ -195,18 +200,16 @@ func _on_weapon_aimed():
 		
 	# master just do it here
 	var burst_count = min(int(rand_range(3, 4)), _weapon.ammo)
-	for i in burst_count: 
-		_weapon.fire_weapon()
+	_weapon.fire_weapon(burst_count)
 		
 	rpc_unreliable("_fire_weapon", burst_count, _weapon.shot_at) # fire for puppet
 	
-remotesync func _fire_weapon(count :int, _shot_at :Vector3):
+remotesync func _fire_weapon(count :int, shot_at :Vector3):
 	if _is_master:
 		return
 		
-	_weapon.shot_at = _shot_at
-	for i in count:
-		_weapon.fire_weapon()
+	_weapon.shot_at = shot_at
+	_weapon.fire_weapon(count)
 		
 func _on_weapon_fired():
 	if is_dead:
@@ -295,6 +298,12 @@ func clone_mesh():
 	var new_pivot = Utils.clone_spatial(pivot)
 	new_pivot.name = "dead_%s" % new_pivot.name
 	return new_pivot
+	
+func taking_damage(_damage :int, _hp: int, _max_hp :int):
+	.taking_damage(_damage, _hp, _max_hp)
+	
+	blood.translation = global_position
+	blood.display()
 	
 func on_dead():
 	# called later after

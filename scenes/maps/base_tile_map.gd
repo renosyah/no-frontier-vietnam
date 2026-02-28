@@ -60,6 +60,9 @@ func is_nav_enable(id :Vector2) -> bool:
 	var nav_id :int = _tile_map_data.tile_ids[id]
 	return not _navigation.is_point_disabled(nav_id)
 	
+func enable_nav(id :Vector2, enable :bool = true):
+	_enable_nav_tile(_navigation, id, enable)
+	
 func update_spawned_object(data :MapObjectData):
 	remove_spawned_object(data.id, false)
 	
@@ -265,7 +268,7 @@ func _enable_nav_tile(nav :AStar2D, id :Vector2, enable :bool = true):
 		
 	var navigation_id: int = _tile_map_data.tile_ids[id]
 	if nav.has_point(navigation_id):
-		nav.set_point_disabled(navigation_id, !enable)
+		nav.set_point_disabled(navigation_id, not enable)
 		
 func _ids_to_tile_nodes(ids :Array) -> Array:
 	var datas = []

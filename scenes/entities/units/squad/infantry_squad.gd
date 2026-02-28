@@ -32,6 +32,7 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 				
 				# hide unit
 				# somewhere far LOL
+				i.stop()
 				i.translation = Vector3(-100, -100, -100)
 				i.set_sync(false)
 				
@@ -48,6 +49,11 @@ func enter_vehicle(at_battle_map_id :Vector2, vehicle):
 	if not task_checker.is_stopped():
 		return
 		
+	# case if vehicle is dead
+	if not is_instance_valid(vehicle):
+		_reasemble_member_around(at_battle_map_id)
+		return
+		
 	var _task_completed :bool = false
 	while not _task_completed:
 		var _all_arived :bool = true
@@ -60,15 +66,48 @@ func enter_vehicle(at_battle_map_id :Vector2, vehicle):
 				# hide unit
 				# somewhere far LOL
 				i.translation = Vector3(-100, -100, -100)
-				i.set_sync(false)
 				
 		_task_completed = _all_arived
 		
 		task_checker.start()
 		yield(task_checker,"timeout")
-	
+		
+	# case if vehicle is dead
+	if not is_instance_valid(vehicle):
+		_reasemble_member_around(at_battle_map_id)
+		return
+		
+	for i in members:
+		i.set_sync(false)
+		
 	emit_signal("on_infatry_squad_task_enter_vehicle", self, vehicle)
 	
+func _reasemble_member_around(tile_id :Vector2):
+	var arounds :Array = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.get_directions(),
+		tile_id,
+		2
+	)
+	
+	for i in members:
+		var infantry :Infantry = i
+		infantry.current_tile = tile_id
+		infantry.is_selectable = true
+		infantry.stop()
+		
+		var bm :BaseTileMap = infantry.tile_map
+		var def_pos = bm.get_tile_instance(tile_id)
+		var tile = bm.get_tile_instance(arounds.front())
+		
+		if is_instance_valid(tile):
+			infantry.current_tile = arounds.front()
+			infantry.translation = tile.global_position
+			
+		else:
+			infantry.translation = def_pos.global_position
+			
+		arounds.pop_front()
+		
 func setup_ambush(v :bool):
 	if _on_camp_mode or _is_moving:
 		return

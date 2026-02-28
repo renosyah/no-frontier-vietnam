@@ -10,30 +10,12 @@ export var reserve_ammo :int = 0
 export var max_reserve_ammo :int = 0
 export var dispersion :float = 0.3
 export var is_master :bool
+export var team :int
 
 var unit_owner
 var shot_from :Vector3
 var shot_at :Vector3
 
-func _ready():
-	connect("weapon_fired", self, "_on_weapon_fired")
-
-func _on_weapon_fired():
-	var to = random_point_around(shot_at, dispersion)
-	_on_fire_at(to)
-	
-	if is_master:
-		var result :Dictionary = get_world().direct_space_state.intersect_ray(shot_from, to, [unit_owner], 1, false, true)
-		if result.empty():
-			return
-			
-		if result["collider"] is HitRegister:
-			var hr :HitRegister = result["collider"]
-			hr.unit.take_damage(damage)
-			
-func _on_fire_at(_pos :Vector3):
-	pass
-	
 func random_point_around(position: Vector3, radius: float) -> Vector3:
 	var dir = Vector3(
 		rand_range(-1.0, 1.0),
@@ -51,9 +33,9 @@ func reload():
 	ammo += ammo_to_load
 	reserve_ammo -= ammo_to_load
 	
-func fire_weapon():
+func fire_weapon(count :int):
 	if is_master:
-		ammo = int(clamp(ammo - 1, 0, capacity))
+		ammo = int(clamp(ammo - count, 0, capacity))
 	
 func firing() -> bool:
 	return false

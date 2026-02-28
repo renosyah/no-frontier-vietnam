@@ -206,7 +206,6 @@ icon = ExtResource( 11 )
 expand_icon = true
 
 [node name="dead" type="Button" parent="CanvasLayer/Control/VBoxContainer/vehicle_option/HBoxContainer"]
-visible = false
 margin_left = 302.0
 margin_right = 427.0
 margin_bottom = 150.0

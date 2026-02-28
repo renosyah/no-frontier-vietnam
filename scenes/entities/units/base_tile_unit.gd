@@ -75,6 +75,7 @@ func move_to(tile_id :Vector2):
 		return
 		
 	enemy = null
+	_is_moving = true
 	
 	var v :Array = _get_tile_path(tile_id)
 	if v.empty():
@@ -216,10 +217,8 @@ func _on_global_tick():
 		if enemy.is_dead:
 			enemy = null
 			
-	if _is_moving:
-		return
-		
-	scan_area()
+	if not _is_moving:
+		scan_area()
 	
 func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
 	if attack_move and _is_master:

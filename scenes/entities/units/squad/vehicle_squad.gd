@@ -40,6 +40,7 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 				
 				# hide unit
 				# somewhere far LOL
+				i.stop()
 				i.translation = Vector3(-100, -100, -100)
 				i.set_sync(false)
 				

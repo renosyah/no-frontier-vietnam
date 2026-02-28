@@ -10,7 +10,7 @@
 [ext_resource path="res://scenes/entities/units/infantry/skin_color_material.tres" type="Material" id=8]
 [ext_resource path="res://scenes/entities/gear/weapons/grenade/grenade.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/entities/units/infantry/infantry.gd" type="Script" id=10]
-[ext_resource path="res://scenes/entities/gear/weapons/m16/m16.tscn" type="PackedScene" id=11]
+[ext_resource path="res://assets/hit_particle/custom_particle/mesh/custom_mesh_particle.tscn" type="PackedScene" id=11]
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://assets/tile_highlight/selected_material.tres" type="Material" id=13]
 [ext_resource path="res://assets/unit_hit_register/infantry_hit_register.tscn" type="PackedScene" id=14]
@@ -1616,7 +1616,7 @@ tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0, 0 ) ]
+"values": [ Vector3( 0.075, 0, 0 ) ]
 }
 tracks/2/type = "value"
 tracks/2/path = NodePath("pivot/body:translation")
@@ -1628,7 +1628,7 @@ tracks/2/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0, 0 ) ]
+"values": [ Vector3( 0.075, 0, 0 ) ]
 }
 tracks/3/type = "value"
 tracks/3/path = NodePath("pivot/body:rotation_degrees")
@@ -1649,7 +1649,7 @@ tracks/4/loop_wrap = true
 tracks/4/imported = false
 tracks/4/enabled = true
 tracks/4/keys = {
-"times": PoolRealArray( 0, 0.3, 0.6 ),
+"times": PoolRealArray( 0, 0.5, 0.9 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector3( 0.126867, 0.103677, -0.0153865 ), Vector3( 0.126867, 0.103677, -0.0153865 ), Vector3( 0.126867, 0.103677, -0.0153865 ) ]
@@ -1661,7 +1661,7 @@ tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = true
 tracks/5/keys = {
-"times": PoolRealArray( 0, 0.2, 0.3, 0.5, 0.6 ),
+"times": PoolRealArray( 0, 0.3, 0.5, 0.8, 0.9 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
 "values": [ Vector3( -20.1653, 97.8276, -80.7206 ), Vector3( -41.716, 58.5095, -12.0875 ), Vector3( -41.716, 2.91947, -12.0875 ), Vector3( -41.716, 58.5095, -12.0875 ), Vector3( -20.1653, 97.8276, -80.7206 ) ]
@@ -1673,7 +1673,7 @@ tracks/6/loop_wrap = true
 tracks/6/imported = false
 tracks/6/enabled = true
 tracks/6/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4 ),
+"times": PoolRealArray( 0, 0.3, 0.7 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector3( -0.140139, 0.103212, 0.0237745 ), Vector3( -0.140139, 0.103212, 0.0237745 ), Vector3( -0.140139, 0.103212, 0.0237745 ) ]
@@ -1685,7 +1685,7 @@ tracks/7/loop_wrap = true
 tracks/7/imported = false
 tracks/7/enabled = true
 tracks/7/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4 ),
+"times": PoolRealArray( 0, 0.3, 0.7 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector3( -61.3955, 35.6123, 9.70385 ), Vector3( -78.3883, -27.6128, 75.6118 ), Vector3( -61.3955, 35.6123, 9.70385 ) ]
@@ -1709,7 +1709,7 @@ tracks/9/loop_wrap = true
 tracks/9/imported = false
 tracks/9/enabled = true
 tracks/9/keys = {
-"times": PoolRealArray( 0, 0.2, 0.5, 0.6 ),
+"times": PoolRealArray( 0, 0.3, 0.8, 0.9 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
 "values": [ Vector3( 0, 59.717, 0 ), Vector3( 19.6293, 59.6713, -0.2643 ), Vector3( 19.6293, 59.6713, -0.2643 ), Vector3( 0, 59.717, 0 ) ]
@@ -1769,10 +1769,10 @@ tracks/14/loop_wrap = true
 tracks/14/imported = false
 tracks/14/enabled = true
 tracks/14/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4 ),
+"times": PoolRealArray( 0, 0.3, 0.7 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( -0.118102, 0.072096, 0.166556 ), Vector3( -0.118102, 0.109224, 0.0969508 ), Vector3( -0.118102, 0.072096, 0.166556 ) ]
+"values": [ Vector3( -0.043, 0.072, 0.167 ), Vector3( -0.043, 0.109, 0.097 ), Vector3( -0.043, 0.072, 0.167 ) ]
 }
 tracks/15/type = "value"
 tracks/15/path = NodePath("pivot/weapon_holder:rotation_degrees")
@@ -1781,7 +1781,7 @@ tracks/15/loop_wrap = true
 tracks/15/imported = false
 tracks/15/enabled = true
 tracks/15/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4 ),
+"times": PoolRealArray( 0, 0.3, 0.7 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector3( 0.466632, -76.922, 3.18402 ), Vector3( 4.69023, -105.684, 17.8297 ), Vector3( 0.466632, -76.922, 3.18402 ) ]
@@ -1793,7 +1793,7 @@ tracks/16/loop_wrap = true
 tracks/16/imported = false
 tracks/16/enabled = true
 tracks/16/keys = {
-"times": PoolRealArray( 0.3 ),
+"times": PoolRealArray( 0.7 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
@@ -3056,6 +3056,8 @@ size = Vector3( 0.4, 0.2, 0.1 )
 [node name="infantry" type="Spatial"]
 script = ExtResource( 10 )
 speed = 1.3
+hp = 8
+max_hp = 8
 spotting_range = 4
 
 [node name="pivot" type="Spatial" parent="."]
@@ -3138,8 +3140,6 @@ material/1 = ExtResource( 7 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.24855e-08, 0.0449767, 0.142818 )
 visible = false
 
-[node name="m16" parent="pivot/weapon_holder" instance=ExtResource( 11 )]
-
 [node name="single_use_weapon" type="Spatial" parent="pivot"]
 visible = false
 
@@ -3187,6 +3187,8 @@ material/0 = ExtResource( 13 )
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 unit_db = 5.0
+
+[node name="blood" parent="." instance=ExtResource( 11 )]
 
 [node name="attack_time" type="Timer" parent="."]
 one_shot = true

@@ -14,6 +14,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/assets_index.gd"
 }, {
+"base": "CPUParticles",
+"class": "BaseCustomParticle",
+"language": "GDScript",
+"path": "res://assets/hit_particle/custom_particle/baseCustomParticle.gd"
+}, {
 "base": "Resource",
 "class": "BaseData",
 "language": "GDScript",
@@ -79,6 +84,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://assets/user_interface/clickable_screen/clickable_screen.gd"
 }, {
+"base": "BaseCustomParticle",
+"class": "CustomMeshParticle",
+"language": "GDScript",
+"path": "res://assets/hit_particle/custom_particle/mesh/custom_mesh_particle.gd"
+}, {
+"base": "BaseCustomParticle",
+"class": "CustomTextParticle",
+"language": "GDScript",
+"path": "res://assets/hit_particle/custom_particle/text/custom_text_particle.gd"
+}, {
 "base": "MarginContainer",
 "class": "DragableCard",
 "language": "GDScript",
@@ -103,6 +118,11 @@ _global_script_classes=[ {
 "class": "GrandMapFileMission",
 "language": "GDScript",
 "path": "res://data/map_data/mission/grand_map_file_mission.gd"
+}, {
+"base": "Spatial",
+"class": "HitParticle",
+"language": "GDScript",
+"path": "res://assets/hit_particle/hit_particle.gd"
 }, {
 "base": "Area",
 "class": "HitRegister",
@@ -316,6 +336,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "AssetsIndex": "",
+"BaseCustomParticle": "",
 "BaseData": "",
 "BaseEntity": "",
 "BaseGameplay": "",
@@ -329,11 +350,14 @@ _global_script_class_icons={
 "BattleMapTransitPoint": "",
 "ClickableFloor": "",
 "ClickableScreen": "",
+"CustomMeshParticle": "",
+"CustomTextParticle": "",
 "DragableCard": "",
 "FloatingSquadIcon": "",
 "GameplayUi": "",
 "GrandMapFileManifest": "",
 "GrandMapFileMission": "",
+"HitParticle": "",
 "HitRegister": "",
 "Infantry": "",
 "InfantryData": "",

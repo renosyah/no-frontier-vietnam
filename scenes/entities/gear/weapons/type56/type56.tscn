@@ -4,7 +4,7 @@
 [ext_resource path="res://scenes/entities/gear/weapons/type56/type56.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://addons/queue_task/queue_task.tscn" type="PackedScene" id=4]
 
-[sub_resource type="SpatialMaterial" id=1]
+[sub_resource type="SpatialMaterial" id=8]
 albedo_color = Color( 0, 0, 0, 1 )
 
 [sub_resource type="SpatialMaterial" id=2]
@@ -108,7 +108,7 @@ ammo = 30
 capacity = 30
 reserve_ammo = 360
 max_reserve_ammo = 360
-dispersion = 0.45
+dispersion = 0.75
 
 [node name="queue_task" parent="." instance=ExtResource( 4 )]
 
@@ -117,7 +117,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.115, -0.019, 0 )
 cast_shadow = 0
 mesh = ExtResource( 2 )
 software_skinning_transform_normals = false
-material/0 = SubResource( 1 )
+material/0 = SubResource( 8 )
 material/1 = SubResource( 2 )
 material/2 = SubResource( 7 )
 

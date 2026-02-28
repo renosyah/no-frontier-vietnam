@@ -352,8 +352,8 @@ albedo_color = Color( 1, 0.984314, 0.972549, 1 )
 [node name="uh1d" type="Spatial"]
 script = ExtResource( 8 )
 speed = 4.0
-hp = 15
-max_hp = 15
+hp = 45
+max_hp = 45
 is_combatan = false
 altitude = 2.0
 is_air = true
