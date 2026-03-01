@@ -17,4 +17,3 @@ unit_voice = 1
 team_color_material_index = 0
 altitude = 2.0
 is_air = true
-capacity = 1

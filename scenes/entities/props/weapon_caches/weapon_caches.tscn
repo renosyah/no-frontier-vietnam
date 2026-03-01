@@ -35,7 +35,6 @@ albedo_color = Color( 0.168627, 0.168627, 0.168627, 1 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.138646, 0 )
-cast_shadow = 0
 mesh = ExtResource( 3 )
 software_skinning_transform_normals = false
 material/0 = SubResource( 1 )

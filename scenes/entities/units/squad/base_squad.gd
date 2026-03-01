@@ -13,6 +13,7 @@ export var team_color_material :SpatialMaterial
 onready var _cam :Camera = get_node_or_null(camera)
 onready var _overlay_ui :Control = get_node_or_null(overlay_ui)
 
+var in_battle_map :bool
 var _floating_icon :FloatingSquadIcon
 
 func _ready():
@@ -33,15 +34,20 @@ func exit_battle_map(_at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 func moving(_delta):
 	.moving(_delta)
 	
+	_track_floating_icon(_cam, global_position)
+	
+func _track_floating_icon(_active_cam :Camera, pos :Vector3):
 	if not _overlay_ui.visible:
 		return
 		
-	var pos = global_position
-	_floating_icon.visible = _current_visible and not _cam.is_position_behind(pos)
+	_floating_icon.visible = _current_visible and not in_battle_map
 	if not _floating_icon.visible:
 		return
 		
-	var screen_pos = _cam.unproject_position(pos)
+	if _active_cam.is_position_behind(pos):
+		return
+		
+	var screen_pos = _active_cam.unproject_position(pos)
 	_floating_icon.rect_global_position = screen_pos - _floating_icon.rect_pivot_offset
 	
 func set_selected(v :bool):

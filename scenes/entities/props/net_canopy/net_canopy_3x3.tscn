@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scenes/entities/props/net_canopy/net_canopy_3x3.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://scenes/tiles/models/rock_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/tiles/models/wood_material.tres" type="Material" id=3]
+[ext_resource path="res://scenes/entities/props/net_canopy/net.png" type="Texture" id=4]
+
+[node name="net_canopy_3x3" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = ExtResource( 1 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 2 )
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform( 4.5, 0, 0, 0, -1.96701e-07, 4.5, 0, -4.5, -1.96701e-07, 0, 1.09671, 0 )
+modulate = Color( 0, 0.247059, 0.0431373, 1 )
+opacity = 0.15
+double_sided = false
+alpha_cut = 2
+texture = ExtResource( 4 )

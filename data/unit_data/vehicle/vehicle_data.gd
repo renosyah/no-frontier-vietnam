@@ -4,21 +4,18 @@ class_name VehicleData
 export var team_color_material_index :int
 export var altitude :float
 export var is_air :bool
-export var capacity :int = 1
 
 func from_dictionary(_data : Dictionary):
 	.from_dictionary(_data)
 	team_color_material_index = _data["_a1"]
 	altitude = _data["_b1"]
 	is_air = _data["_c1"]
-	capacity = _data["_d1"]
 	
 func to_dictionary() -> Dictionary :
 	var _data :Dictionary = .to_dictionary()
 	_data["_a1"] = team_color_material_index
 	_data["_b1"] = altitude
 	_data["_c1"] = is_air
-	_data["_d1"] = capacity
 	return _data
 	
 	
@@ -33,7 +30,6 @@ func spawn(player_data :PlayerData, parent, _overlay_ui_path:NodePath, _cam_path
 	vehicle.team_color_material = MaterialsIndex.team_colors[team_color_material_index]
 	vehicle.is_air = is_air
 	vehicle.altitude = altitude
-	vehicle.capacity = capacity
 	vehicle.unit_voice = unit_voice
 	vehicle.team_color_material = MaterialsIndex.team_colors[team_color_material_index]
 	parent.add_child(vehicle)

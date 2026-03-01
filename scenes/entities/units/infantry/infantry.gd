@@ -33,7 +33,6 @@ onready var attack_time = $attack_time
 onready var infantry_hit_register = $infantry_hit_register
 onready var blood = $blood
 
-
 onready var meshes = [
 	$pivot/body/head/h, # head : 0=skin, 1:hair
 	$pivot/body/Body, # body : 0=uniform
@@ -165,8 +164,8 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 		attack_time.wait_time = rand_range(1, 4)
 		attack_time.start()
 	
-func _on_enemy_dead():
-	._on_enemy_dead()
+func _on_no_enemy():
+	._on_no_enemy()
 	
 	_weapon_aimed = false
 	_weapon.stop_firing()

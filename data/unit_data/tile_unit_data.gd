@@ -10,7 +10,7 @@ export var speed :float
 export var position :Vector3
 export var scene_index :int
 export var color :Color
-export var unit_voice :int
+export var unit_voice :int # 1:us, 2:viet
 
 func from_dictionary(_data : Dictionary):
 	.from_dictionary(_data)

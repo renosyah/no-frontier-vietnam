@@ -90,3 +90,13 @@ static func clone_spatial(original: Spatial) -> Spatial:
 	var copy = original.duplicate()
 	copy.global_transform = original.global_transform
 	return copy
+	
+static func shuffle_array(rng :RandomNumberGenerator, array: Array) -> void:
+	for i in range(array.size() - 1, 0, -1):
+		var j = rng.randi_range(0, i)
+		
+		# swap array[i] and array[j]
+		var temp = array[i]
+		array[i] = array[j]
+		array[j] = temp
+		

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/net_canopy_3x2.obj-efffd64c4d3c47521c6b2a630529147a.mesh"
+
+[deps]
+
+files=[ "res://.import/net_canopy_3x2.obj-efffd64c4d3c47521c6b2a630529147a.mesh" ]
+
+source_file="res://scenes/entities/props/net_canopy/net_canopy_3x2.obj"
+dest_files=[ "res://.import/net_canopy_3x2.obj-efffd64c4d3c47521c6b2a630529147a.mesh", "res://.import/net_canopy_3x2.obj-efffd64c4d3c47521c6b2a630529147a.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

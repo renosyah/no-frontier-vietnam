@@ -11,12 +11,85 @@ onready var mesh_instances = [
 ]
 onready var decoration_icon = $decoration_icon
 onready var task_checker = $task_checker
+onready var rng = RandomNumberGenerator.new()
 
 var members :Array = [] # [ Infantry ]
 
 var _on_ambush_mode :bool
 var _on_camp_mode :bool
 
+func _ready():
+	rng.randomize()
+	
+	for i in mesh_instances:
+		i.set_surface_material(0, team_color_material)
+		
+func get_avg_pos() -> Vector3:
+	var pos :Vector3 = Vector3.ZERO
+	var count :int = 0
+	for i in members:
+		if is_instance_valid(i):
+			count += 1
+			pos += i.global_position
+			
+	return (pos / count) + Vector3(0, 1, 0)
+	
+func _on_global_tick():
+	#._on_global_tick()
+	
+	if not task_checker.is_stopped() or _current_visible:
+		return
+		
+	_check_member_spacing()
+	
+func _check_member_spacing():
+	for i in members:
+		var infantry :Infantry = i
+		if infantry.is_moving():
+			continue
+			
+		var unit_pos :Dictionary = infantry.unit_position
+		if _is_need_spacing(infantry, unit_pos):
+			_find_spacing(infantry, infantry.tile_map, unit_pos)
+			return
+	
+func _find_spacing(infantry :Infantry, bm :BaseTileMap, unit_pos :Dictionary):
+	var arounds :Array = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.get_directions(),
+		infantry.current_tile,
+		1
+	)
+	
+	Utils.shuffle_array(rng, arounds)
+	
+	for id in arounds:
+		if unit_pos.has(id):
+			if _is_empty_here(id, unit_pos):
+				if bm.has_tile(id) and bm.is_nav_enable(id):
+					infantry.move_to(id)
+					return
+	
+func _is_empty_here(id :Vector2, unit_pos :Dictionary, unit = null):
+	if unit_pos[id].empty():
+		return true
+		
+	var count_inside :int = 0
+	for soldier in unit_pos[id]:
+		if unit != null:
+			if soldier == unit:
+				continue
+				
+		count_inside += 1
+		
+	return count_inside == 0
+	
+func _is_need_spacing(infantry :Infantry, unit_pos :Dictionary) -> bool:
+	var id :Vector2 = infantry.current_tile
+	if not unit_pos.has(id):
+		return false
+		
+	return not _is_empty_here(id, unit_pos, infantry)
+	
 func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	if not task_checker.is_stopped():
 		return
@@ -25,16 +98,18 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	while not _task_completed:
 		var _all_arived :bool = true
 		for i in members:
-			if i.current_tile != at_battle_map_id:
-				_all_arived = false
-				
-			else:
-				
-				# hide unit
-				# somewhere far LOL
-				i.stop()
-				i.translation = Vector3(-100, -100, -100)
-				i.set_sync(false)
+			var infantry :Infantry = i
+			if is_instance_valid(infantry):
+				if infantry.current_tile != at_battle_map_id:
+					_all_arived = false
+					
+				else:
+					
+					# hide unit
+					# somewhere far LOL
+					infantry.stop()
+					infantry.translation = Vector3(-100, -100, -100)
+					infantry.set_sync(false)
 				
 		_task_completed = _all_arived
 		
@@ -45,6 +120,7 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 
 # i cant declare vehicle type class
 # it errr cycle if i do
+# at_battle_map_id id is just a id tile on battle map, dont confuse it
 func enter_vehicle(at_battle_map_id :Vector2, vehicle):
 	if not task_checker.is_stopped():
 		return
@@ -58,15 +134,18 @@ func enter_vehicle(at_battle_map_id :Vector2, vehicle):
 	while not _task_completed:
 		var _all_arived :bool = true
 		for i in members:
-			if i.current_tile != at_battle_map_id:
-				_all_arived = false
-				
-			else:
-				
-				# hide unit
-				# somewhere far LOL
-				i.translation = Vector3(-100, -100, -100)
-				
+			var infantry :Infantry = i
+			if is_instance_valid(infantry):
+				if infantry.current_tile != at_battle_map_id:
+					_all_arived = false
+					
+				else:
+					
+					# hide unit
+					# somewhere far LOL
+					i.stop()
+					infantry.translation = Vector3(-100, -100, -100)
+					
 		_task_completed = _all_arived
 		
 		task_checker.start()
@@ -82,7 +161,7 @@ func enter_vehicle(at_battle_map_id :Vector2, vehicle):
 		
 	emit_signal("on_infatry_squad_task_enter_vehicle", self, vehicle)
 	
-func _reasemble_member_around(tile_id :Vector2):
+func _reasemble_member_around(tile_id :Vector2 = Vector2.ZERO):
 	var arounds :Array = TileMapUtils.get_adjacent_tiles(
 		TileMapUtils.get_directions(),
 		tile_id,
@@ -97,11 +176,11 @@ func _reasemble_member_around(tile_id :Vector2):
 		
 		var bm :BaseTileMap = infantry.tile_map
 		var def_pos = bm.get_tile_instance(tile_id)
-		var tile = bm.get_tile_instance(arounds.front())
+		var front = arounds.front()
 		
-		if is_instance_valid(tile):
-			infantry.current_tile = arounds.front()
-			infantry.translation = tile.global_position
+		if bm.has_tile(front) and bm.is_nav_enable(front):
+			infantry.current_tile = front
+			infantry.translation = bm.get_tile_instance(front).global_position
 			
 		else:
 			infantry.translation = def_pos.global_position
@@ -130,10 +209,6 @@ func is_ambush_mode() -> bool:
 func is_camp_mode() -> bool:
 	return _on_camp_mode
 	
-func _ready():
-	for i in mesh_instances:
-		i.set_surface_material(0, team_color_material)
-		
 func move_to(tile_id :Vector2):
 	if is_ambush_mode() or _on_camp_mode:
 		return

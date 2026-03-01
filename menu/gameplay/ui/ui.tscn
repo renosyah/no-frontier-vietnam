@@ -107,6 +107,7 @@ rect_min_size = Vector2( 0, 240 )
 mouse_filter = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/squad_option"]
+visible = false
 margin_right = 600.0
 margin_bottom = 150.0
 rect_min_size = Vector2( 0, 150 )
@@ -139,6 +140,7 @@ rect_min_size = Vector2( 0, 240 )
 mouse_filter = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/infantry_option"]
+visible = false
 margin_right = 600.0
 margin_bottom = 150.0
 rect_min_size = Vector2( 0, 150 )
@@ -206,6 +208,7 @@ icon = ExtResource( 11 )
 expand_icon = true
 
 [node name="dead" type="Button" parent="CanvasLayer/Control/VBoxContainer/vehicle_option/HBoxContainer"]
+visible = false
 margin_left = 302.0
 margin_right = 427.0
 margin_bottom = 150.0

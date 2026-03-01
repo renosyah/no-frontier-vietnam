@@ -57,6 +57,7 @@ var tile_map :BaseTileMap
 var unit_position :Dictionary = {} # {Vector2 : [BaseTileUnit]}
 var enemy = null # cycle warning set to null
 var attack_move :bool
+var spotting_area :Array
 
 # multiplayer data to sync
 puppet var _puppet_current_tile :Vector2
@@ -64,6 +65,11 @@ puppet var _puppet_translation :Vector3
 
 func _ready():
 	if is_combatan:
+		
+		spotting_area = TileMapUtils.get_adjacent_tiles(
+			TileMapUtils.get_directions(), current_tile, spotting_range
+		)
+		
 		Global.connect("on_global_tick", self, "_on_global_tick")
 		connect("on_current_tile_updated", self, "_on_current_tile_updated")
 
@@ -75,12 +81,12 @@ func move_to(tile_id :Vector2):
 		return
 		
 	enemy = null
-	_is_moving = true
 	
 	var v :Array = _get_tile_path(tile_id)
 	if v.empty():
 		return
 		
+	_is_moving = true
 	_paths.clear()
 	_paths.append_array(v)
 	
@@ -146,13 +152,12 @@ func master_moving(delta :float) -> void:
 		
 	var pos :Vector3 = global_position
 	if is_instance_valid(enemy):
-		if enemy.is_dead:
+		if not _is_enemy_in_range():
 			enemy = null
-			_on_enemy_dead()
+			_on_no_enemy()
 			return
 			
-		var enemy_pos :Vector3 = enemy.global_position
-		_on_enemy_in_range(delta, pos, enemy_pos)
+		_on_enemy_in_range(delta, pos, enemy.global_position)
 		return
 	
 	if _paths.empty():
@@ -190,7 +195,7 @@ func _move_to_path(delta :float, pos :Vector3, to :Vector3):
 func _on_enemy_in_range(_delta :float, _pos :Vector3, _enemy_pos :Vector3):
 	pass
 	
-func _on_enemy_dead():
+func _on_no_enemy():
 	pass
 	
 func puppet_moving(delta :float) -> void:
@@ -210,30 +215,39 @@ func puppet_moving(delta :float) -> void:
 	
 # for active enemy spotting
 func _on_global_tick():
+	if _is_master and not _is_moving:
+		_scan_area()
+	
+func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
 	if not _is_master:
 		return
 		
-	if is_instance_valid(enemy):
-		if enemy.is_dead:
-			enemy = null
-			
-	if not _is_moving:
-		scan_area()
-	
-func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
-	if attack_move and _is_master:
-		scan_area()
-	
-func scan_area():
-	enemy = null
-	
-	if unit_position.empty():
-		return
-		
-	var near :Array = TileMapUtils.get_adjacent_tiles(
+	spotting_area = TileMapUtils.get_adjacent_tiles(
 		TileMapUtils.get_directions(), current_tile, spotting_range
 	)
-	for pos in near:
+	
+	if attack_move:
+		_scan_area()
+	
+func _is_enemy_in_range() -> bool:
+	if enemy.is_dead or unit_position.empty():
+		return false
+		
+	for pos in spotting_area:
+		if not unit_position.has(pos):
+			continue
+			
+		var unit_positions :Array = unit_position[pos]
+		if unit_positions.has(enemy):
+			return true
+		
+	return false
+	
+func _scan_area():
+	if unit_position.empty() or is_instance_valid(enemy):
+		return
+		
+	for pos in spotting_area:
 		if not unit_position.has(pos):
 			continue
 			
@@ -242,10 +256,11 @@ func scan_area():
 			continue
 			
 		for unit in unit_positions:
-			if unit.team != team:
-				enemy = unit
-				return
-	
+			if is_instance_valid(unit):
+				if unit.team != team:
+					enemy = unit
+					return
+		
 func take_damage(damage :int):
 	if is_dead:
 		return

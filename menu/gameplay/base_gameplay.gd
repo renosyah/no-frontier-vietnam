@@ -56,6 +56,7 @@ func _on_leave():
 	
 func _on_all_player_ready():
 	Global.hide_transition()
+	
 	# test squad
 #	if NetworkLobbyManager.is_server():
 #		for i in NetworkLobbyManager.get_players():
@@ -199,6 +200,7 @@ func _on_spawn_infantry():
 	infantry_squad.team = player.player_team
 	infantry_squad.current_tile = tile
 	infantry_squad.position = grand_map.get_tile_instance(tile).global_position
+	infantry_squad.unit_voice = player.player_team
 	
 	infantry_squad.members = []
 	for i in 4:
@@ -238,6 +240,7 @@ func _on_spawn_heli_press():
 	vehicle_squad.team = player.player_team
 	vehicle_squad.current_tile = tile
 	vehicle_squad.position = grand_map.get_tile_instance(tile).global_position
+	vehicle_squad.unit_voice = player.player_team
 	
 	var vehicle = preload("res://data/unit_data/vehicle/uh1d.tres").duplicate()
 	vehicle.player_network_id = player.player_network_id
@@ -262,6 +265,7 @@ func _on_spawn_bot_infantry():
 	infantry_squad.team = 3
 	infantry_squad.current_tile = tile_id
 	infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
+	infantry_squad.unit_voice = 2
 	
 	infantry_squad.members = []
 	for i in 6:
@@ -443,10 +447,20 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	battle_map.generate_from_data(battle_map_datas[id])
 	battle_map_holder[id] = battle_map
 	battle_map.visible = false
-
+	
 	if not battle_map_unit_positions.has(battle_map):
 		battle_map_unit_positions[battle_map] = {}
 		
+	# initiated empty positions
+	var battle_map_size :int = grand_map_manifest_data.battle_map_size
+	var tiles :Array = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.get_directions(),
+		Vector2.ZERO,
+		battle_map_size
+	)
+	for id in tiles:
+		battle_map_unit_positions[battle_map][id] = []
+			
 	for tile in grand_map_data.tiles:
 		if tile.id == id:
 			zoomable_battle_map[id] = tile
@@ -471,7 +485,6 @@ func get_closes_zoomable_battle_map(from :Vector3) -> TileMapData:
 	return current # TileMapData
 	
 func set_current_battle_map(battle_map_id :Vector2):
-	
 	current_battle_map = battle_map_holder[battle_map_id]
 	current_battle_map.visible = true
 	grand_map.visible = false
@@ -496,11 +509,24 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	
 	var mission = grand_map_mission_data
 	if tile_id in mission.points:
-		var caches = preload("res://scenes/entities/props/weapon_caches/weapon_caches.tscn").instance()
-		battle_map.add_child(caches)
-		caches.global_position = battle_map.get_tile_instance(Vector2.ZERO).global_position
-		battle_map.enable_nav(Vector2.ZERO, false)
+		spawn_capture_point_objective(tile_id, battle_map)
 		
+	if tile_id in mission.bases:
+		spawn_base_building(tile_id, battle_map)
+		
+########################################## battle map capture point ############################################
+
+func spawn_capture_point_objective(tile_id :Vector2, battle_map :BaseTileMap):
+	var props = preload("res://scenes/entities/props/hidden_cache/hidden_cache.tscn").instance()
+	battle_map.add_child(props)
+	props.global_position = battle_map.get_tile_instance(Vector2.ZERO).global_position
+	battle_map.enable_nav(Vector2.UP, false)
+	battle_map.enable_nav(Vector2.LEFT, false)
+	battle_map.enable_nav(Vector2.RIGHT, false)
+	
+func spawn_base_building(tile_id :Vector2, battle_map :BaseTileMap):
+	pass
+	
 ########################################## battle map transit point ############################################
 
 # to despawn unit in battle map to enter back at grand map
@@ -748,6 +774,7 @@ func on_grand_map_squad_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2,
 func _on_grand_map_squad_task_exit_battle_map(squad :BaseSquad, to_grand_map_id :Vector2):
 	squad.tile_map = grand_map
 	squad.move_to(to_grand_map_id)
+	squad.in_battle_map = false
 	
 	if squad is VehicleSquad:
 		var vehicle :Vehicle = squad.vehicle
@@ -778,7 +805,10 @@ func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
 	squad.queue_free()
 	
 func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicle):
-	var is_vehicle_ok :bool = is_instance_valid(vehicle)
+	if not is_instance_valid(vehicle):
+		squad.reasemble_member_around()
+		return
+		
 	for i in squad.members:
 		var member :Infantry = i
 		
@@ -786,10 +816,7 @@ func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicl
 		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
 		if pos_datas.has(member):
 			pos_datas.erase(member)
-	
-	if not is_vehicle_ok:
-		return
-		
+			
 	if vehicle is Vehicle:
 		vehicle.take_passenger([squad])
 	
@@ -937,7 +964,10 @@ remotesync func _on_battle_map_passenger_exit_vehicle(units:Array, grand_map_til
 ########################################## squad member control ############################################
 
 func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, current_tile_id :Vector2):
+	unit.in_battle_map = true
+
 	if unit is VehicleSquad:
+		
 		var vehicle :Vehicle = unit.vehicle
 		
 		var result :Array = create_entry_positions(from_tile_id, current_tile_id, vehicle.is_air)
