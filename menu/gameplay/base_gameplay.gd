@@ -84,6 +84,11 @@ func spawn_grand_map():
 	grand_map.generate_from_data(grand_map_data)
 	grand_map.setup_border_scale(Vector3.ONE * ((grand_map_manifest_data.map_size * 2) + 1.5))
 	
+	var ambient = AudioStreamPlayer3D.new()
+	ambient.stream = preload("res://assets/sounds/misc/office_ambient.ogg")
+	grand_map.add_child(ambient)
+	ambient.play()
+	
 func _on_grand_map_ready():
 	NetworkLobbyManager.set_ready()
 	setup_base_and_point()
@@ -415,6 +420,11 @@ func setup_battle_map():
 	ground_table.name = "ground_table"
 	add_child(ground_table)
 	
+	var ambient = AudioStreamPlayer3D.new()
+	ambient.stream = preload("res://assets/sounds/misc/jungle_ambient.ogg")
+	ground_table.add_child(ambient)
+	ambient.play()
+	
 	var map_keys = battle_map_datas.keys()
 	var poses = Utils.generate_positions(map_keys.size(), 40, 50)
 	
@@ -509,22 +519,33 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	
 	var mission = grand_map_mission_data
 	if tile_id in mission.points:
-		spawn_capture_point_objective(tile_id, battle_map)
+		var index :int = mission.points.find(tile_id)
+		spawn_capture_point_objective(tile_id, battle_map,index)
 		
 	if tile_id in mission.bases:
-		spawn_base_building(tile_id, battle_map)
+		var index :int = mission.bases.find(tile_id)
+		spawn_base_building(tile_id, battle_map, index)
 		
 ########################################## battle map capture point ############################################
 
-func spawn_capture_point_objective(tile_id :Vector2, battle_map :BaseTileMap):
-	var props = preload("res://scenes/entities/props/hidden_cache/hidden_cache.tscn").instance()
+func spawn_capture_point_objective(tile_id :Vector2, battle_map :BaseTileMap, index:int):
+	var props :Spatial
+	if index == 0:
+		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_intel.tscn").instance()
+	
+	elif index == 1:
+		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_medkit.tscn").instance()
+	
+	else:
+		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_ammo.tscn").instance()
+
 	battle_map.add_child(props)
 	props.global_position = battle_map.get_tile_instance(Vector2.ZERO).global_position
 	battle_map.enable_nav(Vector2.UP, false)
 	battle_map.enable_nav(Vector2.LEFT, false)
 	battle_map.enable_nav(Vector2.RIGHT, false)
 	
-func spawn_base_building(tile_id :Vector2, battle_map :BaseTileMap):
+func spawn_base_building(tile_id :Vector2, battle_map :BaseTileMap, index:int):
 	var wall = preload("res://scenes/entities/props/base_camp/field_base.tscn").instance()
 	battle_map.add_child(wall)
 	wall.translation = battle_map.get_tile_instance(Vector2.ZERO).translation

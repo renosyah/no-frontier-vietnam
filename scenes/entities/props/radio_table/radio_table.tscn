@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scenes/tiles/models/ground_material.tres" type="Material" id=1]
+[ext_resource path="res://scenes/tiles/models/rock_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/entities/props/radio_table/radio.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://scenes/entities/props/radio_table/radio_face.jpg" type="Texture" id=4]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0, 0.2, 0.0313726, 1 )
+
+[node name="radio_table" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+cast_shadow = 0
+mesh = ExtResource( 3 )
+software_skinning_transform_normals = false
+material/0 = SubResource( 1 )
+material/1 = ExtResource( 2 )
+material/2 = ExtResource( 1 )
+material/3 = ExtResource( 2 )
+material/4 = ExtResource( 1 )
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform( 0.11, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0.098449, 0.40225, 0.107263 )
+modulate = Color( 0.498039, 0.498039, 0.498039, 1 )
+texture = ExtResource( 4 )

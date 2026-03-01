@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/radio.obj-c1194ebcca45ef8cf6240c5f3ec2e70e.mesh"
+
+[deps]
+
+files=[ "res://.import/radio.obj-c1194ebcca45ef8cf6240c5f3ec2e70e.mesh" ]
+
+source_file="res://scenes/entities/props/radio_table/radio.obj"
+dest_files=[ "res://.import/radio.obj-c1194ebcca45ef8cf6240c5f3ec2e70e.mesh", "res://.import/radio.obj-c1194ebcca45ef8cf6240c5f3ec2e70e.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

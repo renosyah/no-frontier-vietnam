@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/office_ambient.ogg-88e2a0080f2e64f094afb62e0671c5e2.oggstr"
+
+[deps]
+
+source_file="res://assets/sounds/misc/office_ambient.ogg"
+dest_files=[ "res://.import/office_ambient.ogg-88e2a0080f2e64f094afb62e0671c5e2.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0
