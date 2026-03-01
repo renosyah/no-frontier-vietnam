@@ -1010,6 +1010,8 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 		if vehicle.is_air:
 			vehicle.translation.y = 10.0
 			
+		vehicle.update_spotting()
+		
 	if unit is InfantrySquad:
 		var result :Array = create_entry_positions(from_tile_id, current_tile_id)
 		var entry_positions :Array = result[0]
@@ -1047,6 +1049,8 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 				infantry.look_at(center_point, Vector3.UP)
 				infantry.global_rotation.x = 0
 				infantry.global_rotation.z = 0
+				
+			infantry.update_spotting()
 			
 func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector2, grand_map_tile_id :Vector2):
 	if squad is VehicleSquad:
@@ -1133,6 +1137,8 @@ func order_infatry_squad_to_exit_vehicle(unit :InfantrySquad, grand_map_tile_id 
 		if not battle_map_unit_positions[infantry.tile_map].has(infantry.current_tile):
 			battle_map_unit_positions[infantry.tile_map][infantry.current_tile] = []
 			
+		infantry.update_spotting()
+		
 		# add to spotting mechanic
 		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
 		if not pos_datas.has(member):

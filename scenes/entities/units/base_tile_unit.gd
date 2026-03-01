@@ -65,11 +65,7 @@ puppet var _puppet_translation :Vector3
 
 func _ready():
 	if is_combatan:
-		
-		spotting_area = TileMapUtils.get_adjacent_tiles(
-			TileMapUtils.get_directions(), current_tile, spotting_range
-		)
-		
+		update_spotting()
 		Global.connect("on_global_tick", self, "_on_global_tick")
 		connect("on_current_tile_updated", self, "_on_current_tile_updated")
 
@@ -222,13 +218,17 @@ func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
 	if not _is_master:
 		return
 		
-	spotting_area = TileMapUtils.get_adjacent_tiles(
-		TileMapUtils.get_directions(), current_tile, spotting_range
-	)
+	update_spotting()
 	
 	if attack_move:
 		_scan_area()
 	
+func update_spotting():
+	spotting_area = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.get_directions(), current_tile, spotting_range
+	)
+	
+# check wheter enemy stil in spotting range or not
 func _is_enemy_in_range() -> bool:
 	if enemy.is_dead or unit_position.empty():
 		return false

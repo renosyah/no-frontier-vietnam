@@ -1,6 +1,7 @@
 extends BaseTileUnit
 class_name Infantry
 
+const punch = preload("res://assets/sounds/weapons/punch.wav")
 const reload_sound = preload("res://assets/sounds/weapons/reload.wav")
 const shot_sounds = [
 	preload("res://assets/sounds/weapons/shot_1.wav"),
@@ -46,11 +47,12 @@ puppet var _puppet_rotation_y :float
 puppet var _puppet_anim :String
 
 var _weapon_aimed :bool # this force anim to focus on fire mode
-var _launcher_firing :bool # this force anim to focus on fire mode
+var _special_move_perform :bool # this force anim to focus on fire mode
 
 var _current_anim :String = "iddle"
 var _weapon :Weapon
 var _launcher :Spatial
+var _melee_range :Array = []
 
 var squad :BaseSquad
 
@@ -158,11 +160,39 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	var foward_dir :Vector3 = (-global_transform.basis.z)
 	var is_align :bool = foward_dir.dot(dir_to) > 0.85
 	
-	if is_align and attack_time.is_stopped():
+	if not is_align:
+		return
+		
+	if _in_melee() and pos.y == enemy_pos.y:
+		_special_move_perform = true
+		_current_anim = "melee_weapon"
+		animation_state.travel(_current_anim)
+		return
+		
+	if attack_time.is_stopped():
 		_weapon.shot_at = enemy_pos
 		fire_weapon()
 		attack_time.wait_time = rand_range(1, 4)
 		attack_time.start()
+
+func _on_enemy_melee():
+	_special_move_perform = false
+	if is_instance_valid(enemy):
+		enemy.take_damage(1)
+		audio_stream_player_3d.stream = punch
+		audio_stream_player_3d.play()
+		
+func _in_melee() -> bool:
+	return _melee_range.has(enemy.current_tile)
+	
+func update_spotting():
+	.update_spotting()
+	
+	_melee_range = TileMapUtils.get_adjacent_tiles(
+		TileMapUtils.get_directions(),
+		current_tile,
+		1
+	)
 	
 func _on_no_enemy():
 	._on_no_enemy()
@@ -243,12 +273,12 @@ func use_launcher(_at :Vector3):
 		rpc("_fire_launcher")
 		
 remotesync func _fire_launcher():
-	_launcher_firing = true
+	_special_move_perform = true
 	_current_anim = "use_launcher"
 	animation_state.travel(_current_anim)
 	
 func _on_launcher_fired():
-	_launcher_firing = false
+	_special_move_perform = false
 	
 func use_grenade(_at :Vector3):
 	stop()
@@ -259,15 +289,15 @@ func use_grenade(_at :Vector3):
 		rpc("_use_grenade")
 		
 remotesync func _use_grenade():
-	_launcher_firing = true
+	_special_move_perform = true
 	_current_anim = "use_grenade"
 	animation_state.travel(_current_anim)
 	
 func _on_grenade_use():
-	_launcher_firing = false
+	_special_move_perform = false
 	
 func _set_animation():
-	if _launcher_firing:
+	if _special_move_perform:
 		return
 		
 	if _weapon_aimed:
@@ -288,7 +318,7 @@ func puppet_moving(delta :float) -> void:
 		
 	rotation.y = lerp_angle(rotation.y, _puppet_rotation_y, 25 * delta)
 	
-	if not _launcher_firing:
+	if not _special_move_perform:
 		animation_state.travel(_puppet_anim)
 		
 func clone_mesh():
