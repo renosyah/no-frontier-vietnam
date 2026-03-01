@@ -47,7 +47,8 @@ puppet var _puppet_rotation_y :float
 puppet var _puppet_anim :String
 
 var _weapon_aimed :bool # this force anim to focus on fire mode
-var _special_move_perform :bool # this force anim to focus on fire mode
+var _special_move_perform :bool # this force anim to focus on special attack
+var _on_melee_perform :bool # this force anim to focus on melee
 
 var _current_anim :String = "iddle"
 var _weapon :Weapon
@@ -160,23 +161,22 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	var foward_dir :Vector3 = (-global_transform.basis.z)
 	var is_align :bool = foward_dir.dot(dir_to) > 0.85
 	
-	if not is_align:
-		return
-		
-	if _in_melee() and pos.y == enemy_pos.y:
-		_special_move_perform = true
+	if is_align and _in_melee() and pos.y == enemy_pos.y:
+		_on_melee_perform = true
 		_current_anim = "melee_weapon"
 		animation_state.travel(_current_anim)
 		return
 		
-	if attack_time.is_stopped():
+	_on_melee_perform = false
+	
+	if is_align and attack_time.is_stopped():
 		_weapon.shot_at = enemy_pos
 		fire_weapon()
 		attack_time.wait_time = rand_range(1, 4)
 		attack_time.start()
 
 func _on_enemy_melee():
-	_special_move_perform = false
+	_on_melee_perform = false
 	if is_instance_valid(enemy):
 		enemy.take_damage(1)
 		audio_stream_player_3d.stream = punch
@@ -297,7 +297,7 @@ func _on_grenade_use():
 	_special_move_perform = false
 	
 func _set_animation():
-	if _special_move_perform:
+	if _special_move_perform or _on_melee_perform:
 		return
 		
 	if _weapon_aimed:

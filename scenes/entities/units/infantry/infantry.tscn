@@ -1745,10 +1745,10 @@ tracks/12/loop_wrap = true
 tracks/12/imported = false
 tracks/12/enabled = true
 tracks/12/keys = {
-"times": PoolRealArray( 0, 1 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0.00274782, -0.0801899, 0.0178608 ), Vector3( 0.00274782, -0.0801899, 0.0178608 ) ]
+"values": [ Vector3( 0.00274782, -0.0801899, 0.0178608 ), Vector3( 0.00274782, -0.0801899, 0.0178608 ), Vector3( 0.00274782, -0.0801899, 0.0178608 ) ]
 }
 tracks/13/type = "value"
 tracks/13/path = NodePath("pivot/legs/r:rotation_degrees")
@@ -1757,10 +1757,10 @@ tracks/13/loop_wrap = true
 tracks/13/imported = false
 tracks/13/enabled = true
 tracks/13/keys = {
-"times": PoolRealArray( 0, 1 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0, 0 ), Vector3( 0, 0, 0 ) ]
+"values": [ Vector3( 0, 0, 0 ), Vector3( -62.443, 5.81816e-06, -9.59879e-06 ), Vector3( 0, 0, 0 ) ]
 }
 tracks/14/type = "value"
 tracks/14/path = NodePath("pivot/weapon_holder:translation")

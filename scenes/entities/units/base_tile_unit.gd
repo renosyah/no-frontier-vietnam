@@ -68,6 +68,7 @@ func _ready():
 		update_spotting()
 		Global.connect("on_global_tick", self, "_on_global_tick")
 		connect("on_current_tile_updated", self, "_on_current_tile_updated")
+		connect("on_finish_travel", self, "_on_current_tile_updated")
 
 func move_to(tile_id :Vector2):
 	if is_dead:
@@ -213,7 +214,7 @@ func puppet_moving(delta :float) -> void:
 func _on_global_tick():
 	if _is_master and not _is_moving:
 		_scan_area()
-	
+
 func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
 	if not _is_master:
 		return
