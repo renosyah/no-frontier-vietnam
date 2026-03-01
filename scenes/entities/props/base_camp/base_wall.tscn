@@ -1,0 +1,132 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scenes/entities/props/base_camp/corner_wall.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://scenes/tiles/models/ground_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/tiles/models/wood_material.tres" type="Material" id=3]
+[ext_resource path="res://scenes/entities/props/base_camp/plank.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://scenes/tiles/models/rock_material.tres" type="Material" id=5]
+
+[node name="base_wall" type="Spatial"]
+
+[node name="wall" type="Spatial" parent="."]
+
+[node name="top_left" type="MeshInstance" parent="wall"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -1.5 )
+cast_shadow = 0
+mesh = ExtResource( 1 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 3 )
+
+[node name="top_right" type="MeshInstance" parent="wall"]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 1.5, 0, -1.5 )
+cast_shadow = 0
+mesh = ExtResource( 1 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 3 )
+
+[node name="top_right2" type="MeshInstance" parent="wall"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 1.5, 0, 1.5 )
+cast_shadow = 0
+mesh = ExtResource( 1 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 3 )
+
+[node name="top_right3" type="MeshInstance" parent="wall"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -1.5, 0, 1.5 )
+cast_shadow = 0
+mesh = ExtResource( 1 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 3 )
+
+[node name="planks" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0278222, 0 )
+
+[node name="plank" type="MeshInstance" parent="planks"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2, 0, 0 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
+
+[node name="plank2" type="MeshInstance" parent="planks"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2, 0, 0 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
+
+[node name="plank3" type="MeshInstance" parent="planks"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0 )
+visible = false
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
+
+[node name="plank6" type="MeshInstance" parent="planks"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1, 0, 0 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
+
+[node name="plank7" type="MeshInstance" parent="planks"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -1, 0, 0 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
+
+[node name="plank4" type="MeshInstance" parent="planks"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
+
+[node name="plank5" type="MeshInstance" parent="planks"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
+
+[node name="plank8" type="MeshInstance" parent="planks"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )
+
+[node name="plank9" type="MeshInstance" parent="planks"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1 )
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 5 )

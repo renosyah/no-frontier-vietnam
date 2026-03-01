@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/canopy_2x2_norope.obj-6f9f25d042e9c572c7ed8e9ef6b4a7cd.mesh"
+
+[deps]
+
+files=[ "res://.import/canopy_2x2_norope.obj-6f9f25d042e9c572c7ed8e9ef6b4a7cd.mesh" ]
+
+source_file="res://scenes/entities/props/net_canopy/canopy_2x2_norope.obj"
+dest_files=[ "res://.import/canopy_2x2_norope.obj-6f9f25d042e9c572c7ed8e9ef6b4a7cd.mesh", "res://.import/canopy_2x2_norope.obj-6f9f25d042e9c572c7ed8e9ef6b4a7cd.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

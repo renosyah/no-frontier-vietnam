@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/plank.obj-fe3580bc0161b7fa3cbf4724e13dc320.mesh"
+
+[deps]
+
+files=[ "res://.import/plank.obj-fe3580bc0161b7fa3cbf4724e13dc320.mesh" ]
+
+source_file="res://scenes/entities/props/base_camp/plank.obj"
+dest_files=[ "res://.import/plank.obj-fe3580bc0161b7fa3cbf4724e13dc320.mesh", "res://.import/plank.obj-fe3580bc0161b7fa3cbf4724e13dc320.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

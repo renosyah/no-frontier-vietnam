@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scenes/entities/props/net_canopy/canopy_2x2_norope.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://scenes/tiles/models/rock_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/tiles/models/wood_material.tres" type="Material" id=3]
+[ext_resource path="res://scenes/entities/props/net_canopy/net.png" type="Texture" id=4]
+
+[node name="net_canopy_2x2" type="Spatial"]
+
+[node name="pivot" type="Spatial" parent="."]
+
+[node name="MeshInstance" type="MeshInstance" parent="pivot"]
+mesh = ExtResource( 1 )
+skeleton = NodePath("../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 2 )
+
+[node name="Sprite3D" type="Sprite3D" parent="pivot"]
+transform = Transform( 3, 0, 0, 0, -1.31134e-07, 3, 0, -3, -1.31134e-07, 0, 1.09671, 0 )
+modulate = Color( 0, 0.247059, 0.0431373, 1 )
+opacity = 0.15
+double_sided = false
+alpha_cut = 2
+texture = ExtResource( 4 )

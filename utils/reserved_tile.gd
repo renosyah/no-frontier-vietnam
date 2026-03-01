@@ -8,6 +8,8 @@ static func get_hq_tiles(at :Vector2 = Vector2(-1, -1)) -> Array:
 		at + Vector2.RIGHT + Vector2.DOWN
 	]
 
+# this will get 2x2 with up and side each 3
+# not really proposional, this is abandond now!
 static func get_base_reseved_tiles(at :Vector2 = Vector2(-1, -1), _spaces :int = 0) -> Array:
 	var tiles :Array = []
 	var hq = get_hq_tiles(at)

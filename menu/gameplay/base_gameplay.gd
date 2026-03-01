@@ -525,7 +525,20 @@ func spawn_capture_point_objective(tile_id :Vector2, battle_map :BaseTileMap):
 	battle_map.enable_nav(Vector2.RIGHT, false)
 	
 func spawn_base_building(tile_id :Vector2, battle_map :BaseTileMap):
-	pass
+	var wall = preload("res://scenes/entities/props/base_camp/field_base.tscn").instance()
+	battle_map.add_child(wall)
+	wall.translation = battle_map.get_tile_instance(Vector2.ZERO).translation
+	var disable_tiles = [
+		Vector2.ZERO, 
+		Vector2(2,-2), Vector2(1,-2),
+		Vector2(2,-1), Vector2(-2,2),
+		Vector2(-1,2), Vector2(-2,1),
+		Vector2(-1,-2), Vector2(-2,-1),
+		Vector2(-2,-2), Vector2(2,2),
+		Vector2(2,1), Vector2(1,2),
+	]
+	for i in disable_tiles:
+		battle_map.enable_nav(i, false)
 	
 ########################################## battle map transit point ############################################
 

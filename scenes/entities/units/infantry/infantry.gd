@@ -190,9 +190,20 @@ func update_spotting():
 	
 	_melee_range = TileMapUtils.get_adjacent_tiles(
 		TileMapUtils.get_directions(),
-		current_tile,
-		1
+		current_tile, 1
 	)
+	
+func take_ammo():
+	_weapon.take_ammo()
+	
+func heal():
+	if _is_master:
+		hp = int(clamp(hp + 1, 0 , max_hp))
+		rpc_unreliable("_heal", hp)
+	
+remotesync func _heal(hp :int):
+	if not _is_master:
+		hp = hp
 	
 func _on_no_enemy():
 	._on_no_enemy()

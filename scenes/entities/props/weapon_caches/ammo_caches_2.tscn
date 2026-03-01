@@ -1,0 +1,48 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://scenes/tiles/models/ground_material.tres" type="Material" id=1]
+[ext_resource path="res://scenes/tiles/models/rock_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/entities/props/weapon_caches/caches.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://scenes/entities/units/infantry/skin_color_dark_material.tres" type="Material" id=4]
+[ext_resource path="res://scenes/entities/units/infantry/uniform_green.tres" type="Material" id=5]
+[ext_resource path="res://scenes/entities/props/weapon_caches/ammo_2.png" type="Texture" id=6]
+[ext_resource path="res://assets/tile_highlight/contested_area_material.tres" type="Material" id=7]
+[ext_resource path="res://scenes/entities/gear/weapons/grenade/grenade.obj" type="ArrayMesh" id=9]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0, 0.2, 0.0313726, 1 )
+
+[node name="ammo_caches" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.138646, 0 )
+mesh = ExtResource( 3 )
+software_skinning_transform_normals = false
+material/0 = SubResource( 1 )
+material/1 = ExtResource( 2 )
+material/2 = ExtResource( 1 )
+
+[node name="grenade" type="MeshInstance" parent="."]
+transform = Transform( 0.87367, 0, -0.486518, 0, 1, 0, 0.486518, 0, 0.87367, -0.211869, 0.104083, 0.11991 )
+cast_shadow = 0
+mesh = ExtResource( 9 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 5 )
+material/1 = ExtResource( 4 )
+material/2 = ExtResource( 7 )
+
+[node name="grenade2" type="MeshInstance" parent="."]
+transform = Transform( 0.850976, 0, -0.525204, 0, 1, 0, 0.525204, 0, 0.850976, -0.288118, 0.104083, 0.254963 )
+cast_shadow = 0
+mesh = ExtResource( 9 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 5 )
+material/1 = ExtResource( 4 )
+material/2 = ExtResource( 7 )
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform( 0.249869, 0.00810127, 3.54118e-10, 0, -1.09278e-08, 0.25, 0.00810127, -0.249869, -1.09221e-08, 0.0579929, 0.392077, -0.234669 )
+modulate = Color( 0.380392, 0.380392, 0.380392, 1 )
+transparent = false
+double_sided = false
+texture = ExtResource( 6 )
