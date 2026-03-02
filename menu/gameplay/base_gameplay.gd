@@ -208,7 +208,8 @@ func _on_spawn_infantry():
 	infantry_squad.unit_voice = player.player_team
 	
 	infantry_squad.members = []
-	for i in 4:
+	var number = 4 if player.player_team == 1 else 6
+	for i in number:
 		var infantry :InfantryData = (nva_riflement if player.player_team != 1 else macv_riflement).duplicate()
 		infantry.player_network_id = player.player_network_id
 		infantry.player_id = player.player_id
@@ -526,24 +527,32 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 		var index :int = mission.bases.find(tile_id)
 		spawn_battle_map_base_building(tile_id, battle_map, index)
 		
+		
 ########################################## battle map capture point ############################################
+
+var team_listen_radio :int
 
 func spawn_battle_map_capture_point(tile_id :Vector2, battle_map :BaseTileMap, index:int):
 	var props :Spatial
 	if index == 0:
 		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_intel.tscn").instance()
+		battle_map.add_child(props)
+		
 		battle_map.enable_nav(Vector2.UP + Vector2.LEFT, false)
 		battle_map.enable_nav(Vector2.UP + Vector2.RIGHT, false)
 		battle_map.enable_nav(Vector2.DOWN + Vector2.LEFT, false)
 		battle_map.enable_nav(Vector2.DOWN + Vector2.RIGHT, false)
-	
+		
+		props.listening_spot.connect("on_listening", self, "_on_listening_post_listen")
+		
 	elif index == 1:
 		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_medkit.tscn").instance()
-	
+		battle_map.add_child(props)
+		
 	else:
 		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_ammo.tscn").instance()
-
-	battle_map.add_child(props)
+		battle_map.add_child(props)
+	
 	props.global_position = battle_map.get_tile_instance(Vector2.ZERO).global_position
 	battle_map.enable_nav(Vector2.UP, false)
 	battle_map.enable_nav(Vector2.LEFT, false)
@@ -570,6 +579,9 @@ func spawn_battle_map_base_building(tile_id :Vector2, battle_map :BaseTileMap, i
 	]
 	for i in disable_tiles:
 		battle_map.enable_nav(i, false)
+	
+func _on_listening_post_listen(by_team :int):
+	team_listen_radio = by_team
 	
 ########################################## battle map transit point ############################################
 
@@ -686,7 +698,7 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 	
 	infantry_squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
 	infantry_squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
-	infantry_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
+	infantry_squad.connect("on_unit_clicked", self, "_on_grand_map_squad_clicked")
 	infantry_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
 	infantry_squad.connect("on_infatry_squad_task_enter_vehicle", self, "_on_grand_map_infatry_squad_task_enter_vehicle")
 	infantry_squad.connect("on_infantry_squad_member_died", self, "_on_grand_map_infantry_squad_member_died")
@@ -700,7 +712,7 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 		var infantry :Infantry = i
 		#infantry.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 		infantry.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
-		infantry.connect("on_unit_selected", self, "_on_battle_map_infantry_selected")
+		infantry.connect("on_unit_clicked", self, "_on_battle_map_infantry_clicked")
 		infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 		infantry.connect("on_unit_dead", infantry_squad, "_on_member_dead")
 		
@@ -724,7 +736,7 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	
 	vehicle_squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
 	vehicle_squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
-	vehicle_squad.connect("on_unit_selected", self, "_on_grand_map_squad_selected")
+	vehicle_squad.connect("on_unit_clicked", self, "_on_grand_map_squad_clicked")
 	vehicle_squad.connect("on_squad_task_exit_battle_map", self, "_on_grand_map_squad_task_exit_battle_map")
 	vehicle_squad.connect("on_squad_destroyed", self, "_on_grand_map_squad_squad_destroyed")
 	
@@ -735,7 +747,7 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	var vehicle :Vehicle = vehicle_squad.vehicle
 	#vehicle.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 	vehicle.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
-	vehicle.connect("on_unit_selected", self, "_on_battle_map_vehicle_selected")
+	vehicle.connect("on_unit_clicked", self, "_on_battle_map_vehicle_clicked")
 	vehicle.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 	vehicle.connect("on_unit_dead", vehicle_squad, "_on_vehicle_dead")
 	vehicle.connect("on_vehicle_drop_passenger", self, "_on_battle_map_vehicle_drop_passenger")
@@ -743,36 +755,39 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	on_grand_map_squad_spawned(vehicle_squad)
 	
 func on_grand_map_squad_spawned(unit :BaseTileUnit):
-	if not squad_positions.has(unit.current_tile):
-		squad_positions[unit.current_tile] = []
+	var current_tile :Vector2 = unit.current_tile
+	if not squad_positions.has(current_tile):
+		squad_positions[current_tile] = []
 		
-	squad_positions[unit.current_tile].append(unit)
+	squad_positions[current_tile].append(unit)
 	
-	if unit.player_id == player.player_id:
-		spawned_squad.append(unit)
-		
-	if unit.team != player.player_team:
-		unit.set_spotted(false)
-		
-		
-	# patching for issue
-	# for hidden on local only
-	if unit.player_id == player.player_id:
-		unit.set_hidden(true)
-		
+	spawned_squad.append(unit)
+	unit.set_spotted(unit.team != player.player_team)
+	unit.set_hidden(current_tile in zoomable_battle_map.keys())
+	
 	# spawned squad
 	# imidiatly enter a battle map
 	# call function via non rpc
 	on_grand_map_squad_enter_battle_map(unit, unit.current_tile, unit.current_tile)
 	
-func _on_grand_map_squad_selected(unit :BaseTileUnit, selected :bool):
+func _on_grand_map_squad_clicked(unit :BaseSquad):
 	if is_instance_valid(ui.selected_squad):
+		var holder = ui.selected_squad
 		ui.selected_squad.set_selected(false)
+		ui.selected_squad = null
+		
+		if holder == unit:
+			return
 		
 	if unit.player_id == player.player_id:
-		ui.selected_squad = unit if selected else null
+		ui.selected_squad = unit
+		ui.selected_squad.set_selected(true)
 	
 func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
+	# rule of gameplay, squad  not displayed on map
+	# if inside one of active battle map
+	unit.set_hidden(to in zoomable_battle_map.keys())
+	
 	# form of position tracking on map
 	# this will tied to spotting mechanic
 	if squad_positions.has(from):
@@ -790,22 +805,18 @@ func _on_grand_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2,
 		on_team_grand_map_squad_moving(unit, from, to)
 
 func _on_grand_map_squad_finish_travel(unit :BaseTileUnit, from_tile_id :Vector2, current_tile_id :Vector2):
-	# rule of gameplay, squad cannot contact hq
+	# rule of gameplay, squad  not displayed on map
 	# if inside one of active battle map
-	# apply to all unit sides
-	var in_zone = current_tile_id in zoomable_battle_map.keys()
-	unit.set_hidden(in_zone)
-	
-	if unit.player_id == player.player_id:
-		Global.unit_responded(RadioChatters.MOVEMENT, unit.unit_voice)
-	
-	if in_zone:
-		# if currently selected squad then it became unselected
+	# if currently selected squad then it became unselected
+	if current_tile_id in zoomable_battle_map.keys():
 		if (ui.selected_squad == unit):
 			ui.selected_squad.set_selected(false)
 			ui.selected_squad = null
 		
 		rpc("_on_grand_map_squad_enter_battle_map", unit.get_path(), from_tile_id, current_tile_id)
+	
+	if unit.player_id == player.player_id:
+		Global.unit_responded(RadioChatters.MOVEMENT, unit.unit_voice)
 	
 # filter only for enemy unit that spotted, not player
 func _on_grand_map_squad_spotted(unit :BaseTileUnit):
@@ -849,6 +860,9 @@ func _on_grand_map_infantry_squad_member_died(squad :BaseSquad, unit :Infantry):
 func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
 	if squad_positions[squad.current_tile].has(squad):
 		squad_positions[squad.current_tile].erase(squad)
+		
+	if spawned_squad.has(squad):
+		spawned_squad.erase(squad)
 		
 	yield(get_tree(),"idle_frame")
 	squad.queue_free()
@@ -898,10 +912,12 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 	if to in zoomable_battle_map.keys():
 		return
 		
+	var is_listening :bool = (team_listen_radio == player.player_team)
+	
 	# pasive spotting
 	# enemy enter one of the watch list position
 	# set spotted true, only from POV of spotter player
-	unit.set_spotted(to in grand_map_watchlist_position)
+	unit.set_spotted(to in grand_map_watchlist_position or is_listening)
 	
 ########################################## battle map unit ############################################
 
@@ -927,15 +943,21 @@ func _on_battle_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2
 		
 	unit_pos[to].append(unit)
 	
-func _on_battle_map_infantry_selected(unit :Infantry, selected :bool):
+func _on_battle_map_infantry_clicked(unit :Infantry):
 	var player_unit :bool = unit.player_id == player.player_id
 	if is_instance_valid(ui.selected_battle_map_unit):
+		var holder = ui.selected_battle_map_unit
 		ui.selected_battle_map_unit.set_selected(false)
+		ui.selected_battle_map_unit = null
+		
+		if holder == unit:
+			return
 		
 	if player_unit:
-		ui.selected_battle_map_unit = unit if selected else null
+		ui.selected_battle_map_unit = unit
+		ui.selected_battle_map_unit.set_selected(true)
 		
-func _on_battle_map_vehicle_selected(vehicle :Vehicle, selected :bool):
+func _on_battle_map_vehicle_clicked(vehicle :Vehicle):
 	var player_unit :bool = vehicle.player_id == player.player_id
 	
 	if is_instance_valid(ui.selected_battle_map_unit):
@@ -948,13 +970,18 @@ func _on_battle_map_vehicle_selected(vehicle :Vehicle, selected :bool):
 			
 			ui.selected_battle_map_unit.set_selected(false)
 			ui.selected_battle_map_unit = null
-			vehicle.set_selected(false)
 			return
 			
+		var holder = ui.selected_battle_map_unit
 		ui.selected_battle_map_unit.set_selected(false)
+		ui.selected_battle_map_unit = null
 		
+		if holder == vehicle:
+			return
+			
 	if player_unit:
-		ui.selected_battle_map_unit = vehicle if selected else null
+		ui.selected_battle_map_unit = vehicle
+		ui.selected_battle_map_unit.set_selected(true)
 		
 func _on_battle_map_unit_dead(unit :BaseTileUnit):
 	if ui.selected_battle_map_unit == unit:

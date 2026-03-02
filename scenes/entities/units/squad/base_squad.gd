@@ -58,5 +58,4 @@ func set_selected(v :bool):
 	_floating_icon.selected(_is_selected)
 	
 func _on_floating_icon_press():
-	set_selected(not _is_selected)
-	emit_signal("on_unit_selected", self, _is_selected)
+	emit_signal("on_unit_clicked", self)

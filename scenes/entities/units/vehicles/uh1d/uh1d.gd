@@ -115,11 +115,8 @@ func puppet_moving(delta :float) -> void:
 		pivot.global_rotation.x = lerp_angle(pivot.global_rotation.x, _puppet_rotation_x, 25 * delta)
 		
 func _on_heli_hit_register_on_click():
-	if is_dead:
-		return
-		
-	set_selected(not _is_selected)
-	emit_signal("on_unit_selected", self, _is_selected)
+	if not is_dead and not _on_task:
+		emit_signal("on_unit_clicked", self)
 	
 func on_dead():
 	#.on_dead() # called after animation dead fininish

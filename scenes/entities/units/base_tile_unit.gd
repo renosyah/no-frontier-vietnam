@@ -7,7 +7,7 @@ class_name BaseTileUnit
 # current tile also getting tracked
 
 signal on_unit_spotted(unit)
-signal on_unit_selected(unit, selected)
+signal on_unit_clicked(unit)
 signal on_current_tile_updated(unit, from_id, to_id)
 signal on_finish_travel(unit, last_id, current_id)
 signal on_unit_dead(unit)
@@ -123,6 +123,9 @@ func set_hidden(v :bool):
 func set_selected(v :bool):
 	_is_selected = v
 	
+func is_selected() -> bool:
+	return _is_selected
+	
 remote func _stop():
 	_is_moving = false
 	_paths.clear()
@@ -226,7 +229,7 @@ func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
 	
 func update_spotting():
 	spotting_area = TileMapUtils.get_adjacent_tiles(
-		TileMapUtils.get_directions(), current_tile, spotting_range
+		TileMapUtils.ARROW_DIRECTIONS, current_tile, spotting_range
 	)
 	
 # check wheter enemy stil in spotting range or not

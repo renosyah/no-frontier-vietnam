@@ -358,8 +358,5 @@ func _on_dead_animation_finished():
 	.on_dead()
 	
 func _on_infantry_hit_register_on_click():
-	if is_dead:
-		return
-		
-	set_selected(not _is_selected)
-	emit_signal("on_unit_selected", self, _is_selected)
+	if not is_dead:
+		emit_signal("on_unit_clicked", self)
