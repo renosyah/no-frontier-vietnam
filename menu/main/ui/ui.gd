@@ -5,7 +5,6 @@ const edit_map_button = preload("res://menu/editor_menu/button/edit_map_button.t
 onready var main = $CanvasLayer/Control/main
 onready var new_game = $CanvasLayer/Control/new_game
 onready var map_select = $CanvasLayer/Control/map_select
-
 onready var maps_holder = $CanvasLayer/Control/map_select/vbox/ScrollContainer/GridContainer
 
 func _ready():

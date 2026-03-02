@@ -51,6 +51,34 @@ static func get_all_resources(path: String, extensions := ["tres", "res", "tscn"
 	
 	return files
 	
+static func copy_file_to_user(source_path: String, target_path: String) -> Array:
+	var logs :Array = []
+	
+	var source_file = File.new()
+	if not source_file.file_exists(source_path):
+		if logs != null:
+			logs.append("Source file not found: %s" % source_path)
+			return logs
+
+	var err = source_file.open(source_path, File.READ)
+	if err != OK:
+		logs.append("Failed to open source file: %s" % source_path)
+		return logs
+
+	var data = source_file.get_buffer(source_file.get_len())
+	source_file.close()
+
+	var target_file = File.new()
+	err = target_file.open(target_path, File.WRITE)
+	if err != OK:
+		logs.append("Failed to open target file: %s" % target_path)
+		return logs
+
+	target_file.store_buffer(data)
+	target_file.close()
+
+	return logs
+	
 static func screen_to_world(cam :Camera, screen_pos: Vector2, with_body :bool = true, collision_mask :int = 0b11) -> Vector3:
 	var from = cam.project_ray_origin(screen_pos)
 	var dir = cam.project_ray_normal(screen_pos)

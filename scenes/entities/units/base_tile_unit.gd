@@ -229,7 +229,7 @@ func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
 	
 func update_spotting():
 	spotting_area = TileMapUtils.get_adjacent_tiles(
-		TileMapUtils.ARROW_DIRECTIONS, current_tile, spotting_range
+		TileMapUtils.get_directions(), current_tile, spotting_range
 	)
 	
 # check wheter enemy stil in spotting range or not

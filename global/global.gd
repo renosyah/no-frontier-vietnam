@@ -79,11 +79,17 @@ func load_player_data():
 		player_data.player_team = 1
 		player_data.player_potrait = 0
 		SaveLoad.save(player_data_filepath, player_data.to_dictionary(), true)
-	
+		
 	else:
 		player_data.from_dictionary(data)
 		
 		
+func copy_preset_map():
+	var maps :Array = Utils.get_all_resources("res://data/preset/", ["png","manifest","mission","map"])
+	for i in maps:
+		var file_path :String = i
+		Utils.copy_file_to_user(i, "user://%s/%s" % [map_dir, file_path.get_file()])
+		yield(get_tree(), "idle_frame")
 		
 ##########################################  transisiion  ############################################
 var transition :CanvasLayer
