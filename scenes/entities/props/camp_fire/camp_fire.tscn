@@ -1,0 +1,25 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scenes/tiles/models/wood_material.tres" type="Material" id=1]
+[ext_resource path="res://scenes/tiles/models/rock_material.tres" type="Material" id=2]
+[ext_resource path="res://scenes/tiles/models/mud_material.tres" type="Material" id=3]
+[ext_resource path="res://scenes/entities/props/camp_fire/camp_fire.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://scenes/entities/props/fire_burning/fire.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/sounds/vehicle/burning.ogg" type="AudioStream" id=6]
+[ext_resource path="res://scenes/entities/props/fire_burning/fire.gd" type="Script" id=7]
+
+[node name="camp_fire" type="MeshInstance"]
+cast_shadow = 0
+mesh = ExtResource( 4 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 1 )
+material/2 = ExtResource( 3 )
+
+[node name="fire" type="Spatial" parent="." instance=ExtResource( 5 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0.274218, 0 )
+script = ExtResource( 7 )
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="fire"]
+stream = ExtResource( 6 )
+autoplay = true

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/corner_wall_wooded.obj-87f66011db9a2c5142048a2fd0b7c0cd.mesh"
+
+[deps]
+
+files=[ "res://.import/corner_wall_wooded.obj-87f66011db9a2c5142048a2fd0b7c0cd.mesh" ]
+
+source_file="res://scenes/entities/props/base_camp/corner_wall_wooded.obj"
+dest_files=[ "res://.import/corner_wall_wooded.obj-87f66011db9a2c5142048a2fd0b7c0cd.mesh", "res://.import/corner_wall_wooded.obj-87f66011db9a2c5142048a2fd0b7c0cd.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

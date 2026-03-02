@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/camp_fire.obj-d3119d0f428d9dc1517b5da1576f85b6.mesh"
+
+[deps]
+
+files=[ "res://.import/camp_fire.obj-d3119d0f428d9dc1517b5da1576f85b6.mesh" ]
+
+source_file="res://scenes/entities/props/camp_fire/camp_fire.obj"
+dest_files=[ "res://.import/camp_fire.obj-d3119d0f428d9dc1517b5da1576f85b6.mesh", "res://.import/camp_fire.obj-d3119d0f428d9dc1517b5da1576f85b6.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

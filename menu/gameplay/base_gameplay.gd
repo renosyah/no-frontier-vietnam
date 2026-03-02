@@ -520,18 +520,22 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	var mission = grand_map_mission_data
 	if tile_id in mission.points:
 		var index :int = mission.points.find(tile_id)
-		spawn_capture_point_objective(tile_id, battle_map,index)
+		spawn_battle_map_capture_point(tile_id, battle_map,index)
 		
 	if tile_id in mission.bases:
 		var index :int = mission.bases.find(tile_id)
-		spawn_base_building(tile_id, battle_map, index)
+		spawn_battle_map_base_building(tile_id, battle_map, index)
 		
 ########################################## battle map capture point ############################################
 
-func spawn_capture_point_objective(tile_id :Vector2, battle_map :BaseTileMap, index:int):
+func spawn_battle_map_capture_point(tile_id :Vector2, battle_map :BaseTileMap, index:int):
 	var props :Spatial
 	if index == 0:
 		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_intel.tscn").instance()
+		battle_map.enable_nav(Vector2.UP + Vector2.LEFT, false)
+		battle_map.enable_nav(Vector2.UP + Vector2.RIGHT, false)
+		battle_map.enable_nav(Vector2.DOWN + Vector2.LEFT, false)
+		battle_map.enable_nav(Vector2.DOWN + Vector2.RIGHT, false)
 	
 	elif index == 1:
 		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_medkit.tscn").instance()
@@ -545,10 +549,16 @@ func spawn_capture_point_objective(tile_id :Vector2, battle_map :BaseTileMap, in
 	battle_map.enable_nav(Vector2.LEFT, false)
 	battle_map.enable_nav(Vector2.RIGHT, false)
 	
-func spawn_base_building(tile_id :Vector2, battle_map :BaseTileMap, index:int):
-	var wall = preload("res://scenes/entities/props/base_camp/field_base.tscn").instance()
-	battle_map.add_child(wall)
-	wall.translation = battle_map.get_tile_instance(Vector2.ZERO).translation
+func spawn_battle_map_base_building(tile_id :Vector2, battle_map :BaseTileMap, index:int):
+	var field_base :Spatial
+	if index == 0:
+		field_base = preload("res://scenes/entities/props/base_camp/field_base.tscn").instance()
+		
+	else:
+		field_base = preload("res://scenes/entities/props/base_camp/village_base.tscn").instance()
+	
+	battle_map.add_child(field_base)
+	field_base.translation = battle_map.get_tile_instance(Vector2.ZERO).translation
 	var disable_tiles = [
 		Vector2.ZERO, 
 		Vector2(2,-2), Vector2(1,-2),
