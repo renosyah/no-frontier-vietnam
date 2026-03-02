@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/entities/gear/vest/vest.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://scenes/entities/gear/vest/belt_bullet.png" type="Texture" id=2]
+[ext_resource path="res://scenes/entities/gear/vest/vest_strap_khaki.tres" type="Material" id=3]
+
+[node name="vest_1_khaki" type="Spatial"]
+
+[node name="vest" type="MeshInstance" parent="."]
+cast_shadow = 0
+mesh = ExtResource( 1 )
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 3 )
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform( -0.0378566, -0.0326631, -3.30953e-09, -0.0326631, 0.0378566, -2.8555e-09, 4.37114e-09, 0, -0.05, -0.047292, 0.0550266, -0.109544 )
+transparent = false
+double_sided = false
+texture = ExtResource( 2 )
+
+[node name="Sprite3D2" type="Sprite3D" parent="."]
+transform = Transform( -0.0378566, -0.0326631, -3.30953e-09, -0.0326631, 0.0378566, -2.8555e-09, 4.37114e-09, 0, -0.05, 0.0360819, -0.0425051, -0.109544 )
+transparent = false
+double_sided = false
+texture = ExtResource( 2 )

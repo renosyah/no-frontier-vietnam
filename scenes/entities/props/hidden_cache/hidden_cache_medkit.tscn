@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scenes/entities/props/weapon_caches/med_caches.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/tile_objects/battle/heal_spot.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/entities/props/net_canopy/net_canopy_3x3.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/entities/props/tent/tent.tscn" type="PackedScene" id=4]
 
 [node name="hidden_cache" type="Spatial"]
 
@@ -13,9 +12,3 @@
 transform = Transform( 0.95534, 0, -0.295508, 0, 1, 0, 0.295508, 0, 0.95534, 0, 0, -0.938141 )
 
 [node name="heal_spot" parent="." instance=ExtResource( 2 )]
-
-[node name="tent" parent="." instance=ExtResource( 4 )]
-transform = Transform( 0.157383, 0, -0.987538, 0, 1, 0, 0.987538, 0, 0.157383, 1.09924, 0, -0.0710712 )
-
-[node name="tent2" parent="." instance=ExtResource( 4 )]
-transform = Transform( 0.191289, 0, 0.981534, 0, 1, 0, -0.981534, 0, 0.191289, -1.08976, 0, -0.0994998 )

@@ -15,8 +15,7 @@ onready var rng = RandomNumberGenerator.new()
 
 var members :Array = [] # [ Infantry ]
 
-var _on_ambush_mode :bool
-var _on_camp_mode :bool
+var _on_stealth_mode :bool
 
 func _ready():
 	rng.randomize()
@@ -187,36 +186,29 @@ func _reasemble_member_around(tile_id :Vector2 = Vector2.ZERO):
 			
 		arounds.pop_front()
 		
-func setup_ambush(v :bool):
-	if _on_camp_mode or _is_moving:
+func enter_stealth_mode(v :bool):
+	if _is_moving:
 		return
 		
 	if _is_master:
-		rpc("_setup_ambush", v)
+		rpc("_enter_stealth_mode", v)
 		
-func setup_camp(v :bool):
-	if _on_ambush_mode or _is_moving:
-		return
-		
-	_on_camp_mode = v
+remotesync func _enter_stealth_mode(v :bool):
+	_on_stealth_mode = v
 	
-remotesync func _setup_ambush(v :bool):
-	_on_ambush_mode = v
+func is_stealth_mode() -> bool:
+	return _on_stealth_mode
 	
-func is_ambush_mode() -> bool:
-	return _on_ambush_mode
-	
-func is_camp_mode() -> bool:
-	return _on_camp_mode
-	
+# cannot move on stealth mode
 func move_to(tile_id :Vector2):
-	if is_ambush_mode() or _on_camp_mode:
+	if is_stealth_mode():
 		return
 	
 	.move_to(tile_id)
 	
+# cannot be spotted on stealth mode
 func set_spotted(v :bool):
-	if is_ambush_mode():
+	if is_stealth_mode():
 		return
 	
 	.set_spotted(v)

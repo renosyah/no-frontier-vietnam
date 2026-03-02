@@ -40,7 +40,7 @@ func _track_floating_icon(_active_cam :Camera, pos :Vector3):
 	if not _overlay_ui.visible:
 		return
 		
-	_floating_icon.visible = _current_visible and not in_battle_map
+	_floating_icon.visible = _current_visible
 	if not _floating_icon.visible:
 		return
 		

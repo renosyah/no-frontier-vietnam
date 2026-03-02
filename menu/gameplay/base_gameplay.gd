@@ -225,12 +225,12 @@ func _on_spawn_infantry():
 			var skin = [0, 1]
 			var hats = [0, 2]
 			var bags = [0,1,2,3,9]
-			var vests = [0, 2]
+			var vests = [0, 1, 4]
 			
 			infantry.skin_material_index = skin[randi() % 2]
 			infantry.hat_scene_index = hats[randi() % 2]
 			infantry.bag_scene_index = 4 if (i == 0) else bags[randi() % 5]
-			infantry.vest_scene_index = vests[randi() % 2]
+			infantry.vest_scene_index = vests[randi() % 3]
 			infantry.uniform_style = style[randi() % 3]
 			
 	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
@@ -754,6 +754,12 @@ func on_grand_map_squad_spawned(unit :BaseTileUnit):
 	if unit.team != player.player_team:
 		unit.set_spotted(false)
 		
+		
+	# patching for issue
+	# for hidden on local only
+	if unit.player_id == player.player_id:
+		unit.set_hidden(true)
+		
 	# spawned squad
 	# imidiatly enter a battle map
 	# call function via non rpc
@@ -812,7 +818,6 @@ remotesync func _on_grand_map_squad_enter_battle_map(unit :NodePath, from_tile_i
 	on_grand_map_squad_enter_battle_map(get_node_or_null(unit), from_tile_id, current_tile_id )
 	
 func on_grand_map_squad_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, current_tile_id :Vector2):
-	unit.set_hidden(true)
 	order_squad_to_enter_battle_map(unit, from_tile_id, current_tile_id)
 	
 func _on_grand_map_squad_task_exit_battle_map(squad :BaseSquad, to_grand_map_id :Vector2):
@@ -889,19 +894,15 @@ func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vect
 				i.set_spotted(true)
 		
 func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vector2):
-	var in_zone = to in zoomable_battle_map.keys()
-	if in_zone:
+	# ignore if in battle map zone
+	if to in zoomable_battle_map.keys():
 		return
 		
 	# pasive spotting
 	# enemy enter one of the watch list position
 	# set spotted true, only from POV of spotter player
-	if to in grand_map_watchlist_position:
-		unit.set_spotted(true)
-		
-	else:
-		unit.set_spotted(false)
-		
+	unit.set_spotted(to in grand_map_watchlist_position)
+	
 ########################################## battle map unit ############################################
 
 var battle_map_unit_positions :Dictionary = {} # { BaseTileMap (battle map):{Vector2:[ BaseTileUnit ] }}

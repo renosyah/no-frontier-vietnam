@@ -7,8 +7,7 @@ onready var battle_map_name = $CanvasLayer/Control/VBoxContainer/HBoxContainer/C
 onready var grand_map_overlay_ui = $CanvasLayer/grand_map_overlay_ui
 
 onready var squad_option = $CanvasLayer/Control/VBoxContainer/squad_option
-onready var setup_camp = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/setup_camp
-onready var setup_ambush = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/setup_ambush
+onready var enter_stealth = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/enter_stealth
 
 onready var infantry_option = $CanvasLayer/Control/VBoxContainer/infantry_option
 onready var vehicle_option = $CanvasLayer/Control/VBoxContainer/vehicle_option
@@ -53,25 +52,16 @@ func _on_selected_squad(v :BaseSquad):
 		
 	if selected_squad is InfantrySquad:
 		squad_option.visible = true
-		setup_ambush.set_toggle_button(selected_squad.is_ambush_mode())
-		setup_camp.set_toggle_button(selected_squad.is_camp_mode())
+		enter_stealth.set_toggle_button(selected_squad.is_stealth_mode())
 		
-func _on_setup_ambush_pressed():
+func _on_enter_stealth_pressed():
 	if not is_instance_valid(selected_squad):
 		return
 		
 	if selected_squad is InfantrySquad:
-		selected_squad.setup_ambush(not selected_squad.is_ambush_mode())
-		setup_ambush.set_toggle_button(selected_squad.is_ambush_mode())
-	
-func _on_setup_camp_pressed():
-	if not is_instance_valid(selected_squad):
-		return
+		selected_squad.enter_stealth_mode(not selected_squad.is_stealth_mode())
+		enter_stealth.set_toggle_button(selected_squad.is_stealth_mode())
 		
-	if selected_squad is InfantrySquad:
-		selected_squad.setup_camp(not selected_squad.is_camp_mode())
-		setup_camp.set_toggle_button(selected_squad.is_camp_mode())
-	
 func _on_fire_weapon_pressed():
 	if not is_instance_valid(selected_battle_map_unit):
 		return
@@ -110,4 +100,5 @@ func _on_dead_pressed():
 		return
 		
 	selected_battle_map_unit.set_dead()
+
 
