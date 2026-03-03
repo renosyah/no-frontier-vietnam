@@ -31,6 +31,7 @@ func spawn(player_data :PlayerData, parent, _overlay_ui_path:NodePath, _cam_path
 	vehicle.is_air = is_air
 	vehicle.altitude = altitude
 	vehicle.unit_voice = unit_voice
+	vehicle.color = color
 	vehicle.team_color_material = MaterialsIndex.team_colors[team_color_material_index]
 	parent.add_child(vehicle)
 	

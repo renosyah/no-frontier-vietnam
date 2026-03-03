@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/entities/units/infantry/uniform_green.tres" type="Material" id=1]
 [ext_resource path="res://scenes/entities/gear/headgear/us_helm.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://scenes/entities/units/infantry/black_material.tres" type="Material" id=3]
+[ext_resource path="res://scenes/entities/gear/headgear/ace.png" type="Texture" id=5]
 
 [node name="us_helm" type="MeshInstance"]
 cast_shadow = 0
@@ -10,3 +11,9 @@ mesh = ExtResource( 2 )
 software_skinning_transform_normals = false
 material/0 = ExtResource( 1 )
 material/1 = ExtResource( 3 )
+
+[node name="Sprite3D2" type="Sprite3D" parent="."]
+transform = Transform( 0.296631, -0.0240816, -0.037815, -0.00751447, -0.276172, 0.116928, -0.0441978, -0.114668, -0.273674, -0.0633439, 0.0951721, -0.122978 )
+transparent = false
+double_sided = false
+texture = ExtResource( 5 )

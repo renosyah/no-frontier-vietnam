@@ -6,8 +6,8 @@ signal on_squad_destroyed(squad)
 
 # MUST SET
 export var overlay_ui :NodePath
-export var squad_icon :StreamTexture
 export var camera :NodePath
+export var squad_icon :StreamTexture
 export var team_color_material :SpatialMaterial
 
 onready var _cam :Camera = get_node_or_null(camera)

@@ -2,6 +2,7 @@ extends Spatial
 class_name Weapon
 
 signal weapon_fired
+signal weapon_update
 
 export var damage :int = 1
 export var ammo :int = 0
@@ -37,14 +38,14 @@ func fire_weapon(count :int):
 	if is_master:
 		ammo = int(clamp(ammo - count, 0, capacity))
 	
-func take_ammo():
-	reserve_ammo = int(clamp(reserve_ammo + 30, 0, max_reserve_ammo))
-	
 func firing() -> bool:
 	return false
 	
 func has_ammo():
 	return ammo > 0
+	
+func weapon_update():
+	emit_signal("weapon_update")
 	
 func stop_firing():
 	pass

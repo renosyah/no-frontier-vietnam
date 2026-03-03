@@ -71,21 +71,26 @@ func _order_unit_attack():
 		return
 		
 	var enemy = _get_enemy(unit.tile_map)
-	if is_instance_valid(enemy):
-		unit.attack_move = true
-		unit.move_to(enemy.current_tile)
+	if not is_instance_valid(enemy):
+		return
+		
+	unit.attack_move = true
+	unit.move_to(enemy.current_tile)
 		
 func _get_enemy(battle_map :BaseTileMap) -> BaseTileUnit:
 	if not battle_map_unit_positions.has(battle_map):
 		return null
 		
-	var unit_positions = battle_map_unit_positions[battle_map]
+	var unit_positions :Dictionary = battle_map_unit_positions[battle_map]
 	for id in unit_positions.keys():
 		if unit_positions[id].empty():
 			continue
 			
 		for i in unit_positions[id]:
 			var unit :BaseTileUnit = i
+			if not is_instance_valid(unit):
+				return null
+				
 			if unit.team != team:
 				return i
 				

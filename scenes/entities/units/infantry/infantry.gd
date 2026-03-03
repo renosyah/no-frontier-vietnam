@@ -20,6 +20,13 @@ export var weapon_scene :PackedScene
 export var launcher_scene :PackedScene
 export var uniform_style :int
 
+# MUST SET
+export var overlay_ui :NodePath
+export var camera :NodePath
+
+onready var _cam :Camera = get_node_or_null(camera)
+onready var _overlay_ui :Control = get_node_or_null(overlay_ui)
+
 onready var pivot = $pivot
 onready var arrow = $circle/arrow
 onready var animation_state = $AnimationTree.get("parameters/playback")
@@ -55,6 +62,8 @@ var _weapon :Weapon
 var _launcher :Spatial
 var _melee_range :Array = []
 
+var _floating_info
+
 var squad :BaseSquad
 
 func _ready():
@@ -70,6 +79,7 @@ func _ready():
 	
 	_weapon.is_master = _is_master
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
+	_weapon.connect("weapon_update", self, "_on_weapon_update")
 	_weapon.unit_owner = self
 	_weapon.team = team
 	
@@ -78,6 +88,10 @@ func _ready():
 	
 	infantry_hit_register.unit = self
 	
+	_floating_info = preload("res://assets/user_interface/icons/floating_infantry_info/floating_infantry_info.tscn").instance()
+	_overlay_ui.add_child(_floating_info)
+	_floating_info.init_bar(color, max_hp, _weapon.capacity)
+	_floating_info.visible = false
 	
 func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
 	
@@ -193,17 +207,19 @@ func update_spotting():
 		current_tile, 1
 	)
 	
-func take_ammo():
-	_weapon.take_ammo()
+func get_weapon() -> Weapon:
+	return _weapon
 	
-func heal():
+func heal(amount :int):
 	if _is_master:
-		hp = int(clamp(hp + 1, 0 , max_hp))
+		hp = int(clamp(hp + amount, 0 , max_hp))
 		rpc_unreliable("_heal", hp)
 	
 remotesync func _heal(hp :int):
 	if not _is_master:
 		hp = hp
+		
+	_floating_info.update_bar(hp, _weapon.ammo)
 	
 func _on_no_enemy():
 	._on_no_enemy()
@@ -265,6 +281,8 @@ func _on_weapon_fired():
 	_current_anim = "fire_weapon"
 	animation_state.travel(_current_anim)
 	
+	_floating_info.update_bar(hp, _weapon.ammo)
+	
 func reload_weapon():
 	if _is_master:
 		_weapon.reload()
@@ -274,6 +292,11 @@ func reload_weapon():
 func _on_reloading():
 	audio_stream_player_3d.stream = reload_sound
 	audio_stream_player_3d.play()
+	
+	_floating_info.update_bar(hp, _weapon.ammo)
+	
+func _on_weapon_update():
+	_floating_info.update_bar(hp, _weapon.ammo)
 	
 func use_launcher(_at :Vector3):
 	stop()
@@ -321,6 +344,28 @@ func _set_animation():
 		
 	_current_anim = "run_with_weapon" if _is_moving else "iddle_hold_weapon"
 	
+func _exit_tree():
+	_floating_info.queue_free()
+	
+func moving(_delta):
+	.moving(_delta)
+	
+	_track_floating_info(_cam, global_position + Vector3.UP)
+	
+func _track_floating_info(_active_cam :Camera, pos :Vector3):
+	if not _overlay_ui.visible:
+		return
+		
+	if not visible:
+		_floating_info.visible = false
+		return
+		
+	if _active_cam.is_position_behind(pos):
+		return
+		
+	var screen_pos = _active_cam.unproject_position(pos)
+	_floating_info.rect_global_position = screen_pos - _floating_info.rect_pivot_offset
+	
 func puppet_moving(delta :float) -> void:
 	.puppet_moving(delta)
 	
@@ -344,6 +389,8 @@ func taking_damage(_damage :int, _hp: int, _max_hp :int):
 	
 	blood.translation = global_position
 	blood.display()
+	
+	_floating_info.update_bar(hp, _weapon.ammo)
 	
 func on_dead():
 	# called later after

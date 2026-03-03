@@ -48,10 +48,4 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	infantry_squad.set_hidden(false)
 	infantry_squad.translation = position
 	
-	for i in members:
-		var inf :InfantryData = i
-		var infantry :Infantry = inf.spawn(player_data, parent,overlay_ui_path,cam_path)
-		infantry.squad = infantry_squad
-		infantry_squad.members.append(infantry)
-		
 	return infantry_squad

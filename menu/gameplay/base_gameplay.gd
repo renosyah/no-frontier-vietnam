@@ -149,6 +149,7 @@ func use_grand_camera():
 	ui.movable_camera_ui.detect_in_out = true
 	
 	ui.grand_map_overlay_ui.visible = true
+	ui.battle_map_overlay_ui.visible = false
 	
 	ground_table.visible = false
 	grand_map.visible = true
@@ -168,6 +169,7 @@ func use_battle_camera(center :Vector3):
 	ui.movable_camera_ui.center_pos = center + Vector3(0, 0, 2)
 	
 	ui.grand_map_overlay_ui.visible = false
+	ui.battle_map_overlay_ui.visible = true
 	
 	ground_table.visible = true
 	
@@ -224,12 +226,12 @@ func _on_spawn_infantry():
 		if player.player_team == 1:
 			var style = [0,1,2]
 			var skin = [0, 1]
-			var hats = [0, 2]
+			var hats = [0, 1, 2, 4]
 			var bags = [0,1,2,3,9]
 			var vests = [0, 1, 4]
 			
 			infantry.skin_material_index = skin[randi() % 2]
-			infantry.hat_scene_index = hats[randi() % 2]
+			infantry.hat_scene_index = hats[randi() % 4]
 			infantry.bag_scene_index = 4 if (i == 0) else bags[randi() % 5]
 			infantry.vest_scene_index = vests[randi() % 3]
 			infantry.uniform_style = style[randi() % 3]
@@ -346,7 +348,7 @@ func on_battle_map_clicked_input(tile :TileMapData):
 	if is_instance_valid(ui.selected_battle_map_unit):
 		var unit :BaseTileUnit = ui.selected_battle_map_unit
 		unit.tile_map = current_battle_map
-		unit.attack_move = true
+		unit.attack_move = false # true
 		unit.move_to(tile.id)
 		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.unit_voice)
 		show_feedback_move_order(tile.pos + current_battle_map.global_position)
@@ -688,9 +690,8 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 	)
 	for i in squad.members:
 		var infantry :InfantryData = i
-		infantry.team_color_material_index = Global.get_team_material_color_index(
-			squad.player_id, squad.team, player.player_id, player.player_team
-		)
+		infantry.color = squad.color
+		infantry.team_color_material_index = squad.team_color_material_index
 	
 	var infantry_squad :InfantrySquad = squad.spawn(
 		player, self, ui.grand_map_overlay_ui.get_path(), movable_camera_room.camera.get_path()
@@ -708,13 +709,19 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 	# if not,it will trigger to emit on_unit_spotted
 	infantry_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
 	
-	for i in infantry_squad.members:
-		var infantry :Infantry = i
+	for i in squad.members:
+		var inf :InfantryData = i
+		var infantry :Infantry = inf.spawn(
+			player, self, ui.battle_map_overlay_ui.get_path(), movable_camera_battle.camera.get_path()
+		)
+		infantry.squad = infantry_squad
+		
 		#infantry.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 		infantry.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
 		infantry.connect("on_unit_clicked", self, "_on_battle_map_infantry_clicked")
 		infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 		infantry.connect("on_unit_dead", infantry_squad, "_on_member_dead")
+		infantry_squad.members.append(infantry)
 		
 	on_grand_map_squad_spawned(infantry_squad)
 	
@@ -728,6 +735,7 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	squad.team_color_material_index = Global.get_team_material_color_index(
 		squad.player_id, squad.team, player.player_id, player.player_team
 	)
+	squad.vehicle.color = squad.color
 	squad.vehicle.team_color_material_index = squad.team_color_material_index
 	
 	var vehicle_squad :VehicleSquad = squad.spawn(
@@ -744,7 +752,12 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	# if not,it will trigger to emit on_unit_spotted
 	vehicle_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
 	
-	var vehicle :Vehicle = vehicle_squad.vehicle
+	var vehicle :Vehicle = squad.vehicle.spawn(
+		player, self, ui.battle_map_overlay_ui.get_path(), movable_camera_battle.camera.get_path()
+	)
+	vehicle.squad = vehicle_squad
+	vehicle_squad.vehicle = vehicle
+	
 	#vehicle.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 	vehicle.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
 	vehicle.connect("on_unit_clicked", self, "_on_battle_map_vehicle_clicked")

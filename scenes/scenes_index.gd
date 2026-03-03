@@ -42,7 +42,9 @@ const launcher = [
 	preload("res://scenes/entities/gear/weapons/rpg2/rpg2.tscn")
 ]
 const hats = [
-	preload("res://scenes/entities/gear/headgear/us_helm.tscn"),
+	preload("res://scenes/entities/gear/headgear/us_helm_1.tscn"),
+	preload("res://scenes/entities/gear/headgear/us_helm_2.tscn"),
+	preload("res://scenes/entities/gear/headgear/us_helm_3.tscn"),
 	preload("res://scenes/entities/gear/headgear/nva_hat.tscn"),
 	preload("res://scenes/entities/gear/headgear/no_hat.tscn")
 ]

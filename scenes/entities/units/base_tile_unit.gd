@@ -68,7 +68,7 @@ func _ready():
 		update_spotting()
 		Global.connect("on_global_tick", self, "_on_global_tick")
 		connect("on_current_tile_updated", self, "_on_current_tile_updated")
-		connect("on_finish_travel", self, "_on_current_tile_updated")
+		connect("on_finish_travel", self, "_on_finish_travel")
 
 func move_to(tile_id :Vector2):
 	if is_dead:
@@ -226,6 +226,14 @@ func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
 	
 	if attack_move:
 		_scan_area()
+	
+func _on_finish_travel(_unit, _from_id :Vector2, _to_id :Vector2):
+	if not _is_master:
+		return
+		
+	update_spotting()
+	_scan_area()
+	
 	
 func update_spotting():
 	spotting_area = TileMapUtils.get_adjacent_tiles(

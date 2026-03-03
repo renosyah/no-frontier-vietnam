@@ -39,8 +39,4 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	vehicle_squad.set_hidden(false)
 	vehicle_squad.translation = position
 	
-	var veh :Vehicle = vehicle.spawn(player_data, parent, overlay_ui_path, cam_path)
-	veh.squad = vehicle_squad
-	
-	vehicle_squad.vehicle = veh
 	return vehicle_squad

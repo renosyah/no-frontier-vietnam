@@ -38,7 +38,7 @@ func to_dictionary() -> Dictionary :
 	return _data
 	
 	
-func spawn(player_data :PlayerData, parent, _overlay_ui_path:NodePath, _cam_path:NodePath):
+func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:NodePath):
 	var infantry:Infantry  = ScenesIndex.battle_map_unit_scenes[scene_index].instance()
 	infantry.player_id = player_id
 	infantry.name = unit_name
@@ -47,6 +47,7 @@ func spawn(player_data :PlayerData, parent, _overlay_ui_path:NodePath, _cam_path
 	infantry.team = team
 	infantry.is_selectable = (player_id == player_data.player_id)
 	infantry.unit_voice = unit_voice
+	infantry.color = color
 	
 	infantry.skin_material = MaterialsIndex.infantry_skin_colors[skin_material_index]
 	infantry.uniform_material = MaterialsIndex.infantry_uniforms[uniform_material_index]
@@ -57,6 +58,9 @@ func spawn(player_data :PlayerData, parent, _overlay_ui_path:NodePath, _cam_path
 	infantry.weapon_scene = ScenesIndex.weapons[weapon_scene_index]
 	infantry.launcher_scene = ScenesIndex.launcher[launcher_scene_index]
 	infantry.uniform_style = uniform_style
+	
+	infantry.overlay_ui = overlay_ui_path
+	infantry.camera = cam_path
 	
 	parent.add_child(infantry)
 	
