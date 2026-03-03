@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scenes/entities/props/base_camp/wooden_base_wall.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/entities/props/camp_fire/camp_fire.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/entities/props/weapon_caches/weapon_caches.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/entities/props/base_camp/village_base.gd" type="Script" id=4]
 [ext_resource path="res://scenes/tile_objects/battle/heal_spot.tscn" type="PackedScene" id=5]
 [ext_resource path="res://scenes/entities/props/weapon_caches/ammo_caches_2.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/entities/props/weapon_caches/ammo_caches.tscn" type="PackedScene" id=7]
@@ -12,6 +13,7 @@
 [ext_resource path="res://scenes/entities/props/radio_table/radio_table.tscn" type="PackedScene" id=11]
 
 [node name="field_base" type="Spatial"]
+script = ExtResource( 4 )
 
 [node name="base_wall" parent="." instance=ExtResource( 1 )]
 
@@ -27,37 +29,42 @@ transform = Transform( 1.2, 0, 0, 0, 1, 0, 0, 0, 1.2, -1.5, 0.100295, 1.4076 )
 [node name="net_canopy_2x5" parent="." instance=ExtResource( 10 )]
 transform = Transform( 1.2, 0, 0, 0, 1, 0, 0, 0, 1.2, 1.5, 0.100295, 1.4076 )
 
-[node name="reload_spot" parent="." instance=ExtResource( 8 )]
+[node name="reload_spot_a" parent="." instance=ExtResource( 8 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1 )
 
-[node name="reload_spot2" parent="." instance=ExtResource( 8 )]
+[node name="reload_spot_b" parent="." instance=ExtResource( 8 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1 )
 
-[node name="heal_spot" parent="." instance=ExtResource( 5 )]
+[node name="heal_spot_a" parent="." instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1 )
 
-[node name="heal_spot2" parent="." instance=ExtResource( 5 )]
+[node name="heal_spot_b" parent="." instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1 )
 
-[node name="ammo_caches" parent="." instance=ExtResource( 7 )]
+[node name="ammo_caches_a" parent="." instance=ExtResource( 7 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.83017, 0.25, -1.81306 )
 
-[node name="ammo_caches2" parent="." instance=ExtResource( 6 )]
+[node name="weapon_caches_a" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.994385, 0.25, -1.85538 )
+
+[node name="ammo_caches_b" parent="." instance=ExtResource( 6 )]
 transform = Transform( 0.00413639, 0, 0.999991, 0, 1, 0, -0.999991, 0, 0.00413639, -1.83017, 0.25, 1.85155 )
 
-[node name="weapon_caches" parent="." instance=ExtResource( 9 )]
+[node name="weapon_caches_b" parent="." instance=ExtResource( 3 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -1.84975, 0.25, 1.05038 )
+
+[node name="med_caches_a" parent="." instance=ExtResource( 9 )]
 transform = Transform( 0.00183256, 0, 0.999998, 0, 1, 0, -0.999998, 0, 0.00183256, -1.87307, 0.25, -0.951838 )
 
-[node name="weapon_caches2" parent="." instance=ExtResource( 9 )]
+[node name="med_caches_b" parent="." instance=ExtResource( 9 )]
 transform = Transform( -0.00287978, 0, -0.999996, 0, 1, 0, 0.999996, 0, -0.00287978, 1.89042, 0.25, 0.961494 )
 
 [node name="radio_table" parent="." instance=ExtResource( 11 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.53142, 0.330917, -2.13553 )
 
-[node name="weapon_caches3" parent="." instance=ExtResource( 3 )]
-transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -1.84975, 0.25, 1.05038 )
-
-[node name="weapon_caches4" parent="." instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.994385, 0.25, -1.85538 )
-
 [node name="camp_fire" parent="." instance=ExtResource( 2 )]
+
+[connection signal="out_of_stock" from="reload_spot_a" to="." method="_on_reload_spot_a_out_of_stock"]
+[connection signal="out_of_stock" from="reload_spot_b" to="." method="_on_reload_spot_b_out_of_stock"]
+[connection signal="out_of_stock" from="heal_spot_a" to="." method="_on_heal_spot_a_out_of_stock"]
+[connection signal="out_of_stock" from="heal_spot_b" to="." method="_on_heal_spot_b_out_of_stock"]

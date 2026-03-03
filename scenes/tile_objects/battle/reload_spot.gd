@@ -1,17 +1,27 @@
 extends MeshInstance
 
+signal out_of_stock
+
 export var usage_rate :int = 30
-export var ammo_supply :int = 750
-export var max_ammo_supply :int = 750
+export var ammo_supply :int = 4750
+export var max_ammo_supply :int = 4750
 
 onready var collision_shape = $CollisionShape
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
+
+var _out_of_stock :bool
 
 func _ready():
 	Global.connect("on_global_tick", self, "_on_global_tick")
 	
 func _on_global_tick():
+	if _out_of_stock:
+		return
+		
 	if ammo_supply <= 0:
+		_out_of_stock = true
+		Global.disconnect("on_global_tick", self, "_on_global_tick")
+		emit_signal("out_of_stock")
 		return
 	
 	var query = PhysicsShapeQueryParameters.new()

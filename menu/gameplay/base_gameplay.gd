@@ -896,7 +896,7 @@ func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicl
 	if vehicle is Vehicle:
 		vehicle.take_passenger([squad])
 	
-func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
+func on_team_grand_map_squad_moving(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# check if to is a active battle map tile
 	var to_in_zone = to in zoomable_battle_map.keys()
 	
@@ -910,6 +910,15 @@ func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vect
 	# ignore check if to is 
 	# a active battle map tile
 	if to_in_zone:
+		
+		# NEW RULE
+		# force enter battle map
+		# even if just intent to passing by
+		if unit.player_id == player.player_id:
+			unit.stop()
+			_on_grand_map_squad_finish_travel(unit, from, to)
+			return
+			
 		return
 		
 	# for active spotting
@@ -925,6 +934,8 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 	if to in zoomable_battle_map.keys():
 		return
 		
+	# if listening pos is captured by team
+	# all enemy team unit will be spotted
 	var is_listening :bool = (team_listen_radio == player.player_team)
 	
 	# pasive spotting
