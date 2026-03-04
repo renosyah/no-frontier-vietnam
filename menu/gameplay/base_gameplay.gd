@@ -11,6 +11,7 @@ func _ready():
 	get_tree().set_quit_on_go_back(false)
 	get_tree().set_auto_accept_quit(false)
 	
+	setup_ambient_audio()
 	setup_battle_map()
 	spawn_grand_map()
 	spawn_movable_camera()
@@ -66,7 +67,25 @@ func _on_all_player_ready():
 #			data.from_dictionary(p.extra)
 #
 #	spawn_dummy(bases, nva_riflement)
+########################################## ambient sound  ############################################
 
+var grand_map_ambient :AudioStreamPlayer
+var battle_map_ambient :AudioStreamPlayer
+
+var grand_map_ambient_pos :float = 0.0
+var battle_map_ambient_pos :float = 0.0
+
+func setup_ambient_audio():
+	grand_map_ambient = AudioStreamPlayer.new()
+	grand_map_ambient.volume_db = -12.0
+	grand_map_ambient.stream = preload("res://assets/sounds/misc/office_ambient.ogg")
+	add_child(grand_map_ambient)
+	
+	battle_map_ambient = AudioStreamPlayer.new()
+	battle_map_ambient.volume_db = -12.0
+	battle_map_ambient.stream = preload("res://assets/sounds/misc/jungle_ambient.ogg")
+	add_child(battle_map_ambient)
+	
 ########################################## grand map  ############################################
 
 onready var grand_map_manifest_data :GrandMapFileManifest = Global.grand_map_manifest_data
@@ -83,11 +102,6 @@ func spawn_grand_map():
 	add_child(grand_map)
 	grand_map.generate_from_data(grand_map_data)
 	grand_map.setup_border_scale(Vector3.ONE * ((grand_map_manifest_data.map_size * 2) + 1.5))
-	
-	var ambient = AudioStreamPlayer3D.new()
-	ambient.stream = preload("res://assets/sounds/misc/office_ambient.ogg")
-	grand_map.add_child(ambient)
-	ambient.play()
 	
 func _on_grand_map_ready():
 	NetworkLobbyManager.set_ready()
@@ -154,6 +168,10 @@ func use_grand_camera():
 	ground_table.visible = false
 	grand_map.visible = true
 	
+	battle_map_ambient_pos = battle_map_ambient.get_playback_position()
+	battle_map_ambient.stop()
+	grand_map_ambient.play(grand_map_ambient_pos)
+	
 func use_battle_camera(center :Vector3):
 	movable_camera_room.set_as_current(false)
 	movable_camera_battle.set_as_current(true)
@@ -172,6 +190,10 @@ func use_battle_camera(center :Vector3):
 	ui.battle_map_overlay_ui.visible = true
 	
 	ground_table.visible = true
+	
+	grand_map_ambient_pos = grand_map_ambient.get_playback_position()
+	grand_map_ambient.stop()
+	battle_map_ambient.play(battle_map_ambient_pos)
 	
 ########################################## UI  ############################################
 
@@ -212,6 +234,10 @@ func _on_spawn_infantry():
 	infantry_squad.members = []
 	var number = 4 if player.player_team == 1 else 6
 	for i in number:
+		
+		var stats :UnitStatsData = UnitStatsData.new()
+		stats.randomize_stats()
+		
 		var infantry :InfantryData = (nva_riflement if player.player_team != 1 else macv_riflement).duplicate()
 		infantry.player_network_id = player.player_network_id
 		infantry.player_id = player.player_id
@@ -223,6 +249,10 @@ func _on_spawn_infantry():
 		infantry.scene_index = 0
 		infantry_squad.members.append(infantry)
 		
+		infantry.modified_max_hp = stats.get_max_hp(8)
+		infantry.modified_speed = stats.get_speed_multiplier()
+		infantry.stats = stats
+		
 		if player.player_team == 1:
 			var style = [0,1,2]
 			var skin = [0, 1]
@@ -230,11 +260,24 @@ func _on_spawn_infantry():
 			var bags = [0,1,2,3,9]
 			var vests = [0, 1, 4]
 			
+			var black_potrait = [1, 2, 4, 6]
+			var white_potrait = [0, 3, 5, 7, 8, 9]
+			
+			stats.soldier_name = SoldierNames.get_random_us_name()
+			stats.soldier_weapon_image_index = 0
+			
 			infantry.skin_material_index = skin[randi() % 2]
+			stats.soldier_potrait_index = black_potrait[randi() % 4] if infantry.skin_material_index == 1 else white_potrait[randi() % 6]
+			
 			infantry.hat_scene_index = hats[randi() % 4]
 			infantry.bag_scene_index = 4 if (i == 0) else bags[randi() % 5]
 			infantry.vest_scene_index = vests[randi() % 3]
 			infantry.uniform_style = style[randi() % 3]
+			
+		else:
+			stats.soldier_name = SoldierNames.get_random_viet_name()
+			stats.soldier_potrait_index = int(rand_range(20, 29))
+			stats.soldier_weapon_image_index = 1
 			
 	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
 	
@@ -277,6 +320,12 @@ func _on_spawn_bot_infantry():
 	
 	infantry_squad.members = []
 	for i in 6:
+		var stats :UnitStatsData = UnitStatsData.new()
+		stats.soldier_name = SoldierNames.get_random_viet_name()
+		stats.soldier_potrait_index = int(rand_range(10, 19))
+		stats.soldier_weapon_image_index = 1
+		stats.randomize_stats()
+		
 		var infantry :InfantryData = preload("res://data/unit_data/infantry/nva_riflement.tres").duplicate()
 		infantry.player_network_id = 1
 		infantry.player_id = id
@@ -286,6 +335,11 @@ func _on_spawn_bot_infantry():
 		infantry.speed = 1.3
 		infantry.position = Vector3.ZERO
 		infantry.scene_index = 0
+		
+		infantry.modified_max_hp = stats.get_max_hp(8)
+		infantry.modified_speed = stats.get_speed_multiplier()
+		infantry.stats = stats
+		
 		infantry_squad.members.append(infantry)
 		
 	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
@@ -423,11 +477,6 @@ func setup_battle_map():
 	ground_table.name = "ground_table"
 	add_child(ground_table)
 	
-	var ambient = AudioStreamPlayer3D.new()
-	ambient.stream = preload("res://assets/sounds/misc/jungle_ambient.ogg")
-	ground_table.add_child(ambient)
-	ambient.play()
-	
 	var map_keys = battle_map_datas.keys()
 	var poses = Utils.generate_positions(map_keys.size(), 40, 50)
 	
@@ -529,7 +578,8 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 		var index :int = mission.bases.find(tile_id)
 		spawn_battle_map_base_building(tile_id, battle_map, index)
 		
-		
+	battle_map.visible = false
+	
 ########################################## battle map capture point ############################################
 
 var team_listen_radio :int
@@ -718,7 +768,7 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 		
 		#infantry.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 		infantry.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
-		infantry.connect("on_unit_clicked", self, "_on_battle_map_infantry_clicked")
+		infantry.connect("on_unit_clicked", self, "_on_battle_map_infantry_clicked", [inf.stats])
 		infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 		infantry.connect("on_unit_dead", infantry_squad, "_on_member_dead")
 		infantry_squad.members.append(infantry)
@@ -967,7 +1017,7 @@ func _on_battle_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2
 		
 	unit_pos[to].append(unit)
 	
-func _on_battle_map_infantry_clicked(unit :Infantry):
+func _on_battle_map_infantry_clicked(unit :Infantry, stats :UnitStatsData):
 	var player_unit :bool = unit.player_id == player.player_id
 	if is_instance_valid(ui.selected_battle_map_unit):
 		var holder = ui.selected_battle_map_unit
@@ -980,6 +1030,7 @@ func _on_battle_map_infantry_clicked(unit :Infantry):
 	if player_unit:
 		ui.selected_battle_map_unit = unit
 		ui.selected_battle_map_unit.set_selected(true)
+		ui.infantry_stats.show_stats(stats)
 		
 func _on_battle_map_vehicle_clicked(vehicle :Vehicle):
 	var player_unit :bool = vehicle.player_id == player.player_id

@@ -12,8 +12,16 @@ export var weapon_scene_index :int
 export var launcher_scene_index :int
 export var uniform_style :int # 1:normal,2:tanktop,3:notop
 
+# why? because is set from origin side of player
+# if i send entire stats, each peeer generate its own
+# modified stats of units like hp diff from each unit
+export var modified_max_hp :int
+export var modified_speed :float
+var stats:UnitStatsData
+
 func from_dictionary(_data : Dictionary):
 	.from_dictionary(_data)
+	
 	skin_material_index = _data["a1"]
 	uniform_material_index = _data["b1"]
 	team_color_material_index = _data["c1"]
@@ -23,6 +31,12 @@ func from_dictionary(_data : Dictionary):
 	weapon_scene_index = _data["g1"]
 	launcher_scene_index = _data["h1"]
 	uniform_style = _data["i1"]
+	modified_max_hp = _data["j1"]
+	modified_speed = _data["k1"]
+	
+	stats = UnitStatsData.new()
+	stats.from_dictionary(_data["l1"])
+	 
 	
 func to_dictionary() -> Dictionary :
 	var _data :Dictionary = .to_dictionary()
@@ -35,6 +49,9 @@ func to_dictionary() -> Dictionary :
 	_data["g1"] = weapon_scene_index
 	_data["h1"] = launcher_scene_index
 	_data["i1"] = uniform_style
+	_data["j1"] = modified_max_hp
+	_data["k1"] = modified_speed
+	_data["l1"] = stats.to_dictionary()
 	return _data
 	
 	
@@ -61,6 +78,12 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	
 	infantry.overlay_ui = overlay_ui_path
 	infantry.camera = cam_path
+	
+	infantry.hp = modified_max_hp
+	infantry.max_hp = modified_max_hp
+	infantry.speed = modified_speed
+	infantry.discipline = stats.discipline
+	infantry.accuracy = stats.accuracy
 	
 	parent.add_child(infantry)
 	

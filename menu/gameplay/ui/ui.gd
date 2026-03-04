@@ -16,6 +16,8 @@ onready var spawn_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer/sp
 onready var spawn_heli = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_heli
 onready var spawn_bot_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer2/spawn_bot_infantry
 
+onready var infantry_stats = $CanvasLayer/Control/HBoxContainer/MarginContainer/infantry_stats
+
 var selected_battle_map_unit :BaseTileUnit setget _on_selected_battle_map_unit
 var selected_squad :BaseSquad setget _on_selected_squad
 var spawned_squad :Array # refrence for BaseGameplay spawned_squad
@@ -26,19 +28,21 @@ func _ready():
 	squad_option.visible = false
 	infantry_option.visible = false
 	vehicle_option.visible = false
+	infantry_stats.visible = false
 	
 func _on_selected_battle_map_unit(v :BaseTileUnit):
 	selected_battle_map_unit = v
 	
 	var is_set :bool = is_instance_valid(selected_battle_map_unit)
 	movable_camera_ui.detect_in_out = not is_set
-	
+	infantry_stats.visible = false
 	infantry_option.visible = false
 	vehicle_option.visible = false
 	
 	if is_set:
 		if selected_battle_map_unit is Infantry:
 			infantry_option.visible = true
+			infantry_stats.visible = true
 			pass
 			
 		if selected_battle_map_unit is Vehicle:

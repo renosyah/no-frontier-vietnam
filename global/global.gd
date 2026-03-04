@@ -117,6 +117,15 @@ func unit_responded(chatter_id :int, unit_voice :int, with_static :bool = false)
 	var k = r.keys()
 	var key = k[randi() % k.size()]
 	radio_chatter.play_radio(key, r[key], with_static, true)
+	
+##########################################  potrait  ############################################
+# infantry_potraits combine (0 - 9 macv) + 10 - 19 macv sog + 20 - 29 nva
+onready var infantry_potraits :Array = SoldierPotraits.get_macv_potraits(2) + SoldierPotraits.get_nva_potraits(1)
+
+onready var weapons = [
+	preload("res://assets/user_interface/weapon_potraits/m16.png"),
+	preload("res://assets/user_interface/weapon_potraits/type56.png")
+]
 
 ##########################################  map editor  ############################################
 # for load and save maps

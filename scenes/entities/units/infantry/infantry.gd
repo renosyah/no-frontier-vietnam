@@ -64,7 +64,11 @@ var _launcher :Spatial
 var _melee_range :Array = []
 
 var squad :BaseSquad
-var stats :UnitStatsData
+
+# set from stats
+var discipline :int
+var accuracy :int
+
 var burst_min :float = 2.0
 var burst_max :float = 4.0
 
@@ -95,11 +99,7 @@ func _ready():
 	floating_unit_info.init_bar(color, max_hp, _weapon.capacity)
 	floating_unit_info.visible = false
 	
-	# mofied unit
-	speed = _get_speed_multiplier(stats.speed)
-	_weapon.dispersion = _get_final_dispersion(_weapon.dispersion, stats.accuration)
-	max_hp = _get_max_hp(max_hp, stats.endurance)
-	hp = max_hp
+	_weapon.dispersion = _get_final_dispersion(_weapon.dispersion)
 	
 func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
 	
@@ -263,7 +263,7 @@ func _on_weapon_aimed():
 		return
 		
 	# master just do it here
-	var burst_count = min(_get_burst_count(stats.dicipline), _weapon.ammo)
+	var burst_count :int = min(_get_burst_count(), _weapon.ammo)
 	_weapon.fire_weapon(burst_count)
 	rpc_unreliable("_fire_weapon", burst_count, _weapon.ammo, _weapon.shot_at) # fire for puppet
 	
@@ -414,30 +414,22 @@ func _on_infantry_hit_register_on_click():
 	if not is_dead:
 		emit_signal("on_unit_clicked", self)
 		
-# stats modifier
-func _get_speed_multiplier(speed_stat: int) -> float:
-	var s = clamp(speed_stat, 1, 10)
-	var t = float(s - 1) / 9.0
-	return lerp(0.8, 1.2, t)
-	
-func _get_burst_count(discipline: int) -> int:
+func _get_burst_count() -> int:
 	var d = clamp(discipline, 1, 10)
 	var t = float(d - 1) / 9.0
 	var max_min_bonus = 1
 	var max_max_bonus = 2
+	var MAX_BURST_CAP = 6
 	var reverse_t = 1.0 - t
 	var min_burst = burst_min + round(max_min_bonus * reverse_t)
 	var max_burst = burst_max + round(max_max_bonus * reverse_t)
-	return randi() % (max_burst - min_burst + 1) + min_burst
+	max_burst = min(max_burst, MAX_BURST_CAP)
+	return randi() % int((max_burst - min_burst + 1.0) + min_burst)
 	
-func _get_final_dispersion(base_dispersion: float, accuracy: int) -> float:
+func _get_final_dispersion(base_dispersion: float) -> float:
 	var a = clamp(accuracy, 1, 10)
 	var t = float(a - 1) / 9.0
 	var reduction_multiplier = lerp(1.0, 0.2, t)
 	var final_dispersion = base_dispersion * reduction_multiplier
 	return max(final_dispersion, 0.0)
 	
-func _get_max_hp(base_hp: float, endurance: int) -> float:
-	var e = clamp(endurance, 1, 10)
-	var multiplier = 1.0 + (e * 0.1)
-	return base_hp * multiplier
