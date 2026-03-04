@@ -1,4 +1,4 @@
-[gd_scene load_steps=68 format=2]
+[gd_scene load_steps=70 format=2]
 
 [ext_resource path="res://scenes/entities/units/infantry/head.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/infantry/la.obj" type="ArrayMesh" id=2]
@@ -15,6 +15,8 @@
 [ext_resource path="res://assets/tile_highlight/selected_material.tres" type="Material" id=13]
 [ext_resource path="res://assets/unit_hit_register/infantry_hit_register.tscn" type="PackedScene" id=14]
 [ext_resource path="res://scenes/entities/units/infantry/uniform_khaki.tres" type="Material" id=15]
+[ext_resource path="res://assets/user_interface/icons/floating_infantry_info/floating_unit_info.tscn" type="PackedScene" id=16]
+[ext_resource path="res://assets/user_interface/icons/floating_icon/infantry.png" type="Texture" id=17]
 
 [sub_resource type="Animation" id=20]
 length = 0.001
@@ -3425,5 +3427,8 @@ unit_db = 5.0
 
 [node name="attack_time" type="Timer" parent="."]
 one_shot = true
+
+[node name="floating_unit_info" parent="." instance=ExtResource( 16 )]
+icon = ExtResource( 17 )
 
 [connection signal="on_click" from="infantry_hit_register" to="." method="_on_infantry_hit_register_on_click"]

@@ -304,6 +304,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://data/unit_data/tile_unit_data.gd"
 }, {
+"base": "BaseData",
+"class": "UnitStatsData",
+"language": "GDScript",
+"path": "res://data/unit_stats_data/unit_stats_data.gd"
+}, {
 "base": "Node",
 "class": "Utils",
 "language": "GDScript",
@@ -394,6 +399,7 @@ _global_script_class_icons={
 "TileMapFileData": "",
 "TileMapUtils": "",
 "TileUnitData": "",
+"UnitStatsData": "",
 "Utils": "",
 "Vehicle": "",
 "VehicleData": "",

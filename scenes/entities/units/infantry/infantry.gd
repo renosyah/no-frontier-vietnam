@@ -40,6 +40,7 @@ onready var vest_holder = $pivot/body/vest
 onready var attack_time = $attack_time
 onready var infantry_hit_register = $infantry_hit_register
 onready var blood = $blood
+onready var floating_unit_info = $floating_unit_info
 
 onready var meshes = [
 	$pivot/body/head/h, # head : 0=skin, 1:hair
@@ -62,9 +63,10 @@ var _weapon :Weapon
 var _launcher :Spatial
 var _melee_range :Array = []
 
-var _floating_info
-
 var squad :BaseSquad
+var stats :UnitStatsData
+var burst_min :float = 2.0
+var burst_max :float = 4.0
 
 func _ready():
 	arrow.visible = _is_selected
@@ -88,10 +90,16 @@ func _ready():
 	
 	infantry_hit_register.unit = self
 	
-	_floating_info = preload("res://assets/user_interface/icons/floating_infantry_info/floating_infantry_info.tscn").instance()
-	_overlay_ui.add_child(_floating_info)
-	_floating_info.init_bar(color, max_hp, _weapon.capacity)
-	_floating_info.visible = false
+	remove_child(floating_unit_info)
+	_overlay_ui.add_child(floating_unit_info)
+	floating_unit_info.init_bar(color, max_hp, _weapon.capacity)
+	floating_unit_info.visible = false
+	
+	# mofied unit
+	speed = _get_speed_multiplier(stats.speed)
+	_weapon.dispersion = _get_final_dispersion(_weapon.dispersion, stats.accuration)
+	max_hp = _get_max_hp(max_hp, stats.endurance)
+	hp = max_hp
 	
 func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
 	
@@ -219,7 +227,7 @@ remotesync func _heal(hp :int):
 	if not _is_master:
 		hp = hp
 		
-	_floating_info.update_bar(hp, _weapon.ammo)
+	floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func _on_no_enemy():
 	._on_no_enemy()
@@ -255,18 +263,18 @@ func _on_weapon_aimed():
 		return
 		
 	# master just do it here
-	var burst_count = min(int(rand_range(3, 4)), _weapon.ammo)
+	var burst_count = min(_get_burst_count(stats.dicipline), _weapon.ammo)
 	_weapon.fire_weapon(burst_count)
-		
-	rpc_unreliable("_fire_weapon", burst_count, _weapon.shot_at) # fire for puppet
+	rpc_unreliable("_fire_weapon", burst_count, _weapon.ammo, _weapon.shot_at) # fire for puppet
 	
-remotesync func _fire_weapon(count :int, shot_at :Vector3):
+remotesync func _fire_weapon(count :int, ammo :int, shot_at :Vector3):
 	if _is_master:
 		return
 		
 	_weapon.shot_at = shot_at
+	_weapon.ammo = ammo
 	_weapon.fire_weapon(count)
-		
+	
 func _on_weapon_fired():
 	if is_dead:
 		return
@@ -281,7 +289,7 @@ func _on_weapon_fired():
 	_current_anim = "fire_weapon"
 	animation_state.travel(_current_anim)
 	
-	_floating_info.update_bar(hp, _weapon.ammo)
+	floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func reload_weapon():
 	if _is_master:
@@ -293,10 +301,10 @@ func _on_reloading():
 	audio_stream_player_3d.stream = reload_sound
 	audio_stream_player_3d.play()
 	
-	_floating_info.update_bar(hp, _weapon.ammo)
+	floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func _on_weapon_update():
-	_floating_info.update_bar(hp, _weapon.ammo)
+	floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func use_launcher(_at :Vector3):
 	stop()
@@ -345,26 +353,24 @@ func _set_animation():
 	_current_anim = "run_with_weapon" if _is_moving else "iddle_hold_weapon"
 	
 func _exit_tree():
-	_floating_info.queue_free()
+	floating_unit_info.queue_free()
 	
 func moving(_delta):
 	.moving(_delta)
 	
-	_track_floating_info(_cam, global_position + Vector3.UP)
-	
-func _track_floating_info(_active_cam :Camera, pos :Vector3):
 	if not _overlay_ui.visible:
 		return
 		
 	if not visible:
-		_floating_info.visible = false
+		floating_unit_info.visible = false
 		return
 		
-	if _active_cam.is_position_behind(pos):
+	var pos :Vector3 = global_position + Vector3.UP
+	if _cam.is_position_behind(pos):
 		return
 		
-	var screen_pos = _active_cam.unproject_position(pos)
-	_floating_info.rect_global_position = screen_pos - _floating_info.rect_pivot_offset
+	var screen_pos = _cam.unproject_position(pos)
+	floating_unit_info.rect_global_position = screen_pos - floating_unit_info.rect_pivot_offset
 	
 func puppet_moving(delta :float) -> void:
 	.puppet_moving(delta)
@@ -390,7 +396,7 @@ func taking_damage(_damage :int, _hp: int, _max_hp :int):
 	blood.translation = global_position
 	blood.display()
 	
-	_floating_info.update_bar(hp, _weapon.ammo)
+	floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func on_dead():
 	# called later after
@@ -407,3 +413,31 @@ func _on_dead_animation_finished():
 func _on_infantry_hit_register_on_click():
 	if not is_dead:
 		emit_signal("on_unit_clicked", self)
+		
+# stats modifier
+func _get_speed_multiplier(speed_stat: int) -> float:
+	var s = clamp(speed_stat, 1, 10)
+	var t = float(s - 1) / 9.0
+	return lerp(0.8, 1.2, t)
+	
+func _get_burst_count(discipline: int) -> int:
+	var d = clamp(discipline, 1, 10)
+	var t = float(d - 1) / 9.0
+	var max_min_bonus = 1
+	var max_max_bonus = 2
+	var reverse_t = 1.0 - t
+	var min_burst = burst_min + round(max_min_bonus * reverse_t)
+	var max_burst = burst_max + round(max_max_bonus * reverse_t)
+	return randi() % (max_burst - min_burst + 1) + min_burst
+	
+func _get_final_dispersion(base_dispersion: float, accuracy: int) -> float:
+	var a = clamp(accuracy, 1, 10)
+	var t = float(a - 1) / 9.0
+	var reduction_multiplier = lerp(1.0, 0.2, t)
+	var final_dispersion = base_dispersion * reduction_multiplier
+	return max(final_dispersion, 0.0)
+	
+func _get_max_hp(base_hp: float, endurance: int) -> float:
+	var e = clamp(endurance, 1, 10)
+	var multiplier = 1.0 + (e * 0.1)
+	return base_hp * multiplier
