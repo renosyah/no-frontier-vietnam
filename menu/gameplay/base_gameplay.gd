@@ -1095,12 +1095,13 @@ func _on_battle_map_unit_dead(unit :BaseTileUnit):
 		
 	# decrease man power
 	# every time a fking unit died
-	var mp :int = ui.game_resource.manpower
-	var mxmp :int = ui.game_resource.max_manpower
-	if unit is Infantry:
-		ui.game_resource.manpower = int(clamp(mp - 1, 0, mxmp))
-	elif unit is Vehicle:
-		ui.game_resource.manpower = int(clamp(mp - 2, 0, mxmp))
+	if unit.player_id == player.player_id:
+		var mp :int = ui.game_resource.manpower
+		var mxmp :int = ui.game_resource.max_manpower
+		if unit is Infantry:
+			ui.game_resource.manpower = int(clamp(mp - 1, 0, mxmp))
+		elif unit is Vehicle:
+			ui.game_resource.manpower = int(clamp(mp - 2, 0, mxmp))
 		
 	# remove from spotting mechanic
 	var pos_datas:Array = battle_map_unit_positions[unit.tile_map][unit.current_tile]
