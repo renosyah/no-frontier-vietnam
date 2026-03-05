@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/uh1d.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_glass_material.tres" type="Material" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://assets/unit_hit_register/heli_hit_register.tscn" type="PackedScene" id=11]
 [ext_resource path="res://assets/tile_highlight/contested_area_material.tres" type="Material" id=12]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_no_glass_material.tres" type="Material" id=13]
+[ext_resource path="res://scenes/entities/units/vehicles/uh1d/pilot.tscn" type="PackedScene" id=14]
 
 [sub_resource type="SpatialMaterial" id=29]
 albedo_color = Color( 0.054902, 0.054902, 0.054902, 1 )
@@ -369,6 +370,12 @@ material/0 = ExtResource( 5 )
 material/1 = ExtResource( 2 )
 material/2 = SubResource( 29 )
 material/3 = SubResource( 30 )
+
+[node name="pilot" parent="pivot/body" instance=ExtResource( 14 )]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -0.16347, -0.0874949, -0.611633 )
+
+[node name="pilot2" parent="pivot/body" instance=ExtResource( 14 )]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.154684, -0.0874949, -0.611633 )
 
 [node name="main_rotor" type="MeshInstance" parent="pivot"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.88479e-08, 0.605248, 0.166045 )

@@ -40,13 +40,14 @@ func _on_selected_battle_map_unit(v :BaseTileUnit):
 	vehicle_option.visible = false
 	
 	if is_set:
+		infantry_stats.visible = true
+		
 		if selected_battle_map_unit is Infantry:
 			infantry_option.visible = true
-			infantry_stats.visible = true
-			pass
 			
 		if selected_battle_map_unit is Vehicle:
 			vehicle_option.visible = true
+			
 	
 func _on_selected_squad(v :BaseSquad):
 	selected_squad = v

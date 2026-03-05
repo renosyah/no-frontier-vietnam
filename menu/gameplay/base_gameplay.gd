@@ -276,7 +276,7 @@ func _on_spawn_infantry():
 			
 		else:
 			stats.soldier_name = SoldierNames.get_random_viet_name()
-			stats.soldier_potrait_index = int(rand_range(20, 29))
+			stats.soldier_potrait_index = int(rand_range(25, 34))
 			stats.soldier_weapon_image_index = 1
 			
 	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
@@ -293,6 +293,12 @@ func _on_spawn_heli_press():
 	vehicle_squad.position = grand_map.get_tile_instance(tile).global_position
 	vehicle_squad.unit_voice = player.player_team
 	
+	var stats :UnitStatsData = UnitStatsData.new()
+	stats.randomize_stats()
+	stats.soldier_name = SoldierNames.get_random_us_name()
+	stats.soldier_weapon_image_index = 0
+	stats.soldier_potrait_index = int(rand_range(20, 24))
+	
 	var vehicle = preload("res://data/unit_data/vehicle/uh1d.tres").duplicate()
 	vehicle.player_network_id = player.player_network_id
 	vehicle.player_id = player.player_id
@@ -300,6 +306,7 @@ func _on_spawn_heli_press():
 	vehicle.team = player.player_team
 	vehicle.current_tile = Vector2.ZERO
 	vehicle.position = Vector3.ZERO
+	vehicle.stats = stats
 	
 	vehicle_squad.vehicle = vehicle
 	
@@ -810,7 +817,7 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	
 	#vehicle.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 	vehicle.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
-	vehicle.connect("on_unit_clicked", self, "_on_battle_map_vehicle_clicked")
+	vehicle.connect("on_unit_clicked", self, "_on_battle_map_vehicle_clicked", [squad.vehicle.stats])
 	vehicle.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
 	vehicle.connect("on_unit_dead", vehicle_squad, "_on_vehicle_dead")
 	vehicle.connect("on_vehicle_drop_passenger", self, "_on_battle_map_vehicle_drop_passenger")
@@ -964,10 +971,11 @@ func on_team_grand_map_squad_moving(unit :BaseTileUnit, from :Vector2, to :Vecto
 		# NEW RULE
 		# force enter battle map
 		# even if just intent to passing by
-		if unit.player_id == player.player_id:
-			unit.stop()
-			_on_grand_map_squad_finish_travel(unit, from, to)
-			return
+		# cause performace issue, hold for now
+		#if unit.player_id == player.player_id:
+			#unit.stop()
+			#_on_grand_map_squad_finish_travel(unit, from, to)
+			#return
 			
 		return
 		
@@ -1032,7 +1040,7 @@ func _on_battle_map_infantry_clicked(unit :Infantry, stats :UnitStatsData):
 		ui.selected_battle_map_unit.set_selected(true)
 		ui.infantry_stats.show_stats(stats)
 		
-func _on_battle_map_vehicle_clicked(vehicle :Vehicle):
+func _on_battle_map_vehicle_clicked(vehicle :Vehicle, stats :UnitStatsData):
 	var player_unit :bool = vehicle.player_id == player.player_id
 	
 	if is_instance_valid(ui.selected_battle_map_unit):
@@ -1057,6 +1065,7 @@ func _on_battle_map_vehicle_clicked(vehicle :Vehicle):
 	if player_unit:
 		ui.selected_battle_map_unit = vehicle
 		ui.selected_battle_map_unit.set_selected(true)
+		ui.infantry_stats.show_stats(stats)
 		
 func _on_battle_map_unit_dead(unit :BaseTileUnit):
 	if ui.selected_battle_map_unit == unit:

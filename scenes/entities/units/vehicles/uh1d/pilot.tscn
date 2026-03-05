@@ -1,0 +1,99 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://scenes/entities/gear/vest/vest_1_green.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/entities/units/infantry/uniform_green.tres" type="Material" id=2]
+[ext_resource path="res://scenes/entities/units/infantry/skin_color_material.tres" type="Material" id=3]
+[ext_resource path="res://scenes/entities/units/infantry/ll.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://scenes/entities/units/infantry/body.obj" type="ArrayMesh" id=5]
+[ext_resource path="res://scenes/entities/units/infantry/la.obj" type="ArrayMesh" id=7]
+[ext_resource path="res://scenes/entities/units/infantry/rl.obj" type="ArrayMesh" id=8]
+[ext_resource path="res://scenes/entities/units/infantry/black_material.tres" type="Material" id=9]
+[ext_resource path="res://scenes/entities/units/infantry/ra.obj" type="ArrayMesh" id=10]
+[ext_resource path="res://scenes/entities/units/infantry/head.obj" type="ArrayMesh" id=11]
+[ext_resource path="res://scenes/entities/gear/headgear/us_heli_helm.tscn" type="PackedScene" id=13]
+
+[node name="pilot" type="Spatial"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
+
+[node name="body" type="Spatial" parent="."]
+
+[node name="bag" type="Spatial" parent="body"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 7.72265e-09, 0.0563147, -0.0883368 )
+
+[node name="vest" type="Spatial" parent="body"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1.70074e-11, 0.0316334, 0.000194542 )
+
+[node name="vest_1_green" parent="body" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.28713e-09, 0.0336524, 0.014723 )
+
+[node name="Body" type="MeshInstance" parent="body"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00439346, -1.19209e-07, 0.0357322 )
+cast_shadow = 0
+mesh = ExtResource( 5 )
+skeleton = NodePath("../../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+
+[node name="l_arm" type="Spatial" parent="body"]
+transform = Transform( 0.827551, 0.519474, -0.21285, -8.08954e-08, 0.379149, 0.925335, 0.56139, -0.765762, 0.313765, 0.12253, 0.0962093, -0.0142964 )
+
+[node name="a" type="MeshInstance" parent="body/l_arm"]
+transform = Transform( 0.997876, -0.0602781, 0.0246984, 0.060278, 0.998182, 0.000745237, -0.0246986, 0.000745267, 0.999695, 0, 0, 0 )
+cast_shadow = 0
+mesh = ExtResource( 7 )
+skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 2 )
+
+[node name="r_arm" type="Spatial" parent="body"]
+transform = Transform( 0.999999, 8.06479e-08, 5.36788e-08, -8.06478e-08, 0.385987, 0.922504, 5.36787e-08, -0.922504, 0.385987, -0.118942, 0.101039, -0.00947694 )
+
+[node name="a" type="MeshInstance" parent="body/r_arm"]
+transform = Transform( 0.887261, -0.425523, 0.178044, 0.425522, 0.904057, 0.0401437, -0.178043, 0.0401436, 0.983204, 0, 0, 0 )
+cast_shadow = 0
+mesh = ExtResource( 10 )
+skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 2 )
+
+[node name="head" type="Spatial" parent="body"]
+
+[node name="h" type="MeshInstance" parent="body/head"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00193334, 0.135413, 0.0174155 )
+mesh = ExtResource( 11 )
+skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 3 )
+material/1 = ExtResource( 9 )
+
+[node name="headgear" type="Spatial" parent="body/head"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.231466, 0 )
+
+[node name="us_helm" parent="body/head/headgear" instance=ExtResource( 13 )]
+
+[node name="legs" type="Spatial" parent="."]
+transform = Transform( 1, 8.4819e-08, 6.62452e-08, -8.48189e-08, 0.242244, 0.970215, 6.62452e-08, -0.970215, 0.242244, 0, 0, 0 )
+
+[node name="l" type="Spatial" parent="legs"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00274782, -0.0801899, 0.0178608 )
+
+[node name="leg" type="MeshInstance" parent="legs/l"]
+cast_shadow = 0
+mesh = ExtResource( 4 )
+skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 9 )
+
+[node name="r" type="Spatial" parent="legs"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00274782, -0.0801899, 0.0178608 )
+
+[node name="leg" type="MeshInstance" parent="legs/r"]
+cast_shadow = 0
+mesh = ExtResource( 8 )
+skeleton = NodePath("../../../..")
+software_skinning_transform_normals = false
+material/0 = ExtResource( 2 )
+material/1 = ExtResource( 9 )

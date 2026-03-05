@@ -22,6 +22,7 @@ onready var animation_player = $AnimationPlayer
 onready var pivot = $pivot
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
 onready var heli_hit_register = $heli_hit_register
+onready var pilots = [$pivot/body/pilot,$pivot/body/pilot2]
 
 puppet var _puppet_rotation_x :float # foward tilt sync
 
@@ -132,6 +133,9 @@ func on_dead():
 	animation_player.play("dead")
 
 func _on_crashes():
+	for i in pilots:
+		i.visible = false
+	
 	.on_dead()
 	
 func clone_mesh():
