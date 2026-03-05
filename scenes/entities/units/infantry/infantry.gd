@@ -8,6 +8,14 @@ const shot_sounds = [
 	preload("res://assets/sounds/weapons/shot_2.wav"),
 	preload("res://assets/sounds/weapons/shot_3.wav")
 ]
+const dead_sounds = [
+	preload("res://assets/sounds/infantry/dead_1.wav"),
+	preload("res://assets/sounds/infantry/dead_2.wav"),
+	preload("res://assets/sounds/infantry/dead_3.wav"),
+	preload("res://assets/sounds/infantry/dead_4.wav"),
+	preload("res://assets/sounds/infantry/dead_5.wav")
+]
+
 const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
 
 export var skin_material :SpatialMaterial
@@ -70,7 +78,10 @@ var discipline :int
 var accuracy :int
 
 var burst_min :float = 2.0
-var burst_max :float = 4.0
+var burst_max :float = 6.0
+
+var min_fire_rate :float = 0.7
+var max_fire_rate :float = 2.3
 
 func _ready():
 	arrow.visible = _is_selected
@@ -194,7 +205,7 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	if is_align and attack_time.is_stopped():
 		_weapon.shot_at = enemy_pos
 		fire_weapon()
-		attack_time.wait_time = rand_range(1, 4)
+		attack_time.wait_time = _get_fire_rate()
 		attack_time.start()
 
 func _on_enemy_melee():
@@ -283,7 +294,7 @@ func _on_weapon_fired():
 		reload_weapon()
 		return
 		
-	audio_stream_player_3d.stream =  shot_sounds[randi() % shot_sounds.size()]
+	audio_stream_player_3d.stream = shot_sounds[randi() % shot_sounds.size()]
 	audio_stream_player_3d.play()
 	
 	_current_anim = "fire_weapon"
@@ -403,6 +414,9 @@ func on_dead():
 	# animation finished
 	#.on_dead()
 	
+	audio_stream_player_3d.stream = dead_sounds[randi() % dead_sounds.size()]
+	audio_stream_player_3d.play()
+	
 	circle.visible = false
 	_current_anim = "die_hold_weapon"
 	animation_state.travel(_current_anim)
@@ -432,4 +446,10 @@ func _get_final_dispersion(base_dispersion: float) -> float:
 	var reduction_multiplier = lerp(1.0, 0.2, t)
 	var final_dispersion = base_dispersion * reduction_multiplier
 	return max(final_dispersion, 0.0)
+	
+func _get_fire_rate() -> float:
+	var d = clamp(discipline, 1, 10)
+	var t = float(d - 1) / 9.0
+	var base = lerp(max_fire_rate, min_fire_rate, t)
+	return rand_range(base * 0.9, base * 1.1)
 	

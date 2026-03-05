@@ -3,20 +3,16 @@ class_name GameplayUi
 
 onready var movable_camera_ui = $CanvasLayer/movable_camera_ui
 onready var center_pos = $CanvasLayer/center_pos
-onready var battle_map_name = $CanvasLayer/Control/VBoxContainer/HBoxContainer/ColorRect/battle_map_name
+onready var battle_map_name = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control/MarginContainer/battle_map_name
 onready var grand_map_overlay_ui = $CanvasLayer/grand_map_overlay_ui
 onready var battle_map_overlay_ui = $CanvasLayer/battle_map_overlay_ui
 
-onready var squad_option = $CanvasLayer/Control/VBoxContainer/squad_option
-onready var enter_stealth = $CanvasLayer/Control/VBoxContainer/squad_option/HBoxContainer/enter_stealth
-
-onready var infantry_option = $CanvasLayer/Control/VBoxContainer/infantry_option
-onready var vehicle_option = $CanvasLayer/Control/VBoxContainer/vehicle_option
 onready var spawn_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_infantry
 onready var spawn_heli = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_heli
 onready var spawn_bot_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer2/spawn_bot_infantry
 
-onready var infantry_stats = $CanvasLayer/Control/HBoxContainer/MarginContainer/infantry_stats
+onready var unit_stats = $CanvasLayer/Control/HBoxContainer/MarginContainer/unit_stats
+onready var game_resource = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control2/game_resource
 
 var selected_battle_map_unit :BaseTileUnit setget _on_selected_battle_map_unit
 var selected_squad :BaseSquad setget _on_selected_squad
@@ -25,86 +21,28 @@ var squad_positions :Dictionary = {} # refrence for BaseGameplay squad_positions
 
 func _ready():
 	spawn_bot_infantry.visible = NetworkLobbyManager.is_server()
-	squad_option.visible = false
-	infantry_option.visible = false
-	vehicle_option.visible = false
-	infantry_stats.visible = false
+	unit_stats.visible = false
 	
 func _on_selected_battle_map_unit(v :BaseTileUnit):
 	selected_battle_map_unit = v
 	
 	var is_set :bool = is_instance_valid(selected_battle_map_unit)
 	movable_camera_ui.detect_in_out = not is_set
-	infantry_stats.visible = false
-	infantry_option.visible = false
-	vehicle_option.visible = false
-	
-	if is_set:
-		infantry_stats.visible = true
-		
-		if selected_battle_map_unit is Infantry:
-			infantry_option.visible = true
-			
-		if selected_battle_map_unit is Vehicle:
-			vehicle_option.visible = true
-			
+	unit_stats.visible = is_set
 	
 func _on_selected_squad(v :BaseSquad):
 	selected_squad = v
-	squad_option.visible = false
 	
-	if not is_instance_valid(selected_squad):
-		return
-		
-	if selected_squad is InfantrySquad:
-		squad_option.visible = true
-		enter_stealth.set_toggle_button(selected_squad.is_stealth_mode())
-		
-func _on_enter_stealth_pressed():
-	if not is_instance_valid(selected_squad):
-		return
-		
-	if selected_squad is InfantrySquad:
-		selected_squad.enter_stealth_mode(not selected_squad.is_stealth_mode())
-		enter_stealth.set_toggle_button(selected_squad.is_stealth_mode())
-		
-func _on_fire_weapon_pressed():
-	if not is_instance_valid(selected_battle_map_unit):
-		return
-	
-	if selected_battle_map_unit is Infantry:
-		selected_battle_map_unit.fire_weapon()
-		Global.unit_responded(RadioChatters.COMBAT_STATUS,selected_battle_map_unit.team)
+func _on_infantry_stats_close():
+	selected_battle_map_unit.set_selected(false)
+	_on_selected_battle_map_unit(null)
 
-func _on_use_launcher_pressed():
-	if not is_instance_valid(selected_battle_map_unit):
-		return
-		
-	if selected_battle_map_unit is Infantry:
-		selected_battle_map_unit.use_launcher(Vector3.ZERO)
-		Global.unit_responded(RadioChatters.COMBAT_STATUS,selected_battle_map_unit.team)
-
-func _on_use_grenade_pressed():
-	if not is_instance_valid(selected_battle_map_unit):
-		return
-		
-	if selected_battle_map_unit is Infantry:
-		selected_battle_map_unit.use_grenade(Vector3.ZERO)
-		Global.unit_responded(RadioChatters.COMBAT_STATUS,selected_battle_map_unit.team)
-	
-func _on_landing_pressed():
+func _on_unit_stats_drop_passenger():
 	if not is_instance_valid(selected_battle_map_unit):
 		return
 		
 	if selected_battle_map_unit is Vehicle:
 		selected_battle_map_unit.drop_passenger()
-		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,selected_battle_map_unit.team)
-	
-	
-func _on_dead_pressed():
-	if not is_instance_valid(selected_battle_map_unit):
-		return
 		
-	selected_battle_map_unit.set_dead()
-
-
+func _on_menu_button_pressed():
+	NetworkLobbyManager.leave()

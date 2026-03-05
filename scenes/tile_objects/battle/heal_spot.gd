@@ -1,10 +1,12 @@
 extends MeshInstance
+class_name HealSpot
 
 signal out_of_stock
 
+export var player_id :String
 export var usage_rate :int = 1
-export var medical_supply :int = 120
-export var max_medical_supply :int = 120
+export var medical_supply :int = 400
+export var max_medical_supply :int = 400
 
 onready var collision_shape = $CollisionShape
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
@@ -39,6 +41,9 @@ func _on_global_tick():
 		if result["collider"] is HitRegister:
 			var i :HitRegister = result["collider"]
 			if i.unit is Infantry:
+				if i.unit.player_id != player_id:
+					return
+					
 				_heal_squad(i.unit)
 				audio_stream_player_3d.play()
 				return

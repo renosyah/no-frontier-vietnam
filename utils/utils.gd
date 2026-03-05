@@ -128,3 +128,12 @@ static func shuffle_array(rng :RandomNumberGenerator, array: Array) -> void:
 		array[i] = array[j]
 		array[j] = temp
 		
+static func format_number(n :int):
+	if n >= 1000000000:
+		return str(round(n / 1000000000.0)) + "B"
+	elif n >= 1000000:
+		return str(round(n / 1000000.0)) + "M"
+	elif n >= 1000:
+		return str(round(n / 1000.0)) + "K"
+	else:
+		return str(n)

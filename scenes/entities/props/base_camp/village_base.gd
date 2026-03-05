@@ -1,5 +1,15 @@
 extends Spatial
 
+export var player_id :String
+
+func _ready():
+	var spots = get_spots()
+	for i in spots:
+		i.player_id = player_id
+
+func get_spots():
+	return [$reload_spot_a, $reload_spot_b, $heal_spot_a, $heal_spot_b]
+
 func _on_reload_spot_a_out_of_stock():
 	$ammo_caches_a.queue_free()
 	$weapon_caches_a.queue_free()

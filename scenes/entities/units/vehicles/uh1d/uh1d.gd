@@ -88,6 +88,8 @@ func prepare_take_passenger():
 	if _on_task:
 		return
 		
+	pivot.rotation_degrees.x = 0
+	
 	_on_task = true
 	_altitude = 0.15
 	animation_player.play("door_open")

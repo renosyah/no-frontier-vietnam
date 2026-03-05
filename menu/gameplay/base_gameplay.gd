@@ -606,10 +606,20 @@ func spawn_battle_map_capture_point(tile_id :Vector2, battle_map :BaseTileMap, i
 		
 	elif index == 1:
 		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_medkit.tscn").instance()
+		
+		# resource is private/local not shared
+		# event at same team, failed manage you own
+		# your fault
+		props.player_id = player.player_id
 		battle_map.add_child(props)
 		
 	else:
 		props = preload("res://scenes/entities/props/hidden_cache/hidden_cache_ammo.tscn").instance()
+		
+		# resource is private/local not shared
+		# event at same team, failed manage you own
+		# your fault
+		props.player_id = player.player_id
 		battle_map.add_child(props)
 	
 	props.global_position = battle_map.get_tile_instance(Vector2.ZERO).global_position
@@ -625,7 +635,18 @@ func spawn_battle_map_base_building(tile_id :Vector2, battle_map :BaseTileMap, i
 	else:
 		field_base = preload("res://scenes/entities/props/base_camp/village_base.tscn").instance()
 	
+	# resource is private/local not shared
+	# event at same team, failed manage you own
+	# your fault
+	field_base.player_id = player.player_id
+	
 	battle_map.add_child(field_base)
+	
+	# if player team id same as base (index + 1) = team id
+	# register the resource to game ui
+	if player.player_team == (index + 1):
+		ui.game_resource.resource_spots.append_array(field_base.get_spots())
+	
 	field_base.translation = battle_map.get_tile_instance(Vector2.ZERO).translation
 	var disable_tiles = [
 		Vector2.ZERO, 
@@ -1038,7 +1059,7 @@ func _on_battle_map_infantry_clicked(unit :Infantry, stats :UnitStatsData):
 	if player_unit:
 		ui.selected_battle_map_unit = unit
 		ui.selected_battle_map_unit.set_selected(true)
-		ui.infantry_stats.show_stats(stats)
+		ui.unit_stats.show_stats(stats, false)
 		
 func _on_battle_map_vehicle_clicked(vehicle :Vehicle, stats :UnitStatsData):
 	var player_unit :bool = vehicle.player_id == player.player_id
@@ -1065,12 +1086,21 @@ func _on_battle_map_vehicle_clicked(vehicle :Vehicle, stats :UnitStatsData):
 	if player_unit:
 		ui.selected_battle_map_unit = vehicle
 		ui.selected_battle_map_unit.set_selected(true)
-		ui.infantry_stats.show_stats(stats)
+		ui.unit_stats.show_stats(stats, true)
 		
 func _on_battle_map_unit_dead(unit :BaseTileUnit):
 	if ui.selected_battle_map_unit == unit:
 		ui.selected_battle_map_unit.set_selected(false)
 		ui.selected_battle_map_unit = null
+		
+	# decrease man power
+	# every time a fking unit died
+	var mp :int = ui.game_resource.manpower
+	var mxmp :int = ui.game_resource.max_manpower
+	if unit is Infantry:
+		ui.game_resource.manpower = int(clamp(mp - 1, 0, mxmp))
+	elif unit is Vehicle:
+		ui.game_resource.manpower = int(clamp(mp - 2, 0, mxmp))
 		
 	# remove from spotting mechanic
 	var pos_datas:Array = battle_map_unit_positions[unit.tile_map][unit.current_tile]
