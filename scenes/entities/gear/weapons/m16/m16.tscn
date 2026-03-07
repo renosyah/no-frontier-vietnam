@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://scenes/entities/gear/weapons/m16/assault_rifle.gd" type="Script" id=1]
 [ext_resource path="res://scenes/entities/gear/weapons/m16/m16.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://assets/user_interface/weapon_potraits/m16.png" type="Texture" id=3]
 [ext_resource path="res://addons/queue_task/queue_task.tscn" type="PackedScene" id=4]
 
 [sub_resource type="SpatialMaterial" id=1]
@@ -106,6 +107,7 @@ capacity = 18
 reserve_ammo = 80
 max_reserve_ammo = 240
 dispersion = 1.42
+icon = ExtResource( 3 )
 
 [node name="queue_task" parent="." instance=ExtResource( 4 )]
 

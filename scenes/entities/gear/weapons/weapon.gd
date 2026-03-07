@@ -13,6 +13,7 @@ export var max_reserve_ammo :int = 0
 export var dispersion :float = 0.3
 export var is_master :bool
 export var team :int
+export var icon :StreamTexture # just holder
 
 var unit_owner
 var shot_from :Vector3

@@ -76,7 +76,7 @@ var squad :BaseSquad
 var discipline :int
 var accuracy :int
 
-var burst_min :float = 2.0
+var burst_min :float = 3.0
 var burst_max :float = 6.0
 
 var min_fire_rate :float = 1.7
@@ -453,7 +453,7 @@ func _get_burst_count() -> int:
 	var t = float(d - 1) / 9.0
 	var max_min_bonus = 1
 	var max_max_bonus = 2
-	var MAX_BURST_CAP = 6
+	var MAX_BURST_CAP = 8
 	var reverse_t = 1.0 - t
 	var min_burst = burst_min + round(max_min_bonus * reverse_t)
 	var max_burst = burst_max + round(max_max_bonus * reverse_t)

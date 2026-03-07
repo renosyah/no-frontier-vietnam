@@ -721,6 +721,7 @@ func create_entry_positions(from_tile_id :Vector2, current_tile_id :Vector2, is_
 	var battle_map_tile_id :Vector2 # for fallback
 	
 	# simplified LOL
+	# this will be USED
 	if is_air:
 		battle_map_tile_id = current_tile_id.direction_to(from_tile_id) * map_size
 		return [[battle_map_tile_id], battle_map_holder[current_tile_id], Vector2.ZERO]
@@ -728,7 +729,7 @@ func create_entry_positions(from_tile_id :Vector2, current_tile_id :Vector2, is_
 	# for case if squad enter
 	# but no entry point found from direction
 	# of that squad entering
-	# NOT USED NOW
+	# NOT USED fOR NOW!
 	if point == null:
 		battle_map_tile_id = from_tile_id.direction_to(current_tile_id) * map_size
 		point_battle_map = battle_map_holder[current_tile_id]
@@ -1131,31 +1132,33 @@ func _on_battle_map_vehicle_drop_passenger(vehicle :Vehicle, passengers :Array):
 	
 	var squads :Array = []
 	for i in passengers:
-		var if_s :InfantrySquad = i
-		if_s.current_tile = vehicle_squad.current_tile
-		if_s.translation = vehicle_squad.global_position
+		var squad :InfantrySquad = i
+		squad.current_tile = vehicle_squad.current_tile
+		squad.translation = vehicle_squad.global_position
 		
-		for m in if_s.members:
+		for m in squad.members:
 			m.current_tile = vehicle.current_tile
 			
-		squads.append(if_s.get_path())
+		# put into node path array
+		# to sync node between peer
+		squads.append(squad.get_path())
 	
 	rpc("_on_battle_map_passenger_exit_vehicle", squads,vehicle_squad.current_tile, vehicle.current_tile)
 	
 # tell all that this squad are entering
-# battle map
+# battle map via exiting vehicle
 remotesync func _on_battle_map_passenger_exit_vehicle(units:Array, grand_map_tile_id :Vector2, battle_map_tile_id :Vector2):
 	for unit in units:
 		order_infatry_squad_to_exit_vehicle(get_node_or_null(unit), grand_map_tile_id, battle_map_tile_id)
 	
 ########################################## squad member control ############################################
 
-func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, current_tile_id :Vector2):
-	unit.in_battle_map = true
+func order_squad_to_enter_battle_map(squad :BaseSquad, from_tile_id :Vector2, current_tile_id :Vector2):
+	squad.in_battle_map = true
 
-	if unit is VehicleSquad:
+	if squad is VehicleSquad:
 		
-		var vehicle :Vehicle = unit.vehicle
+		var vehicle :Vehicle = squad.vehicle
 		
 		var result :Array = create_entry_positions(from_tile_id, current_tile_id, vehicle.is_air)
 		var entry_positions :Array = result[0]
@@ -1199,14 +1202,14 @@ func order_squad_to_enter_battle_map(unit :BaseSquad, from_tile_id :Vector2, cur
 			
 		vehicle.update_spotting()
 		
-	if unit is InfantrySquad:
+	if squad is InfantrySquad:
 		var result :Array = create_entry_positions(from_tile_id, current_tile_id)
 		var entry_positions :Array = result[0]
 		var point_battle_map :BaseTileMap = result[1]
 		var battle_map_tile_id :Vector2 = result[2]
 		var center_point :Vector3 = point_battle_map.get_tile_instance(Vector2.ZERO).global_position
 		
-		for member in unit.members:
+		for member in squad.members:
 			var infantry :Infantry = member
 			infantry.unit_position = battle_map_unit_positions[point_battle_map]
 			infantry.tile_map = point_battle_map
@@ -1244,7 +1247,13 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 		var vehicle :Vehicle = squad.vehicle
 		if vehicle.have_task():
 			return
-		
+			
+		# remove from spotting mechanic
+		# from leaved battle map
+		var pos_datas:Array = battle_map_unit_positions[vehicle.tile_map][vehicle.current_tile]
+		if pos_datas.has(vehicle):
+			pos_datas.erase(vehicle)
+			
 		vehicle.attack_move = false
 		vehicle.unit_position = {}
 		vehicle.tile_map = battle_map_holder[squad.current_tile]
@@ -1257,6 +1266,7 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 			var infantry :Infantry = i
 			
 			# remove from spotting mechanic
+			# from leaved battle map
 			var pos_datas:Array = battle_map_unit_positions[infantry.tile_map][infantry.current_tile]
 			if pos_datas.has(infantry):
 				pos_datas.erase(infantry)
@@ -1288,7 +1298,7 @@ func order_infatry_squad_to_enter_vehicle(infantry :Infantry, vehicle :Vehicle):
 	squad.enter_vehicle(vehicle.current_tile, vehicle)
 	vehicle.prepare_take_passenger()
 	
-func order_infatry_squad_to_exit_vehicle(unit :InfantrySquad, grand_map_tile_id :Vector2, battle_map_tile_id :Vector2):
+func order_infatry_squad_to_exit_vehicle(squad :InfantrySquad, grand_map_tile_id :Vector2, battle_map_tile_id :Vector2):
 	var positions :Array = TileMapUtils.get_adjacent_tiles(TileMapUtils.get_directions(), battle_map_tile_id, 2)
 	var point_battle_map :BaseTileMap = battle_map_holder[grand_map_tile_id]
 	var entry_positions :Array = []
@@ -1300,10 +1310,10 @@ func order_infatry_squad_to_exit_vehicle(unit :InfantrySquad, grand_map_tile_id 
 		if point_battle_map.is_nav_enable(id):
 			entry_positions.append(id)
 			
-	unit.current_tile = grand_map_tile_id
-	unit.translation = grand_map.get_tile_instance(grand_map_tile_id).global_position
+	squad.current_tile = grand_map_tile_id
+	squad.translation = grand_map.get_tile_instance(grand_map_tile_id).global_position
 	
-	for member in unit.members:
+	for member in squad.members:
 		var infantry :Infantry = member
 		infantry.unit_position = battle_map_unit_positions[point_battle_map]
 		infantry.tile_map = point_battle_map
@@ -1327,6 +1337,7 @@ func order_infatry_squad_to_exit_vehicle(unit :InfantrySquad, grand_map_tile_id 
 		infantry.update_spotting()
 		
 		# add to spotting mechanic
+		# to entered battle map
 		var pos_datas:Array = battle_map_unit_positions[member.tile_map][member.current_tile]
 		if not pos_datas.has(member):
 			pos_datas.append(member)
