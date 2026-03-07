@@ -10,10 +10,15 @@ onready var vehicle_option = $vehicle_option
 func _ready():
 	vehicle_option.visible = false
 
-func show_stats(stats :UnitStatsData, is_vehicle :bool = false):
+func show_stats(stats :UnitStatsData, unit :BaseTileUnit):
 	unit_name.text = stats.soldier_name
 	potrait.texture = Global.infantry_potraits[stats.soldier_potrait_index]
-	vehicle_option.visible = is_vehicle
+	
+	if unit is Vehicle:
+		_display_vehicle_info(unit)
+
+func _display_vehicle_info(veh: Vehicle):
+	vehicle_option.visible = veh.passengers.size() > 0
 
 func _on_close_pressed():
 	emit_signal("close")

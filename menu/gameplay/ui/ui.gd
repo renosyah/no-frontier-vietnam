@@ -40,9 +40,12 @@ func _on_infantry_stats_close():
 func _on_unit_stats_drop_passenger():
 	if not is_instance_valid(selected_battle_map_unit):
 		return
-		
+	
 	if selected_battle_map_unit is Vehicle:
 		selected_battle_map_unit.drop_passenger()
 		
+	selected_battle_map_unit.set_selected(false)
+	_on_selected_battle_map_unit(null)
+	
 func _on_menu_button_pressed():
 	NetworkLobbyManager.leave()

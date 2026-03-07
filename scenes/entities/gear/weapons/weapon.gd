@@ -3,6 +3,7 @@ class_name Weapon
 
 signal weapon_fired
 signal weapon_update
+signal weapon_finish_firing
 
 export var damage :int = 1
 export var ammo :int = 0

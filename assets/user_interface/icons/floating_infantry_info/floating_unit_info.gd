@@ -6,13 +6,13 @@ onready var color_rect = $Control2/MarginContainer/ColorRect
 onready var hp_bar = $Control/hp_bar
 onready var ammo_bar = $Control/ammo_bar
 onready var hide_timeout = $hide_timeout
-onready var texture_rect = $Control2/MarginContainer/TextureRect
+onready var texture_rect = $Control2/MarginContainer/MarginContainer2/TextureRect
 
 var _show :bool
 
 func _ready():
 	texture_rect.texture = icon
-
+	
 func init_bar(color :Color, max_hp :int, max_ammo: int):
 	hp_bar.max_value = max_hp
 	ammo_bar.max_value = max_ammo

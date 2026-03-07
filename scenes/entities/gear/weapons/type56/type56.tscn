@@ -107,8 +107,8 @@ script = ExtResource( 1 )
 ammo = 30
 capacity = 30
 reserve_ammo = 60
-max_reserve_ammo = 90
-dispersion = 0.75
+max_reserve_ammo = 180
+dispersion = 1.75
 
 [node name="queue_task" parent="." instance=ExtResource( 4 )]
 

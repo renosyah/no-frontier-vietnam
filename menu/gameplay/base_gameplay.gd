@@ -1059,7 +1059,7 @@ func _on_battle_map_infantry_clicked(unit :Infantry, stats :UnitStatsData):
 	if player_unit:
 		ui.selected_battle_map_unit = unit
 		ui.selected_battle_map_unit.set_selected(true)
-		ui.unit_stats.show_stats(stats, false)
+		ui.unit_stats.show_stats(stats, unit)
 		
 func _on_battle_map_vehicle_clicked(vehicle :Vehicle, stats :UnitStatsData):
 	var player_unit :bool = vehicle.player_id == player.player_id
@@ -1086,7 +1086,7 @@ func _on_battle_map_vehicle_clicked(vehicle :Vehicle, stats :UnitStatsData):
 	if player_unit:
 		ui.selected_battle_map_unit = vehicle
 		ui.selected_battle_map_unit.set_selected(true)
-		ui.unit_stats.show_stats(stats, true)
+		ui.unit_stats.show_stats(stats, vehicle)
 		
 func _on_battle_map_unit_dead(unit :BaseTileUnit):
 	if ui.selected_battle_map_unit == unit:

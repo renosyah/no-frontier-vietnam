@@ -47,7 +47,6 @@ onready var headgear_holder = $pivot/body/head/headgear
 onready var vest_holder = $pivot/body/vest
 onready var attack_time = $attack_time
 onready var infantry_hit_register = $infantry_hit_register
-onready var blood = $blood
 onready var floating_unit_info = $floating_unit_info
 
 onready var meshes = [
@@ -80,8 +79,8 @@ var accuracy :int
 var burst_min :float = 2.0
 var burst_max :float = 6.0
 
-var min_fire_rate :float = 0.7
-var max_fire_rate :float = 2.3
+var min_fire_rate :float = 1.7
+var max_fire_rate :float = 3.3
 
 func _ready():
 	arrow.visible = _is_selected
@@ -97,6 +96,7 @@ func _ready():
 	_weapon.is_master = _is_master
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
 	_weapon.connect("weapon_update", self, "_on_weapon_update")
+	_weapon.connect("weapon_finish_firing", self, "_on_weapon_finish_firing")
 	_weapon.unit_owner = self
 	_weapon.team = team
 	
@@ -150,11 +150,9 @@ func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int)
 func set_selected(v :bool):
 	.set_selected(v)
 	
-	if not is_selectable:
-		return
-		
-	circle.set_surface_material(0, selected_area_material if _is_selected else team_color_material)
-	arrow.visible = _is_selected
+	if is_selectable:
+		circle.set_surface_material(0, selected_area_material if _is_selected else team_color_material)
+		arrow.visible = _is_selected
 	
 func move_to(tile_id :Vector2):
 	.move_to(tile_id)
@@ -162,10 +160,10 @@ func move_to(tile_id :Vector2):
 	if is_dead:
 		return
 		
+	_on_melee_perform = false
 	_weapon_aimed = false
 	_weapon.stop_firing()
 	attack_time.stop()
-	
 	
 func sync_update() -> void:
 	.sync_update()
@@ -203,7 +201,7 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	_on_melee_perform = false
 	
 	if is_align and attack_time.is_stopped():
-		_weapon.shot_at = enemy_pos
+		_weapon.shot_at = enemy_pos + Vector3(0, 0.25, 0)
 		fire_weapon()
 		attack_time.wait_time = _get_fire_rate()
 		attack_time.start()
@@ -238,7 +236,8 @@ remotesync func _heal(hp :int):
 	if not _is_master:
 		hp = hp
 		
-	floating_unit_info.update_bar(hp, _weapon.ammo)
+	if visible:
+		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func _on_no_enemy():
 	._on_no_enemy()
@@ -255,30 +254,54 @@ func master_moving(delta :float) -> void:
 	if is_dead:
 		return
 		
-	_set_animation()
+	if _weapon_aimed or _special_move_perform or _on_melee_perform:
+		return
+		
+	if not _weapon:
+		_current_anim = "run_unarm" if _is_moving else "iddle"
+		
+	else:
+		_current_anim = "run_with_weapon" if _is_moving else "iddle_hold_weapon"
+		
 	animation_state.travel(_current_anim)
 	
 func fire_weapon():
+	if is_dead:
+		return
+		
+	_current_anim = "aim_weapon"
+	
 	if _weapon_aimed:
 		_on_weapon_aimed()
 		return
 		
+	animation_state.travel(_current_anim)
 	_weapon_aimed = true
 	
 func _on_weapon_aimed():
-	if not _is_master or _weapon.firing():
+	if is_dead:
+		return
+		
+	if not _is_master:
 		return
 		
 	if not _weapon.has_ammo():
 		reload_weapon()
 		return
 		
+	if _weapon.firing():
+		return
+		
 	# master just do it here
 	var burst_count :int = min(_get_burst_count(), _weapon.ammo)
 	_weapon.fire_weapon(burst_count)
+	
 	rpc_unreliable("_fire_weapon", burst_count, _weapon.ammo, _weapon.shot_at) # fire for puppet
 	
 remotesync func _fire_weapon(count :int, ammo :int, shot_at :Vector3):
+	if is_dead:
+		return
+		
 	if _is_master:
 		return
 		
@@ -290,32 +313,43 @@ func _on_weapon_fired():
 	if is_dead:
 		return
 		
-	if not _weapon.has_ammo() and _is_master:
-		reload_weapon()
-		return
-		
 	audio_stream_player_3d.stream = shot_sounds[randi() % shot_sounds.size()]
 	audio_stream_player_3d.play()
 	
 	_current_anim = "fire_weapon"
 	animation_state.travel(_current_anim)
 	
-	floating_unit_info.update_bar(hp, _weapon.ammo)
+	if visible:
+		floating_unit_info.update_bar(hp, _weapon.ammo)
+	
+func _on_weapon_finish_firing():
+	if is_dead:
+		return
+		
+	if _is_master:
+		_current_anim = "aim_weapon"
+		animation_state.travel(_current_anim)
 	
 func reload_weapon():
+	if is_dead:
+		return
+		
 	if _is_master:
-		_weapon.reload()
 		_current_anim = "reload_weapon"
 		animation_state.travel(_current_anim)
 	
 func _on_reloading():
+	_weapon.reload()
+	
 	audio_stream_player_3d.stream = reload_sound
 	audio_stream_player_3d.play()
 	
-	floating_unit_info.update_bar(hp, _weapon.ammo)
+	if visible:
+		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func _on_weapon_update():
-	floating_unit_info.update_bar(hp, _weapon.ammo)
+	if visible:
+		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func use_launcher(_at :Vector3):
 	stop()
@@ -348,20 +382,6 @@ remotesync func _use_grenade():
 	
 func _on_grenade_use():
 	_special_move_perform = false
-	
-func _set_animation():
-	if _special_move_perform or _on_melee_perform:
-		return
-		
-	if _weapon_aimed:
-		_current_anim = "aim_weapon"
-		return
-		
-	if not _weapon:
-		_current_anim = "run_unarm" if _is_moving else "iddle"
-		return
-		
-	_current_anim = "run_with_weapon" if _is_moving else "iddle_hold_weapon"
 	
 func _exit_tree():
 	floating_unit_info.queue_free()
@@ -404,10 +424,8 @@ func clone_mesh():
 func taking_damage(_damage :int, _hp: int, _max_hp :int):
 	.taking_damage(_damage, _hp, _max_hp)
 	
-	blood.translation = global_position
-	blood.display()
-	
-	floating_unit_info.update_bar(hp, _weapon.ammo)
+	if visible:
+		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func on_dead():
 	# called later after
@@ -425,8 +443,10 @@ func _on_dead_animation_finished():
 	.on_dead()
 	
 func _on_infantry_hit_register_on_click():
-	if not is_dead:
-		emit_signal("on_unit_clicked", self)
+	if is_dead:
+		return
+		
+	emit_signal("on_unit_clicked", self)
 		
 func _get_burst_count() -> int:
 	var d = clamp(discipline, 1, 10)

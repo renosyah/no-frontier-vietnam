@@ -1,6 +1,8 @@
 extends Node
 class_name QueueTask
 
+signal finish
+
 var task_queue = []
 var is_running = false
 
@@ -16,9 +18,14 @@ func add_task(instance: Object,f :String, params: Array = []) -> void:
 	if not is_running:
 		_run_next()
 
+func clear():
+	is_running = false
+	task_queue.clear()
+
 func _run_next() -> void:
 	if task_queue.empty():
 		is_running = false
+		emit_signal("finish")
 		return
 		
 	is_running = true

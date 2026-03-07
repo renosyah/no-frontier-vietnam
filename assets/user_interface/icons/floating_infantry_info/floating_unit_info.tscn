@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://assets/user_interface/icons/floating_infantry_info/bar.png" type="Texture" id=1]
 [ext_resource path="res://assets/user_interface/icons/floating_icon/infantry.png" type="Texture" id=2]
 [ext_resource path="res://assets/user_interface/icons/floating_infantry_info/floating_unit_info.gd" type="Script" id=3]
+[ext_resource path="res://assets/user_interface/icons/floating_infantry_info/circle.png" type="Texture" id=4]
 
 [node name="floating_unit_info" type="MarginContainer"]
 margin_right = 50.0
@@ -70,7 +71,26 @@ margin_right = 35.0
 margin_bottom = 35.0
 color = Color( 0.133333, 0.133333, 0.133333, 1 )
 
-[node name="TextureRect" type="TextureRect" parent="Control2/MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Control2/MarginContainer"]
+visible = false
+margin_right = 35.0
+margin_bottom = 35.0
+
+[node name="aim_time_display" type="TextureProgress" parent="Control2/MarginContainer/MarginContainer"]
+margin_right = 35.0
+margin_bottom = 35.0
+max_value = 1.0
+step = 0.01
+value = 0.23
+texture_progress = ExtResource( 4 )
+fill_mode = 5
+nine_patch_stretch = true
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control2/MarginContainer"]
+margin_right = 35.0
+margin_bottom = 35.0
+
+[node name="TextureRect" type="TextureRect" parent="Control2/MarginContainer/MarginContainer2"]
 margin_left = 5.0
 margin_top = 5.0
 margin_right = 29.0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=2]
+[gd_scene load_steps=69 format=2]
 
 [ext_resource path="res://scenes/entities/units/infantry/head.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/infantry/la.obj" type="ArrayMesh" id=2]
@@ -10,7 +10,6 @@
 [ext_resource path="res://scenes/entities/units/infantry/skin_color_material.tres" type="Material" id=8]
 [ext_resource path="res://scenes/entities/gear/weapons/grenade/grenade.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/entities/units/infantry/infantry.gd" type="Script" id=10]
-[ext_resource path="res://assets/hit_particle/custom_particle/mesh/custom_mesh_particle.tscn" type="PackedScene" id=11]
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://assets/tile_highlight/selected_material.tres" type="Material" id=13]
 [ext_resource path="res://assets/unit_hit_register/infantry_hit_register.tscn" type="PackedScene" id=14]
@@ -3255,7 +3254,7 @@ states/die_hold_weapon/position = Vector2( -157.208, 23.394 )
 states/exit_aim_weapon/node = SubResource( 34 )
 states/exit_aim_weapon/position = Vector2( 116, 269 )
 states/fire_weapon/node = SubResource( 46 )
-states/fire_weapon/position = Vector2( 654, 206 )
+states/fire_weapon/position = Vector2( 685, 206 )
 states/iddle/node = SubResource( 7 )
 states/iddle/position = Vector2( 72, 55 )
 states/iddle_hold_weapon/node = SubResource( 27 )
@@ -3422,8 +3421,6 @@ material/0 = ExtResource( 13 )
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 unit_db = 5.0
-
-[node name="blood" parent="." instance=ExtResource( 11 )]
 
 [node name="attack_time" type="Timer" parent="."]
 one_shot = true
