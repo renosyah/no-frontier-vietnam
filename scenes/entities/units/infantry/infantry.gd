@@ -72,6 +72,9 @@ var _melee_range :Array = []
 
 var squad :BaseSquad
 
+var grenade :int = 3
+var launcher :int = 0
+
 # set from stats
 var discipline :int
 var accuracy :int
@@ -351,7 +354,10 @@ func _on_weapon_update():
 	if visible:
 		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
-func use_launcher(_at :Vector3):
+func use_launcher():
+	if launcher == 0:
+		return
+		
 	stop()
 	_weapon_aimed = false
 	_weapon.stop_firing()
@@ -366,8 +372,12 @@ remotesync func _fire_launcher():
 	
 func _on_launcher_fired():
 	_special_move_perform = false
+	launcher = 0
 	
-func use_grenade(_at :Vector3):
+func use_grenade():
+	if grenade == 0:
+		return
+	
 	stop()
 	_weapon_aimed = false
 	_weapon.stop_firing()
@@ -382,6 +392,7 @@ remotesync func _use_grenade():
 	
 func _on_grenade_use():
 	_special_move_perform = false
+	grenade = int(clamp(grenade - 1, 0, 3))
 	
 func _exit_tree():
 	floating_unit_info.queue_free()

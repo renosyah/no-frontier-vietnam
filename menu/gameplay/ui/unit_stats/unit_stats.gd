@@ -5,16 +5,26 @@ signal drop_passenger
 
 onready var potrait = $HBoxContainer/Control/Control2/TextureRect/potrait
 onready var unit_name = $HBoxContainer/Control/Control2/Control/Control/TextureRect/unit_name
+
 onready var vehicle_option = $HBoxContainer/vehicle_option
-onready var infantry_option = $HBoxContainer/infantry_option
-onready var weapon_image = $HBoxContainer/infantry_option/MarginContainer/VBoxContainer/CenterContainer/weapon_image
-onready var ammo = $HBoxContainer/infantry_option/MarginContainer/VBoxContainer/HBoxContainer/ammo
+onready var vehicle_info = $HBoxContainer/vehicle_info
+onready var vehicle_image = $HBoxContainer/vehicle_info/MarginContainer/CenterContainer/vehicle_image
+
+onready var infantry_weapon_info = $HBoxContainer/infantry_weapon_info
+onready var weapon_image = $HBoxContainer/infantry_weapon_info/MarginContainer/VBoxContainer/CenterContainer/weapon_image
+onready var ammo = $HBoxContainer/infantry_weapon_info/MarginContainer/VBoxContainer/HBoxContainer/ammo
+
+onready var infantry_grenade_ability = $HBoxContainer/infantry_grenade_ability
+onready var infantry_launcher_ability = $HBoxContainer/infantry_launcher_ability
+
+onready var greande_count = $HBoxContainer/infantry_grenade_ability/MarginContainer/greande_count
+onready var launcher_count = $HBoxContainer/infantry_launcher_ability/MarginContainer/launcher_count
 
 var _info_weapon :Weapon
+var _unit :BaseTileUnit
 
 func _ready():
-	vehicle_option.visible = false
-	infantry_option.visible = false
+	_hide()
 	
 func _process(delta):
 	if not visible:
@@ -24,11 +34,12 @@ func _process(delta):
 		ammo.text = "%s/%s" % [_info_weapon.ammo, _info_weapon.reserve_ammo]
 
 func show_stats(stats :UnitStatsData, unit :BaseTileUnit):
+	_unit = unit
+	
 	unit_name.text = stats.soldier_name
 	potrait.texture = Global.infantry_potraits[stats.soldier_potrait_index]
 	
-	infantry_option.visible = false
-	vehicle_option.visible = false
+	_hide()
 	
 	if unit is Vehicle:
 		_display_vehicle_info(unit)
@@ -36,16 +47,41 @@ func show_stats(stats :UnitStatsData, unit :BaseTileUnit):
 	if unit is Infantry:
 		_display_infantry_info(unit)
 
+func _hide():
+	vehicle_info.visible = false
+	infantry_weapon_info.visible = false
+	vehicle_option.visible = false
+	infantry_grenade_ability.visible = false
+	infantry_launcher_ability.visible = false
+
 func _display_vehicle_info(veh: Vehicle):
+	vehicle_info.visible = true
 	vehicle_option.visible = veh.passengers.size() > 0
+	vehicle_image.texture = veh.icon
 
 func _display_infantry_info(unit :Infantry):
-	infantry_option.visible = true
+	infantry_weapon_info.visible = true
 	_info_weapon = unit.get_weapon()
 	weapon_image.texture = _info_weapon.icon
+	
+	infantry_grenade_ability.visible = unit.grenade > 0
+	infantry_launcher_ability.visible = unit.launcher > 0
+	
+	greande_count.text = "x %s" % unit.grenade
+	launcher_count.text = "x %s" % unit.launcher
 	
 func _on_close_pressed():
 	emit_signal("close")
 
 func _on_drop_unit_pressed():
 	emit_signal("drop_passenger")
+
+func _on_grenade_pressed():
+	if _unit is Infantry:
+		_unit.use_grenade()
+		_display_infantry_info(_unit)
+	
+func _on_launch_pressed():
+	if _unit is Infantry:
+		_unit.use_launcher()
+		_display_infantry_info(_unit)

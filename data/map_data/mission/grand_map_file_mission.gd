@@ -3,7 +3,7 @@ class_name GrandMapFileMission
 
 var bases :Array # [ Vector2 ]
 var points :Array # [ Vector2 ]
-var edited_battle_maps :Dictionary # { Vector2 : String }
+var edited_battle_maps :Dictionary # { Vector2 : String } # for editor
 
 func from_dictionary(_data : Dictionary):
 	bases = _data["bases"].duplicate()

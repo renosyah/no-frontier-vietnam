@@ -15,6 +15,7 @@ script = ExtResource( 3 )
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_right = 50.0
 margin_bottom = 24.0
+mouse_filter = 2
 color = Color( 0.490196, 0.490196, 0.490196, 1 )
 
 [node name="Control" type="Control" parent="."]
@@ -53,6 +54,7 @@ margin_top = 7.0
 margin_right = 1.0
 margin_bottom = 17.0
 rect_min_size = Vector2( 1, 10 )
+mouse_filter = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 
@@ -65,20 +67,24 @@ margin_left = -35.0
 margin_top = -17.5
 margin_bottom = 17.5
 rect_min_size = Vector2( 35, 35 )
+mouse_filter = 2
 
 [node name="ColorRect" type="ColorRect" parent="Control2/MarginContainer"]
 margin_right = 35.0
 margin_bottom = 35.0
+mouse_filter = 2
 color = Color( 0.133333, 0.133333, 0.133333, 1 )
 
 [node name="MarginContainer" type="MarginContainer" parent="Control2/MarginContainer"]
 visible = false
 margin_right = 35.0
 margin_bottom = 35.0
+mouse_filter = 2
 
 [node name="aim_time_display" type="TextureProgress" parent="Control2/MarginContainer/MarginContainer"]
 margin_right = 35.0
 margin_bottom = 35.0
+mouse_filter = 2
 max_value = 1.0
 step = 0.01
 value = 0.23
@@ -89,6 +95,7 @@ nine_patch_stretch = true
 [node name="MarginContainer2" type="MarginContainer" parent="Control2/MarginContainer"]
 margin_right = 35.0
 margin_bottom = 35.0
+mouse_filter = 2
 
 [node name="TextureRect" type="TextureRect" parent="Control2/MarginContainer/MarginContainer2"]
 margin_left = 5.0
@@ -96,6 +103,7 @@ margin_top = 5.0
 margin_right = 29.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 24, 24 )
+mouse_filter = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource( 2 )

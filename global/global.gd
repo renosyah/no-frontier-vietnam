@@ -37,6 +37,11 @@ func get_team_color(owner_id :String, team :int, player_id :String, player_team 
 		
 	return Color.red
 	
+func get_base_color(index :int, player_team :int):
+	if index == player_team:
+		return Color.blue
+	return Color.red
+	
 func get_team_material_color(owner_id :String, team :int, player_id :String, player_team :int):
 	return MaterialsIndex.team_colors[get_team_material_color_index(owner_id, team, player_id, player_team)]
 	

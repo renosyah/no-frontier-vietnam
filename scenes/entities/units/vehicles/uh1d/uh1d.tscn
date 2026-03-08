@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/uh1d.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_glass_material.tres" type="Material" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://assets/tile_highlight/contested_area_material.tres" type="Material" id=12]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/heli_no_glass_material.tres" type="Material" id=13]
 [ext_resource path="res://scenes/entities/units/vehicles/uh1d/pilot.tscn" type="PackedScene" id=14]
+[ext_resource path="res://assets/user_interface/vehicle_potraits/uh1d.png" type="Texture" id=15]
 
 [sub_resource type="SpatialMaterial" id=29]
 albedo_color = Color( 0.054902, 0.054902, 0.054902, 1 )
@@ -358,6 +359,7 @@ max_hp = 45
 is_combatan = false
 altitude = 2.0
 is_air = true
+icon = ExtResource( 15 )
 
 [node name="pivot" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0 )

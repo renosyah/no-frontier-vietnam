@@ -7,6 +7,7 @@ export var altitude :float
 export var is_air :bool
 export var capacity :int = 1
 export var team_color_material :SpatialMaterial
+export var icon :StreamTexture
 
 var squad :BaseSquad
 var passengers :Array # [ InfantrySquad ]

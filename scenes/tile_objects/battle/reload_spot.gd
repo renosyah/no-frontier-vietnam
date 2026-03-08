@@ -55,7 +55,11 @@ func _resupply_squad(unit :Infantry):
 			return
 			
 		if is_instance_valid(i):
-			var w :Weapon = i.get_weapon()
+			var infantry :Infantry = i
+			var w :Weapon = infantry.get_weapon()
+			if w.ammo < w.capacity:
+				w.reload()
+				
 			if w.reserve_ammo >= w.max_reserve_ammo:
 				continue
 				

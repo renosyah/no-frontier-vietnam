@@ -207,8 +207,12 @@ func setup_ui():
 	ui.movable_camera_ui.connect("camera_down", self, "_on_camera_down_zoom_in")
 	ui.movable_camera_ui.connect("camera_up", self, "_on_camera_up_exiting")
 	
+	ui.player = player
 	ui.spawned_squad = spawned_squad
 	ui.squad_positions = squad_positions
+	ui.grand_map_mission_data = grand_map_mission_data
+	
+	ui.connect("to_battle_map", self, "_on_ui_to_battle_map")
 	
 	ui.spawn_infantry.connect("pressed", self, "_on_spawn_infantry")
 	ui.spawn_heli.connect("pressed", self, "_on_spawn_heli_press")
@@ -216,6 +220,18 @@ func setup_ui():
 	
 	use_grand_camera()
 	
+func _on_ui_to_battle_map(tile_id :Vector2):
+	
+	set_current_battle_map(tile_id)
+	
+	if is_instance_valid(ui.selected_squad):
+		ui.selected_squad.set_selected(false)
+		ui.selected_squad = null
+		
+	if is_instance_valid(ui.selected_battle_map_unit):
+		ui.selected_battle_map_unit.set_selected(false)
+		ui.selected_battle_map_unit = null
+		
 func _on_spawn_infantry():
 	var macv_riflement = preload("res://data/unit_data/infantry/macv_riflement.tres")
 	var nva_riflement = preload("res://data/unit_data/infantry/nva_riflement.tres")
@@ -355,7 +371,7 @@ func _on_camera_down_zoom_in():
 	if current_cam != movable_camera_room:
 		return
 		
-	var tile = get_closes_zoomable_battle_map(selection_battle_map_indicator.translation)
+	var tile :TileMapData = get_closes_zoomable_battle_map(selection_battle_map_indicator.translation)
 	if tile == null:
 		return
 		
@@ -533,8 +549,9 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	for tile in grand_map_data.tiles:
 		if tile.id == id:
 			zoomable_battle_map[id] = tile
-			return
-	
+			break
+			
+			
 func get_closes_zoomable_battle_map(from :Vector3) -> TileMapData:
 	var tiles :Array = zoomable_battle_map.values()
 	if tiles.empty():
@@ -586,6 +603,7 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 		spawn_battle_map_base_building(tile_id, battle_map, index)
 		
 	battle_map.visible = false
+	ui.on_zoomable_battle_map_updated(zoomable_battle_map)
 	
 ########################################## battle map capture point ############################################
 

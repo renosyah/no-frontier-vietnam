@@ -74,10 +74,16 @@ func _is_empty_here(id :Vector2, unit_pos :Dictionary, unit = null):
 		
 	var count_inside :int = 0
 	for soldier in unit_pos[id]:
+		if not is_instance_valid(soldier):
+			return
+			
 		if unit != null:
 			if soldier == unit:
 				continue
 				
+		if soldier.is_moving():
+			continue
+			
 		count_inside += 1
 		
 	return count_inside == 0

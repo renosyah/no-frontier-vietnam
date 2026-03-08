@@ -69,16 +69,24 @@ mouse_filter = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -175.0
 margin_right = 175.0
 margin_bottom = 80.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer"]
+margin_right = 350.0
+margin_bottom = 80.0
 rect_min_size = Vector2( 300, 80 )
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/MarginContainer"]
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/MarginContainer"]
 margin_right = 350.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 350, 80 )
@@ -86,7 +94,7 @@ mouse_filter = 2
 texture = ExtResource( 6 )
 expand = true
 
-[node name="battle_map_name" type="Label" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/MarginContainer"]
+[node name="battle_map_name" type="Label" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/MarginContainer"]
 margin_top = 29.0
 margin_right = 350.0
 margin_bottom = 50.0
@@ -94,6 +102,14 @@ custom_fonts/font = ExtResource( 5 )
 text = "..."
 align = 1
 valign = 1
+
+[node name="bm_shortcut_holder" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer"]
+margin_top = 84.0
+margin_right = 350.0
+margin_bottom = 124.0
+rect_min_size = Vector2( 0, 40 )
+mouse_filter = 2
+alignment = 1
 
 [node name="Control2" type="Control" parent="CanvasLayer/Control/VBoxContainer/MarginContainer"]
 margin_right = 10.0
@@ -138,6 +154,34 @@ texture = ExtResource( 7 )
 expand = true
 flip_h = true
 
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
+margin_top = 14.0
+margin_right = 600.0
+margin_bottom = 1024.0
+mouse_filter = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer"]
+margin_right = 30.0
+margin_bottom = 1010.0
+rect_min_size = Vector2( 30, 0 )
+mouse_filter = 2
+
+[node name="unit_stats" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer" instance=ExtResource( 8 )]
+margin_left = 34.0
+margin_top = 710.0
+margin_right = 566.0
+margin_bottom = 1010.0
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer"]
+margin_left = 570.0
+margin_right = 600.0
+margin_bottom = 1010.0
+rect_min_size = Vector2( 30, 0 )
+mouse_filter = 2
+
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control"]
 margin_right = 600.0
 margin_bottom = 1024.0
@@ -171,18 +215,12 @@ rect_min_size = Vector2( 80, 80 )
 icon = ExtResource( 14 )
 expand_icon = true
 
-[node name="MarginContainer" type="VBoxContainer" parent="CanvasLayer/Control/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/HBoxContainer"]
 margin_left = 84.0
 margin_right = 516.0
 margin_bottom = 1024.0
 mouse_filter = 2
 size_flags_horizontal = 3
-alignment = 2
-
-[node name="unit_stats" parent="CanvasLayer/Control/HBoxContainer/MarginContainer" instance=ExtResource( 8 )]
-margin_top = 724.0
-margin_right = 432.0
-margin_bottom = 1024.0
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/Control/HBoxContainer"]
 margin_left = 520.0
@@ -208,5 +246,5 @@ size_flags_horizontal = 0
 size_flags_vertical = 8
 
 [connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/MarginContainer/Control3/menu_button" to="." method="_on_menu_button_pressed"]
-[connection signal="close" from="CanvasLayer/Control/HBoxContainer/MarginContainer/unit_stats" to="." method="_on_infantry_stats_close"]
-[connection signal="drop_passenger" from="CanvasLayer/Control/HBoxContainer/MarginContainer/unit_stats" to="." method="_on_unit_stats_drop_passenger"]
+[connection signal="close" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats" to="." method="_on_infantry_stats_close"]
+[connection signal="drop_passenger" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats" to="." method="_on_unit_stats_drop_passenger"]

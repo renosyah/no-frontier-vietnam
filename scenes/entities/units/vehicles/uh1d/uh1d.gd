@@ -61,8 +61,11 @@ func _on_uh1d_on_finish_travel(_unit, _last_id, _current_id):
 	animation_player.play_backwards("foward")
 	
 func drop_passenger():
-	if _on_task or _is_moving or passengers.empty():
+	if _on_task or passengers.empty():
 		return
+		
+	if _is_moving:
+		stop()
 		
 	pivot.rotation_degrees.x = 0
 	
