@@ -6,7 +6,7 @@ export var move_chance :float = 0.7
 
 var team :int
 var units :Array = [] # [ BaseTileUnit ]
-var battle_map_unit_positions :Dictionary = {} # { BaseTileMap (battle map):{Vector2:[ BaseTileUnit ] }}
+var unit_position :UnitPositionManager
 
 var _rng :RandomNumberGenerator
 onready var _timer = $Timer
@@ -78,15 +78,16 @@ func _order_unit_attack():
 	unit.move_to(enemy.current_tile)
 		
 func _get_enemy(battle_map :BaseTileMap) -> BaseTileUnit:
-	if not battle_map_unit_positions.has(battle_map):
+	var positions :Dictionary = unit_position.get_positions(battle_map)
+	if positions.empty():
 		return null
 		
-	var unit_positions :Dictionary = battle_map_unit_positions[battle_map]
-	for id in unit_positions.keys():
-		if unit_positions[id].empty():
+	for id in positions.keys():
+		var units :Array = unit_position.units_in_position(battle_map, id)
+		if units.empty():
 			continue
 			
-		for i in unit_positions[id]:
+		for i in units:
 			var unit :BaseTileUnit = i
 			if not is_instance_valid(unit):
 				return null

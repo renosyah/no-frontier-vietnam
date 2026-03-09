@@ -21,8 +21,6 @@ var player :PlayerData
 var grand_map_mission_data :GrandMapFileMission
 var selected_battle_map_unit :BaseTileUnit setget _on_selected_battle_map_unit
 var selected_squad :BaseSquad setget _on_selected_squad
-var spawned_squad :Array # refrence for BaseGameplay spawned_squad
-var squad_positions :Dictionary # refrence for BaseGameplay squad_positions
 
 func _ready():
 	spawn_bot_infantry.visible = NetworkLobbyManager.is_server()
