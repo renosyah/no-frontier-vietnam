@@ -14,9 +14,8 @@ func _ready():
 	
 	connect("input_event", self, "_on_hit_register_input_event")
 	
-func take_damage(damage :int, team :int):
-	if unit.team != team:
-		unit.take_damage(damage)
+func take_damage(damage :int):
+	unit.take_damage(damage)
 	
 func _on_input_detection_any_gesture(_sig ,event):
 	if event is InputEventSingleScreenTap:

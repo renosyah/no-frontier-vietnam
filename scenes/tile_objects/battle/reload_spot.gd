@@ -5,8 +5,8 @@ signal out_of_stock
 
 export var player_id :String
 export var usage_rate :int = 30
-export var ammo_supply :int = 3500
-export var max_ammo_supply :int = 3500
+export var ammo_supply :int = 7500
+export var max_ammo_supply :int = 7500
 
 onready var collision_shape = $CollisionShape
 onready var audio_stream_player_3d = $AudioStreamPlayer3D

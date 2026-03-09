@@ -15,7 +15,6 @@ var _total_med :int
 func _ready():
 	Global.connect("on_global_tick", self, "_on_global_tick")
 
-
 func _on_global_tick():
 	_total_ammo = 0
 	_total_med = 0

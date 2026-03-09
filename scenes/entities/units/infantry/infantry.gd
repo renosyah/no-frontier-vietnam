@@ -64,6 +64,7 @@ puppet var _puppet_anim :String
 var _weapon_aimed :bool # this force anim to focus on fire mode
 var _special_move_perform :bool # this force anim to focus on special attack
 var _on_melee_perform :bool # this force anim to focus on melee
+var _rng :RandomNumberGenerator = RandomNumberGenerator.new()
 
 var _current_anim :String = "iddle"
 var _weapon :Weapon
@@ -113,7 +114,7 @@ func _ready():
 	floating_unit_info.init_bar(color, max_hp, _weapon.capacity)
 	floating_unit_info.visible = false
 	
-	_weapon.dispersion = _get_final_dispersion(_weapon.dispersion)
+	_rng.randomize()
 	
 func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
 	
@@ -316,6 +317,11 @@ func _on_weapon_fired():
 	if is_dead:
 		return
 		
+	if _is_master:
+		if _weapon.check_hit(_rng, accuracy):
+			if is_instance_valid(enemy):
+				enemy.take_damage(_weapon.damage)
+		
 	audio_stream_player_3d.stream = shot_sounds[randi() % shot_sounds.size()]
 	audio_stream_player_3d.play()
 	
@@ -470,13 +476,6 @@ func _get_burst_count() -> int:
 	var max_burst = burst_max + round(max_max_bonus * reverse_t)
 	max_burst = min(max_burst, MAX_BURST_CAP)
 	return randi() % int((max_burst - min_burst + 1.0) + min_burst)
-	
-func _get_final_dispersion(base_dispersion: float) -> float:
-	var a = clamp(accuracy, 1, 10)
-	var t = float(a - 1) / 9.0
-	var reduction_multiplier = lerp(1.0, 0.2, t)
-	var final_dispersion = base_dispersion * reduction_multiplier
-	return max(final_dispersion, 0.0)
 	
 func _get_fire_rate() -> float:
 	var d = clamp(discipline, 1, 10)

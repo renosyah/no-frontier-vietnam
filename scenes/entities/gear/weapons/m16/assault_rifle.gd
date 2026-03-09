@@ -29,26 +29,11 @@ func _on_queue_task_finish():
 # override
 func fire_weapon(count :int):
 	shot_from = barrel.global_position
-	var to = random_point_around(shot_at, dispersion)
 	
-	if is_master:
-		_hit_detection(to)
-		
 	for i in count:
+		var to = random_point_around(shot_at, dispersion)
 		queue_task.add_task(self, "_bang", [to])
-		to = random_point_around(shot_at, dispersion)
-
-func _hit_detection(to):
-	var result :Dictionary = get_world().direct_space_state.intersect_ray(
-		shot_from, to, [unit_owner], 1, false, true
-	)
-	if result.empty():
-		return
-		
-	if result["collider"] is HitRegister:
-		var hr :HitRegister = result["collider"]
-		hr.take_damage(damage, team)
-		
+	
 func stop_firing():
 	queue_task.clear()
 	

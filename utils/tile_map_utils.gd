@@ -162,6 +162,20 @@ static func get_astar_adjacent_tile(nav :AStar2D, navigation_id: int, radius: in
 	
 	return result # [Vector2]
 	
+static func tile_faced(direction :Vector2) -> Vector2:
+	var dirs :Array = get_directions()
+	var faced :Vector2 = dirs[0]
+	for i in dirs:
+		if i == faced:
+			continue
+			
+		var dis1 :float = direction.distance_squared_to(i) 
+		var dis2 :float = direction.distance_squared_to(faced) 
+		if dis1 < dis2:
+			faced = i
+		
+	return faced
+	
 # return all adjacent tiles
 # with range and type of direction
 static func get_adjacent_tiles(directions :Array, from: Vector2 = Vector2.ZERO, radius: int = 1) -> Array:

@@ -4,7 +4,7 @@ onready var battle_map_bot = $battle_map_bot
 
 func _ready():
 	battle_map_bot.team = 3
-	battle_map_bot.unit_position = unit_position
+	battle_map_bot.unit_position_manager = unit_position_manager
 
 func on_grand_map_squad_spawned(squad :BaseSquad):
 	.on_grand_map_squad_spawned(squad)

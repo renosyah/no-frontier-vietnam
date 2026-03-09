@@ -16,6 +16,7 @@ export var team :int
 export var icon :StreamTexture # just holder
 
 var unit_owner
+var target
 var shot_from :Vector3
 var shot_at :Vector3
 
@@ -28,6 +29,28 @@ func random_point_around(position: Vector3, radius: float) -> Vector3:
 	
 	var distance = sqrt(randf()) * radius
 	return position + dir * distance
+	
+func check_hit(rng:RandomNumberGenerator, accuracy:int) -> bool:
+	var soldier_factor = clamp(accuracy / 10.0, 0.0, 1.0)
+	var weapon_factor = clamp(1.0 - dispersion, 0.0, 1.0)
+	var hit_chance = soldier_factor * weapon_factor
+	hit_chance = min(hit_chance, 0.75)
+	return rng.randf() <= hit_chance
+	
+# optional
+#func is_target(enemy) -> bool:
+#	var result :Dictionary = get_world().direct_space_state.intersect_ray(
+#		shot_from, shot_at, [unit_owner], 1, false, true
+#	)
+#	if result.empty():
+#		return false
+#
+#	if result["collider"] is HitRegister:
+#		var hr :HitRegister = result["collider"]
+#		if hr.unit == enemy:
+#			return true
+#
+#	return false
 	
 func reload():
 	var ammo_needed = capacity - ammo

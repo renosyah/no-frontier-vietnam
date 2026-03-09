@@ -105,7 +105,7 @@ func spawn_grand_map():
 	grand_map.setup_border_scale(Vector3.ONE * ((grand_map_manifest_data.map_size * 2) + 1.5))
 	
 	# init grandmap unit position
-	unit_position.init_position(grand_map, grand_map_manifest_data.map_size)
+	unit_position_manager.init_position(grand_map, grand_map_manifest_data.map_size)
 	
 func _on_grand_map_ready():
 	NetworkLobbyManager.set_ready()
@@ -237,6 +237,7 @@ func _on_ui_to_battle_map(tile_id :Vector2):
 func _on_spawn_infantry():
 	var macv_riflement = preload("res://data/unit_data/infantry/macv_riflement.tres")
 	var nva_riflement = preload("res://data/unit_data/infantry/nva_riflement.tres")
+	
 	var bases = grand_map_mission_data.bases
 	var tile = bases[player.player_team - 1]
 	
@@ -275,7 +276,7 @@ func _on_spawn_infantry():
 			var style = [0,1,2]
 			var skin = [0, 1]
 			var hats = [0, 1, 2, 4]
-			var bags = [0,1,2,3,9]
+			var bags = [0,1,2,4,9]
 			var vests = [0, 1, 4]
 			
 			var black_potrait = [1, 2, 4, 6]
@@ -288,7 +289,7 @@ func _on_spawn_infantry():
 			stats.soldier_potrait_index = black_potrait[randi() % 4] if infantry.skin_material_index == 1 else white_potrait[randi() % 6]
 			
 			infantry.hat_scene_index = hats[randi() % 4]
-			infantry.bag_scene_index = 4 if (i == 0) else bags[randi() % 5]
+			infantry.bag_scene_index = 3 if (i == 0) else bags[randi() % 5]
 			infantry.vest_scene_index = vests[randi() % 3]
 			infantry.uniform_style = style[randi() % 3]
 			
@@ -490,12 +491,12 @@ func show_tile_by_ray():
 	
 ########################################## position manager ############################################
 
-var unit_position :UnitPositionManager
+var unit_position_manager :UnitPositionManager
 
 func setup_unit_position_manager():
-	unit_position = preload("res://assets/position_manager/position_manager.tscn").instance()
-	unit_position.name = "unit_position_manager"
-	add_child(unit_position)
+	unit_position_manager = preload("res://assets/position_manager/position_manager.tscn").instance()
+	unit_position_manager.name = "unit_position_manager"
+	add_child(unit_position_manager)
 
 ########################################## battle map ############################################
 
@@ -544,7 +545,7 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	battle_map_holder[id] = battle_map
 	battle_map.visible = false
 	
-	unit_position.init_position(battle_map,grand_map_manifest_data.battle_map_size)
+	unit_position_manager.init_position(battle_map,grand_map_manifest_data.battle_map_size)
 	
 	for tile in grand_map_data.tiles:
 		if tile.id == id:
@@ -581,6 +582,10 @@ func set_current_battle_map(battle_map_id :Vector2):
 	if dead_bodies_holder.has(current_battle_map):
 		for i in dead_bodies_holder[current_battle_map]:
 			i.visible = true
+			
+	var tile :BaseTile = grand_map.get_tile_instance(battle_map_id)
+	movable_camera_room.translation.x = tile.global_position.x
+	movable_camera_room.translation.z = tile.global_position.z + 1
 	
 func hide_battle_map():
 	for i in battle_map_holder.values():
@@ -870,7 +875,7 @@ func on_grand_map_squad_spawned(squad :BaseSquad):
 	
 	# add to unit position
 	# for spotting purposes
-	unit_position.add_to_position(grand_map, squad)
+	unit_position_manager.add_to_position(grand_map, squad)
 	
 	spawned_squad.append(squad)
 	squad.set_spotted(squad.team != player.player_team)
@@ -901,7 +906,7 @@ func _on_grand_map_squad_current_tile_updated(squad :BaseSquad, from :Vector2, t
 	
 	# form of position tracking on map
 	# this will tied to spotting mechanic
-	unit_position.update_position(grand_map, squad, from, to)
+	unit_position_manager.update_position(grand_map, squad, from, to)
 	
 	if squad.team != player.player_team:
 		on_enemy_grand_map_squad_moving(squad, from, to)
@@ -941,20 +946,20 @@ func _on_grand_map_squad_task_exit_battle_map(squad :BaseSquad, to_grand_map_id 
 	if squad is VehicleSquad:
 		# remove from spotting mechanic
 		var vehicle :Vehicle = squad.vehicle
-		unit_position.remove_from_position(vehicle.tile_map, vehicle)
+		unit_position_manager.remove_from_position(vehicle.tile_map, vehicle)
 
 	if squad is InfantrySquad:
 		for i in squad.members:
 			# remove from spotting mechanic
 			var infantry :Infantry = i
-			unit_position.remove_from_position(infantry.tile_map, infantry)
+			unit_position_manager.remove_from_position(infantry.tile_map, infantry)
 
 func _on_grand_map_infantry_squad_member_died(squad :BaseSquad, unit :Infantry):
 	if unit.player_id == player.player_id:
 		Global.unit_responded(RadioChatters.CASUALTY, unit.unit_voice)
 		
 func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
-	unit_position.remove_from_position(grand_map, squad)
+	unit_position_manager.remove_from_position(grand_map, squad)
 	
 	yield(get_tree(),"idle_frame")
 	squad.queue_free()
@@ -967,7 +972,7 @@ func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicl
 	for i in squad.members:
 		# remove from spotting mechanic
 		var infantry :Infantry = i
-		unit_position.remove_from_position(infantry.tile_map, infantry)
+		unit_position_manager.remove_from_position(infantry.tile_map, infantry)
 		
 	if vehicle is Vehicle:
 		vehicle.take_passenger([squad])
@@ -1001,7 +1006,7 @@ func on_team_grand_map_squad_moving(unit :BaseTileUnit, from :Vector2, to :Vecto
 	# for active spotting
 	# when entering check if any enemy in it
 	# set spot if true
-	var squads :Array = unit_position.units_in_position(grand_map, to)
+	var squads :Array = unit_position_manager.units_in_position(grand_map, to)
 	if squads.empty():
 		return
 		
@@ -1034,7 +1039,7 @@ func _on_battle_map_squad_finish_travel(_unit :BaseTileUnit, _from_tile_id :Vect
 func _on_battle_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# form of position tracking on map
 	# this will tied to spotting mechanic
-	unit_position.update_position(unit.tile_map, unit, from, to)
+	unit_position_manager.update_position(unit.tile_map, unit, from, to)
 	
 func _on_battle_map_infantry_clicked(unit :Infantry, stats :UnitStatsData):
 	var player_unit :bool = unit.player_id == player.player_id
@@ -1094,7 +1099,7 @@ func _on_battle_map_unit_dead(unit :BaseTileUnit):
 			ui.game_resource.manpower = int(clamp(mp - 2, 0, mxmp))
 		
 	# remove from spotting mechanic
-	unit_position.remove_from_position(unit.tile_map, unit)
+	unit_position_manager.remove_from_position(unit.tile_map, unit)
 	
 	var dead_body = unit.clone_mesh()
 	add_child(dead_body)
@@ -1152,7 +1157,7 @@ func order_squad_to_enter_battle_map(squad :BaseSquad, from_tile_id :Vector2, cu
 		var battle_map_tile_id :Vector2 = result[2]
 		var center_point :Vector3 = point_battle_map.get_tile_instance(Vector2.ZERO).global_position
 		
-		vehicle.unit_position = unit_position.get_positions(point_battle_map)
+		vehicle.unit_position = unit_position_manager.get_positions(point_battle_map)
 		vehicle.tile_map = point_battle_map
 		vehicle.current_tile = battle_map_tile_id
 		vehicle.translation = point_battle_map.get_tile_instance(vehicle.current_tile).global_position
@@ -1169,7 +1174,7 @@ func order_squad_to_enter_battle_map(squad :BaseSquad, from_tile_id :Vector2, cu
 			entry_positions.pop_front()
 			
 		# add to spotting mechanic
-		unit_position.add_to_position(vehicle.tile_map, vehicle)
+		unit_position_manager.add_to_position(vehicle.tile_map, vehicle)
 		
 		if vehicle.current_tile != Vector2.ZERO:
 			vehicle.look_at(center_point, Vector3.UP)
@@ -1192,7 +1197,7 @@ func order_squad_to_enter_battle_map(squad :BaseSquad, from_tile_id :Vector2, cu
 		
 		for member in squad.members:
 			var infantry :Infantry = member
-			infantry.unit_position = unit_position.get_positions(point_battle_map)
+			infantry.unit_position = unit_position_manager.get_positions(point_battle_map)
 			infantry.tile_map = point_battle_map
 			infantry.current_tile = battle_map_tile_id
 			infantry.translation = point_battle_map.get_tile_instance(infantry.current_tile).global_position
@@ -1209,7 +1214,7 @@ func order_squad_to_enter_battle_map(squad :BaseSquad, from_tile_id :Vector2, cu
 				entry_positions.pop_front()
 				
 			# add to spotting mechanic
-			unit_position.add_to_position(infantry.tile_map, infantry)
+			unit_position_manager.add_to_position(infantry.tile_map, infantry)
 			
 			if infantry.current_tile != Vector2.ZERO:
 				infantry.look_at(center_point, Vector3.UP)
@@ -1226,7 +1231,7 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 			
 		# remove from spotting mechanic
 		# from leaved battle map
-		unit_position.remove_from_position(vehicle.tile_map, vehicle)
+		unit_position_manager.remove_from_position(vehicle.tile_map, vehicle)
 		
 		vehicle.attack_move = false
 		vehicle.unit_position = {}
@@ -1241,7 +1246,7 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 			
 			# remove from spotting mechanic
 			# from leaved battle map
-			unit_position.remove_from_position(infantry.tile_map, infantry)
+			unit_position_manager.remove_from_position(infantry.tile_map, infantry)
 				
 			infantry.attack_move = false
 			infantry.unit_position = {}
@@ -1287,7 +1292,7 @@ func order_infatry_squad_to_exit_vehicle(squad :InfantrySquad, grand_map_tile_id
 	
 	for member in squad.members:
 		var infantry :Infantry = member
-		infantry.unit_position = unit_position.get_positions(point_battle_map)
+		infantry.unit_position = unit_position_manager.get_positions(point_battle_map)
 		infantry.tile_map = point_battle_map
 		infantry.current_tile = battle_map_tile_id
 		infantry.translation = point_battle_map.get_tile_instance(infantry.current_tile).global_position
@@ -1307,7 +1312,7 @@ func order_infatry_squad_to_exit_vehicle(squad :InfantrySquad, grand_map_tile_id
 		
 		# add to spotting mechanic
 		# to entered battle map
-		unit_position.add_to_position(infantry.tile_map, infantry)
+		unit_position_manager.add_to_position(infantry.tile_map, infantry)
 
 
 

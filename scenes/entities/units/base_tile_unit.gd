@@ -240,6 +240,7 @@ func update_spotting():
 		TileMapUtils.get_directions(), current_tile, spotting_range
 	)
 	
+
 # check wheter enemy stil in spotting range or not
 func _is_enemy_in_range() -> bool:
 	if enemy.is_dead or unit_position.empty():

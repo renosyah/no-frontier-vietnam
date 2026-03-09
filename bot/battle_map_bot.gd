@@ -6,7 +6,7 @@ export var move_chance :float = 0.7
 
 var team :int
 var units :Array = [] # [ BaseTileUnit ]
-var unit_position :UnitPositionManager
+var unit_position_manager :UnitPositionManager
 
 var _rng :RandomNumberGenerator
 onready var _timer = $Timer
@@ -78,12 +78,12 @@ func _order_unit_attack():
 	unit.move_to(enemy.current_tile)
 		
 func _get_enemy(battle_map :BaseTileMap) -> BaseTileUnit:
-	var positions :Dictionary = unit_position.get_positions(battle_map)
+	var positions :Dictionary = unit_position_manager.get_positions(battle_map)
 	if positions.empty():
 		return null
 		
 	for id in positions.keys():
-		var units :Array = unit_position.units_in_position(battle_map, id)
+		var units :Array = unit_position_manager.units_in_position(battle_map, id)
 		if units.empty():
 			continue
 			
