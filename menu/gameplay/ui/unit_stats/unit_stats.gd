@@ -17,7 +17,7 @@ onready var ammo = $HBoxContainer/infantry_weapon_info/MarginContainer/VBoxConta
 onready var infantry_grenade_ability = $HBoxContainer/infantry_grenade_ability
 onready var infantry_launcher_ability = $HBoxContainer/infantry_launcher_ability
 
-onready var greande_count = $HBoxContainer/infantry_grenade_ability/MarginContainer/greande_count
+onready var grenade_count = $HBoxContainer/infantry_grenade_ability/MarginContainer/greande_count
 onready var launcher_count = $HBoxContainer/infantry_launcher_ability/MarginContainer/launcher_count
 
 var _info_weapon :Weapon
@@ -67,7 +67,7 @@ func _display_infantry_info(unit :Infantry):
 	infantry_grenade_ability.visible = unit.grenade > 0
 	infantry_launcher_ability.visible = unit.launcher > 0
 	
-	greande_count.text = "x %s" % unit.grenade
+	grenade_count.text = "x %s" % unit.grenade
 	launcher_count.text = "x %s" % unit.launcher
 	
 func _on_close_pressed():
@@ -79,9 +79,7 @@ func _on_drop_unit_pressed():
 func _on_grenade_pressed():
 	if _unit is Infantry:
 		_unit.use_grenade()
-		_display_infantry_info(_unit)
 	
 func _on_launch_pressed():
 	if _unit is Infantry:
 		_unit.use_launcher()
-		_display_infantry_info(_unit)

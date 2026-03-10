@@ -12,30 +12,32 @@ export var reserve_ammo :int = 0
 export var max_reserve_ammo :int = 0
 export var dispersion :float = 0.3
 export var is_master :bool
-export var team :int
 export var icon :StreamTexture # just holder
 
-var unit_owner
-var target
+onready var _rng :RandomNumberGenerator = RandomNumberGenerator.new()
+
 var shot_from :Vector3
 var shot_at :Vector3
 
+func _ready():
+	_rng.randomize()
+
 func random_point_around(position: Vector3, radius: float) -> Vector3:
 	var dir = Vector3(
-		rand_range(-1.0, 1.0),
-		rand_range(-1.0, 1.0),
-		rand_range(-1.0, 1.0)
+		_rng.randf_range(-1.0, 1.0),
+		_rng.randf_range(-1.0, 1.0),
+		_rng.randf_range(-1.0, 1.0)
 	).normalized()
 	
-	var distance = sqrt(randf()) * radius
+	var distance = sqrt(_rng.randf()) * radius
 	return position + dir * distance
 	
-func check_hit(rng:RandomNumberGenerator, accuracy:int) -> bool:
+func check_hit(accuracy:int) -> bool:
 	var soldier_factor = clamp(accuracy / 10.0, 0.0, 1.0)
 	var weapon_factor = clamp(1.0 - dispersion, 0.0, 1.0)
 	var hit_chance = soldier_factor * weapon_factor
 	hit_chance = min(hit_chance, 0.75)
-	return rng.randf() <= hit_chance
+	return _rng.randf() <= hit_chance
 	
 # optional
 #func is_target(enemy) -> bool:

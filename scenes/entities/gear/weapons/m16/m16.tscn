@@ -107,6 +107,7 @@ capacity = 18
 reserve_ammo = 80
 max_reserve_ammo = 240
 dispersion = 0.23
+team = null
 icon = ExtResource( 3 )
 
 [node name="queue_task" parent="." instance=ExtResource( 4 )]

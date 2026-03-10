@@ -22,14 +22,26 @@ func launch():
 	set_process(true)
 	look_at(to, Vector3.UP)
 	
-func _process(delta):
+func on_travel(delta):
 	if travel_distance > max_range:
-		is_ready = true
-		visible = false
-		set_process(false)
+		on_stop()
 		return
 		
 	var vel = speed * delta
 	translation += dir * vel
 	travel_distance += vel
 	
+func _process(delta):
+	on_travel(delta)
+	
+func on_stop():
+	set_process(false)
+	is_ready = true
+	visible = false
+	
+	
+	
+	
+
+
+

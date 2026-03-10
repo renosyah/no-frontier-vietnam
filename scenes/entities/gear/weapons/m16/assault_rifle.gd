@@ -6,7 +6,7 @@ onready var barrel = $barrel
 onready var animation_player = $AnimationPlayer
 onready var queue_task = $queue_task
 
-var bullets :Array = []
+var _bullets :Array = []
 
 func _ready():
 	queue_task.connect("finish", self, "_on_queue_task_finish")
@@ -14,10 +14,10 @@ func _ready():
 	for i in 32:
 		var bullet = bullet_scene.instance()
 		add_child(bullet)
-		bullets.append(bullet)
+		_bullets.append(bullet)
 		
 func _get_ready_bullet() -> BaseProjectile:
-	for i in bullets:
+	for i in _bullets:
 		if i.is_ready:
 			return i
 			
@@ -29,10 +29,11 @@ func _on_queue_task_finish():
 # override
 func fire_weapon(count :int):
 	shot_from = barrel.global_position
+	var dist = shot_from.distance_to(shot_at)
 	
 	for i in count:
 		var to = random_point_around(shot_at, dispersion)
-		queue_task.add_task(self, "_bang", [to])
+		queue_task.add_task(self, "_bang", [dist, to])
 	
 func stop_firing():
 	queue_task.clear()
@@ -40,7 +41,7 @@ func stop_firing():
 func firing() -> bool:
 	return queue_task.is_running
 	
-func _bang(to :Vector3):
+func _bang(dist :float, to :Vector3):
 	if is_master:
 		ammo = int(clamp(ammo - 1, 0, capacity))
 		
@@ -51,6 +52,7 @@ func _bang(to :Vector3):
 	if bullet != null:
 		bullet.translation = shot_from
 		bullet.to = to
+		bullet.max_range = dist
 		bullet.launch()
 		
 	emit_signal("weapon_fired")

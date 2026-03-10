@@ -15,7 +15,7 @@ const dead_sounds = [
 	preload("res://assets/sounds/infantry/dead_4.wav"),
 	preload("res://assets/sounds/infantry/dead_5.wav")
 ]
-
+const grenade_projectile_scene = preload("res://scenes/entities/projectiles/grenade/grenade.tscn")
 const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
 
 export var skin_material :SpatialMaterial
@@ -64,12 +64,14 @@ puppet var _puppet_anim :String
 var _weapon_aimed :bool # this force anim to focus on fire mode
 var _special_move_perform :bool # this force anim to focus on special attack
 var _on_melee_perform :bool # this force anim to focus on melee
-var _rng :RandomNumberGenerator = RandomNumberGenerator.new()
+
 
 var _current_anim :String = "iddle"
 var _weapon :Weapon
 var _launcher :Spatial
 var _melee_range :Array = []
+var _grenade_projectile :BaseProjectile
+
 
 var squad :BaseSquad
 
@@ -101,8 +103,6 @@ func _ready():
 	_weapon.connect("weapon_fired", self, "_on_weapon_fired")
 	_weapon.connect("weapon_update", self, "_on_weapon_update")
 	_weapon.connect("weapon_finish_firing", self, "_on_weapon_finish_firing")
-	_weapon.unit_owner = self
-	_weapon.team = team
 	
 	weapon_holder.add_child(_weapon)
 	single_use_weapon.add_child(_launcher)
@@ -113,8 +113,6 @@ func _ready():
 	_overlay_ui.add_child(floating_unit_info)
 	floating_unit_info.init_bar(color, max_hp, _weapon.capacity)
 	floating_unit_info.visible = false
-	
-	_rng.randomize()
 	
 func set_uniform_style(skin:SpatialMaterial, uniform:SpatialMaterial, mode :int):
 	
@@ -318,7 +316,7 @@ func _on_weapon_fired():
 		return
 		
 	if _is_master:
-		if _weapon.check_hit(_rng, accuracy):
+		if _weapon.check_hit(accuracy):
 			if is_instance_valid(enemy):
 				enemy.take_damage(_weapon.damage)
 		
@@ -332,12 +330,15 @@ func _on_weapon_fired():
 		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func _on_weapon_finish_firing():
-	if is_dead:
+	if is_dead or not _is_master:
 		return
 		
-	if _is_master:
-		_current_anim = "aim_weapon"
-		animation_state.travel(_current_anim)
+	if not _weapon.has_ammo():
+		reload_weapon()
+		return
+		
+	_current_anim = "aim_weapon"
+	animation_state.travel(_current_anim)
 	
 func reload_weapon():
 	if is_dead:
@@ -383,22 +384,36 @@ func _on_launcher_fired():
 func use_grenade():
 	if grenade == 0:
 		return
-	
+		
 	stop()
 	_weapon_aimed = false
 	_weapon.stop_firing()
 	
+	var to = global_position + (-global_transform.basis.z) * 2
+	if _is_master and is_instance_valid(enemy):
+		to = enemy.global_position 
+	
 	if _is_master:
-		rpc("_use_grenade")
+		rpc("_use_grenade", to)
 		
-remotesync func _use_grenade():
+remotesync func _use_grenade(to :Vector3):
 	_special_move_perform = true
 	_current_anim = "use_grenade"
 	animation_state.travel(_current_anim)
 	
+	_grenade_projectile = grenade_projectile_scene.instance()
+	_grenade_projectile.is_master = _is_master
+	_grenade_projectile.to = to
+	_grenade_projectile.speed = 2
+	_grenade_projectile.max_range = global_position.distance_to(to)
+	get_parent().add_child(_grenade_projectile)
+	_grenade_projectile.translation = global_position
+	
 func _on_grenade_use():
 	_special_move_perform = false
 	grenade = int(clamp(grenade - 1, 0, 3))
+	_grenade_projectile.launch()
+	_grenade_projectile = null
 	
 func _exit_tree():
 	floating_unit_info.queue_free()
