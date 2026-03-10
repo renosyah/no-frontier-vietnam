@@ -5,6 +5,8 @@ export var to :Vector3
 export var speed :float = 12.0
 export var is_ready :bool = true
 export var max_range :float = 5.0
+export var is_master :bool
+export var damage :int = 6
 
 var dir :Vector3
 var travel_distance :float = 0

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/pending_task/pending_task.gd" type="Script" id=1]
+
+[node name="pending_task" type="Node"]
+script = ExtResource( 1 )

@@ -1,7 +1,15 @@
 extends TileUnitData
 class_name InfantryData
 
+const role_riflement = 1
+const role_radio_operator = 2
+const role_at_specialist = 3
+
+const faction_macv = 1
+const faction_nva = 2
+
 # get all at ScenesIndex
+
 export var skin_material_index :int
 export var uniform_material_index :int
 export var team_color_material_index :int
@@ -11,6 +19,7 @@ export var vest_scene_index :int
 export var weapon_scene_index :int
 export var launcher_scene_index :int
 export var uniform_style :int # 1:normal,2:tanktop,3:notop
+export var role :int
 
 # why? because is set from origin side of player
 # if i send entire stats, each peeer generate its own
@@ -19,6 +28,51 @@ export var modified_max_hp :int
 export var modified_speed :float
 var stats:UnitStatsData
 
+func make_variant(faction_idx :int):
+	
+	if faction_idx == faction_macv:
+		var style = [0,1,2]
+		var skin = [0,1]
+		var hats = [0,1,2,4]
+		var bags = [0,1,2,9]
+		var vests = [0,1,4]
+		var black_potrait = [1,2,4,6]
+		var white_potrait = [0,3,5,7,8,9]
+		
+		stats.soldier_name = SoldierNames.get_random_us_name()
+		skin_material_index = skin[randi() % 2]
+		stats.soldier_potrait_index = black_potrait[randi() % 4] if skin_material_index == 1 else white_potrait[randi() % 6]
+		hat_scene_index = hats[randi() % 4]
+		bag_scene_index = bags[randi() % 4]
+		vest_scene_index = vests[randi() % 3]
+		uniform_style = style[randi() % 3]
+		
+		match (role):
+			role_radio_operator:
+				bag_scene_index = 3
+				
+			role_at_specialist:
+				bag_scene_index = 4
+		
+	elif faction_idx == faction_nva:
+		var hats = [3,4]
+		var style = [0,1,2]
+		var bags = [5,6,7,9]
+		var vests = [2,3,4]
+		stats.soldier_name = SoldierNames.get_random_viet_name()
+		stats.soldier_potrait_index = int(rand_range(25, 34))
+		hat_scene_index = hats[randi() % 2]
+		bag_scene_index = bags[randi() % 4]
+		vest_scene_index = vests[randi() % 3]
+		uniform_style = style[randi() % 3]
+		
+		match (role):
+			role_radio_operator:
+				bag_scene_index = 3
+				
+			role_at_specialist:
+				bag_scene_index = 8
+				
 func from_dictionary(_data : Dictionary):
 	.from_dictionary(_data)
 	
@@ -33,9 +87,10 @@ func from_dictionary(_data : Dictionary):
 	uniform_style = _data["i1"]
 	modified_max_hp = _data["j1"]
 	modified_speed = _data["k1"]
+	role = _data["l1"]
 	
 	stats = UnitStatsData.new()
-	stats.from_dictionary(_data["l1"])
+	stats.from_dictionary(_data["m1"])
 	 
 	
 func to_dictionary() -> Dictionary :
@@ -51,7 +106,8 @@ func to_dictionary() -> Dictionary :
 	_data["i1"] = uniform_style
 	_data["j1"] = modified_max_hp
 	_data["k1"] = modified_speed
-	_data["l1"] = stats.to_dictionary()
+	_data["l1"] = role
+	_data["m1"] = stats.to_dictionary()
 	return _data
 	
 	
@@ -66,6 +122,7 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	infantry.unit_voice = unit_voice
 	infantry.color = color
 	
+	infantry.role = role
 	infantry.skin_material = MaterialsIndex.infantry_skin_colors[skin_material_index]
 	infantry.uniform_material = MaterialsIndex.infantry_uniforms[uniform_material_index]
 	infantry.team_color_material = MaterialsIndex.team_colors[team_color_material_index]
@@ -85,6 +142,15 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	infantry.discipline = stats.discipline
 	infantry.accuracy = stats.accuracy
 	
+	match (infantry.role):
+		role_radio_operator:
+			infantry.grenade = 0
+			infantry.launcher = 0
+			
+		role_at_specialist:
+			infantry.grenade = 0
+			infantry.launcher = 1
+			
 	parent.add_child(infantry)
 	
 	infantry.translation = Vector3(-100, -100, -100)

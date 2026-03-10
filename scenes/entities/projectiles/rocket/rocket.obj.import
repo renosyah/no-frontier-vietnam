@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/rocket.obj-ba2736c8a3caca677dfdf043ab7764f9.mesh"
+
+[deps]
+
+files=[ "res://.import/rocket.obj-ba2736c8a3caca677dfdf043ab7764f9.mesh" ]
+
+source_file="res://scenes/entities/projectiles/rocket/rocket.obj"
+dest_files=[ "res://.import/rocket.obj-ba2736c8a3caca677dfdf043ab7764f9.mesh", "res://.import/rocket.obj-ba2736c8a3caca677dfdf043ab7764f9.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true

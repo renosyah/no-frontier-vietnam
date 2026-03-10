@@ -23,5 +23,6 @@ vest_scene_index = 3
 weapon_scene_index = 1
 launcher_scene_index = 1
 uniform_style = 0
+role = 1
 modified_max_hp = 0
 modified_speed = 0.0

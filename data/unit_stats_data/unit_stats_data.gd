@@ -3,7 +3,6 @@ class_name UnitStatsData
 
 export var soldier_name :String
 export var soldier_potrait_index :int
-export var soldier_weapon_image_index :int
 
 # value from 1 to 0
 export var speed :int
@@ -33,7 +32,6 @@ func from_dictionary(_data:Dictionary):
 	
 	soldier_name = _data["a"]
 	soldier_potrait_index = _data["b"]
-	soldier_weapon_image_index = _data["c"]
 	speed = _data["d"]
 	endurance = _data["e"]
 	accuracy = _data["f"]
@@ -43,7 +41,6 @@ func to_dictionary() -> Dictionary :
 	var _data :Dictionary = .to_dictionary()
 	_data["a"] = soldier_name
 	_data["b"] = soldier_potrait_index
-	_data["c"] = soldier_weapon_image_index
 	_data["d"] = speed
 	_data["e"] = endurance
 	_data["f"] = accuracy

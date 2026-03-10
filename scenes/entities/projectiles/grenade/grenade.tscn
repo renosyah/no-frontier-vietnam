@@ -102,7 +102,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.5 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0, 0 ), Vector3( 360, 0, 0 ) ]
+"values": [ Vector3( 360, 0, 0 ), Vector3( 0, 0, 0 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("MeshInstance:scale")
@@ -137,6 +137,7 @@ albedo_color = Color( 1, 0.447059, 0, 1 )
 
 [node name="grenade_projectile" type="Spatial"]
 script = ExtResource( 1 )
+speed = 2.0
 
 [node name="grenade" type="MeshInstance" parent="."]
 cast_shadow = 0

@@ -15,9 +15,12 @@ const dead_sounds = [
 	preload("res://assets/sounds/infantry/dead_4.wav"),
 	preload("res://assets/sounds/infantry/dead_5.wav")
 ]
+
+const rocket_projectile_scene = preload("res://scenes/entities/projectiles/rocket/rocket_projectile.tscn")
 const grenade_projectile_scene = preload("res://scenes/entities/projectiles/grenade/grenade.tscn")
 const selected_area_material = preload("res://assets/tile_highlight/selected_material.tres")
 
+export var role :int
 export var skin_material :SpatialMaterial
 export var uniform_material :SpatialMaterial
 export var team_color_material :SpatialMaterial
@@ -70,7 +73,7 @@ var _current_anim :String = "iddle"
 var _weapon :Weapon
 var _launcher :Spatial
 var _melee_range :Array = []
-var _grenade_projectile :BaseProjectile
+var _special_projectile :BaseProjectile
 
 
 var squad :BaseSquad
@@ -362,27 +365,40 @@ func _on_weapon_update():
 		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func use_launcher():
-	if launcher == 0:
+	if launcher == 0 or _weapon.firing() or _on_melee_perform:
 		return
 		
 	stop()
 	_weapon_aimed = false
 	_weapon.stop_firing()
 	
-	if _is_master:
-		rpc("_fire_launcher")
+	var to = global_position + (-global_transform.basis.z) * 5
+	if _is_master and is_instance_valid(enemy):
+		to = enemy.global_position 
 		
-remotesync func _fire_launcher():
+	if _is_master:
+		rpc("_fire_launcher", to)
+		
+remotesync func _fire_launcher(to):
 	_special_move_perform = true
 	_current_anim = "use_launcher"
 	animation_state.travel(_current_anim)
 	
+	_special_projectile = rocket_projectile_scene.instance()
+	_special_projectile.is_master = _is_master
+	_special_projectile.to = to
+	_special_projectile.max_range = global_position.distance_to(to)
+	get_parent().add_child(_special_projectile)
+	_special_projectile.translation = global_position
+	
 func _on_launcher_fired():
 	_special_move_perform = false
 	launcher = 0
+	_special_projectile.launch()
+	_special_projectile = null
 	
 func use_grenade():
-	if grenade == 0:
+	if grenade == 0 or _weapon.firing() or _on_melee_perform:
 		return
 		
 	stop()
@@ -392,7 +408,7 @@ func use_grenade():
 	var to = global_position + (-global_transform.basis.z) * 2
 	if _is_master and is_instance_valid(enemy):
 		to = enemy.global_position 
-	
+		
 	if _is_master:
 		rpc("_use_grenade", to)
 		
@@ -401,19 +417,18 @@ remotesync func _use_grenade(to :Vector3):
 	_current_anim = "use_grenade"
 	animation_state.travel(_current_anim)
 	
-	_grenade_projectile = grenade_projectile_scene.instance()
-	_grenade_projectile.is_master = _is_master
-	_grenade_projectile.to = to
-	_grenade_projectile.speed = 2
-	_grenade_projectile.max_range = global_position.distance_to(to)
-	get_parent().add_child(_grenade_projectile)
-	_grenade_projectile.translation = global_position
+	_special_projectile = grenade_projectile_scene.instance()
+	_special_projectile.is_master = _is_master
+	_special_projectile.to = to
+	_special_projectile.max_range = global_position.distance_to(to)
+	get_parent().add_child(_special_projectile)
+	_special_projectile.translation = global_position
 	
 func _on_grenade_use():
 	_special_move_perform = false
 	grenade = int(clamp(grenade - 1, 0, 3))
-	_grenade_projectile.launch()
-	_grenade_projectile = null
+	_special_projectile.launch()
+	_special_projectile = null
 	
 func _exit_tree():
 	floating_unit_info.queue_free()

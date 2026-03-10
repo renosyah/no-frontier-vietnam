@@ -6,6 +6,7 @@ signal finish
 var task_queue = []
 var is_running = false
 
+
 func add_task(instance: Object,f :String, params: Array = []) -> void:
 	var fn: FuncRef = funcref(instance, f)
 	if fn == null:

@@ -229,6 +229,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/network/helper/NetworkServer.gd"
 }, {
+"base": "Node",
+"class": "PendingTask",
+"language": "GDScript",
+"path": "res://addons/pending_task/pending_task.gd"
+}, {
 "base": "BaseData",
 "class": "PlayerData",
 "language": "GDScript",
@@ -399,6 +404,7 @@ _global_script_class_icons={
 "NetworkConfiguration": "",
 "NetworkPlayer": "",
 "NetworkServer": "",
+"PendingTask": "",
 "PlayerData": "",
 "PlayerPotrait": "",
 "QueueTask": "",

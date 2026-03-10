@@ -272,31 +272,18 @@ func _on_spawn_infantry():
 		infantry.modified_speed = stats.get_speed_multiplier()
 		infantry.stats = stats
 		
+		infantry.role = infantry.role_riflement
+		
+		if i == 0:
+			infantry.role = infantry.role_radio_operator
+		elif i == 3:
+			infantry.role = infantry.role_at_specialist
+			
 		if player.player_team == 1:
-			var style = [0,1,2]
-			var skin = [0, 1]
-			var hats = [0, 1, 2, 4]
-			var bags = [0,1,2,4,9]
-			var vests = [0, 1, 4]
-			
-			var black_potrait = [1, 2, 4, 6]
-			var white_potrait = [0, 3, 5, 7, 8, 9]
-			
-			stats.soldier_name = SoldierNames.get_random_us_name()
-			stats.soldier_weapon_image_index = 0
-			
-			infantry.skin_material_index = skin[randi() % 2]
-			stats.soldier_potrait_index = black_potrait[randi() % 4] if infantry.skin_material_index == 1 else white_potrait[randi() % 6]
-			
-			infantry.hat_scene_index = hats[randi() % 4]
-			infantry.bag_scene_index = 3 if (i == 0) else bags[randi() % 5]
-			infantry.vest_scene_index = vests[randi() % 3]
-			infantry.uniform_style = style[randi() % 3]
+			infantry.make_variant(infantry.faction_macv)
 			
 		else:
-			stats.soldier_name = SoldierNames.get_random_viet_name()
-			stats.soldier_potrait_index = int(rand_range(25, 34))
-			stats.soldier_weapon_image_index = 1
+			infantry.make_variant(infantry.faction_nva)
 			
 	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
 	
@@ -315,7 +302,6 @@ func _on_spawn_heli_press():
 	var stats :UnitStatsData = UnitStatsData.new()
 	stats.randomize_stats()
 	stats.soldier_name = SoldierNames.get_random_us_name()
-	stats.soldier_weapon_image_index = 0
 	stats.soldier_potrait_index = int(rand_range(20, 24))
 	
 	var vehicle = preload("res://data/unit_data/vehicle/uh1d.tres").duplicate()
@@ -349,7 +335,6 @@ func _on_spawn_bot_infantry():
 		var stats :UnitStatsData = UnitStatsData.new()
 		stats.soldier_name = SoldierNames.get_random_viet_name()
 		stats.soldier_potrait_index = int(rand_range(10, 19))
-		stats.soldier_weapon_image_index = 1
 		stats.randomize_stats()
 		
 		var infantry :InfantryData = preload("res://data/unit_data/infantry/nva_riflement.tres").duplicate()
@@ -365,6 +350,8 @@ func _on_spawn_bot_infantry():
 		infantry.modified_max_hp = stats.get_max_hp(8)
 		infantry.modified_speed = stats.get_speed_multiplier()
 		infantry.stats = stats
+		infantry.role = infantry.role_riflement
+		infantry.make_variant(infantry.faction_nva)
 		
 		infantry_squad.members.append(infantry)
 		
