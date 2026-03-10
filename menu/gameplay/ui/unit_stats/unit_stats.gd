@@ -21,7 +21,8 @@ onready var grenade_count = $HBoxContainer/infantry_grenade_ability/MarginContai
 onready var launcher_count = $HBoxContainer/infantry_launcher_ability/MarginContainer/launcher_count
 
 var _info_weapon :Weapon
-var _unit :BaseTileUnit
+var _vehicle_unit :Vehicle
+var _infantry_unit :Infantry
 
 func _ready():
 	_hide()
@@ -32,9 +33,16 @@ func _process(delta):
 		
 	if is_instance_valid(_info_weapon):
 		ammo.text = "%s/%s" % [_info_weapon.ammo, _info_weapon.reserve_ammo]
+		
+	if is_instance_valid(_infantry_unit):
+		infantry_grenade_ability.visible = _infantry_unit.grenade > 0
+		infantry_launcher_ability.visible = _infantry_unit.launcher > 0
+		grenade_count.text = "x %s" % _infantry_unit.grenade
+		launcher_count.text = "x %s" % _infantry_unit.launcher
 
 func show_stats(stats :UnitStatsData, unit :BaseTileUnit):
-	_unit = unit
+	_vehicle_unit = null
+	_infantry_unit = null
 	
 	unit_name.text = stats.soldier_name
 	potrait.texture = Global.infantry_potraits[stats.soldier_potrait_index]
@@ -42,9 +50,11 @@ func show_stats(stats :UnitStatsData, unit :BaseTileUnit):
 	_hide()
 	
 	if unit is Vehicle:
+		_vehicle_unit = unit
 		_display_vehicle_info(unit)
 		
 	if unit is Infantry:
+		_infantry_unit = unit
 		_display_infantry_info(unit)
 
 func _hide():
@@ -64,12 +74,6 @@ func _display_infantry_info(unit :Infantry):
 	_info_weapon = unit.get_weapon()
 	weapon_image.texture = _info_weapon.icon
 	
-	infantry_grenade_ability.visible = unit.grenade > 0
-	infantry_launcher_ability.visible = unit.launcher > 0
-	
-	grenade_count.text = "x %s" % unit.grenade
-	launcher_count.text = "x %s" % unit.launcher
-	
 func _on_close_pressed():
 	emit_signal("close")
 
@@ -77,9 +81,9 @@ func _on_drop_unit_pressed():
 	emit_signal("drop_passenger")
 
 func _on_grenade_pressed():
-	if _unit is Infantry:
-		_unit.use_grenade()
+	if is_instance_valid(_infantry_unit):
+		_infantry_unit.use_grenade()
 	
 func _on_launch_pressed():
-	if _unit is Infantry:
-		_unit.use_launcher()
+	if is_instance_valid(_infantry_unit):
+		_infantry_unit.use_launcher()
