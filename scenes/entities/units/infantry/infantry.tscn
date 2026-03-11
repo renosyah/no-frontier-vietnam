@@ -1,4 +1,4 @@
-[gd_scene load_steps=69 format=2]
+[gd_scene load_steps=70 format=2]
 
 [ext_resource path="res://scenes/entities/units/infantry/head.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://scenes/entities/units/infantry/la.obj" type="ArrayMesh" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://scenes/entities/units/infantry/skin_color_material.tres" type="Material" id=8]
 [ext_resource path="res://scenes/entities/gear/weapons/grenade/grenade.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/entities/units/infantry/infantry.gd" type="Script" id=10]
+[ext_resource path="res://addons/pending_task/pending_task.tscn" type="PackedScene" id=11]
 [ext_resource path="res://assets/tile_highlight/circle_selection.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://assets/tile_highlight/selected_material.tres" type="Material" id=13]
 [ext_resource path="res://assets/unit_hit_register/infantry_hit_register.tscn" type="PackedScene" id=14]
@@ -2591,7 +2592,7 @@ tracks/16/path = NodePath(".")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
 tracks/16/imported = false
-tracks/16/enabled = true
+tracks/16/enabled = false
 tracks/16/keys = {
 "times": PoolRealArray( 0.3 ),
 "transitions": PoolRealArray( 1 ),
@@ -3380,6 +3381,8 @@ visible = false
 visible = false
 
 [node name="grenade" parent="pivot/single_use_weapon2" instance=ExtResource( 9 )]
+
+[node name="pending_task" parent="." instance=ExtResource( 11 )]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 20 )

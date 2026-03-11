@@ -51,6 +51,7 @@ onready var vest_holder = $pivot/body/vest
 onready var attack_time = $attack_time
 onready var infantry_hit_register = $infantry_hit_register
 onready var floating_unit_info = $floating_unit_info
+onready var pending_task = $pending_task
 
 onready var meshes = [
 	$pivot/body/head/h, # head : 0=skin, 1:hair
@@ -65,16 +66,13 @@ puppet var _puppet_rotation_y :float
 puppet var _puppet_anim :String
 
 var _weapon_aimed :bool # this force anim to focus on fire mode
-var _special_move_perform :bool # this force anim to focus on special attack
-var _on_melee_perform :bool # this force anim to focus on melee
-
+var _using_ability :bool # like luncher or grenade
 
 var _current_anim :String = "iddle"
 var _weapon :Weapon
 var _launcher :Spatial
 var _melee_range :Array = []
 var _special_projectile :BaseProjectile
-
 
 var squad :BaseSquad
 
@@ -165,8 +163,9 @@ func move_to(tile_id :Vector2):
 	if is_dead:
 		return
 		
-	_on_melee_perform = false
 	_weapon_aimed = false
+	_using_ability = false
+	
 	_weapon.stop_firing()
 	attack_time.stop()
 	
@@ -198,13 +197,10 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	var is_align :bool = foward_dir.dot(dir_to) > 0.85
 	
 	if is_align and _in_melee() and pos.y == enemy_pos.y:
-		_on_melee_perform = true
 		_current_anim = "melee_weapon"
 		animation_state.travel(_current_anim)
 		return
 		
-	_on_melee_perform = false
-	
 	if is_align and attack_time.is_stopped():
 		_weapon.shot_at = enemy_pos + Vector3(0, 0.25, 0)
 		fire_weapon()
@@ -212,7 +208,6 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 		attack_time.start()
 
 func _on_enemy_melee():
-	_on_melee_perform = false
 	if is_instance_valid(enemy):
 		enemy.take_damage(1)
 		audio_stream_player_3d.stream = punch
@@ -259,7 +254,7 @@ func master_moving(delta :float) -> void:
 	if is_dead:
 		return
 		
-	if _weapon_aimed or _special_move_perform or _on_melee_perform:
+	if _weapon_aimed or _using_ability:
 		return
 		
 	if not _weapon:
@@ -274,12 +269,11 @@ func fire_weapon():
 	if is_dead:
 		return
 		
-	_current_anim = "aim_weapon"
-	
 	if _weapon_aimed:
 		_on_weapon_aimed()
 		return
 		
+	_current_anim = "aim_weapon"
 	animation_state.travel(_current_anim)
 	_weapon_aimed = true
 	
@@ -336,6 +330,10 @@ func _on_weapon_finish_firing():
 	if is_dead or not _is_master:
 		return
 		
+	if pending_task.has_task():
+		pending_task.run()
+		return
+		
 	if not _weapon.has_ammo():
 		reload_weapon()
 		return
@@ -365,25 +363,39 @@ func _on_weapon_update():
 		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func use_launcher():
-	if launcher == 0 or _weapon.firing() or _on_melee_perform:
+	if launcher == 0 or _using_ability:
 		return
 		
 	stop()
-	_weapon_aimed = false
-	_weapon.stop_firing()
 	
-	var to = global_position + (-global_transform.basis.z) * 5
-	if _is_master and is_instance_valid(enemy):
-		to = enemy.global_position 
+	# currently firing
+	# just add to pending task
+	# after firing it will lob grenade
+	if _weapon.firing():
+		pending_task.add_task(self, "_task_use_launcher")
+		return
 		
+	_task_use_launcher()
+	
+func _task_use_launcher():
+	yield(get_tree(),"idle_frame")
+	
 	if _is_master:
+		var to = global_position + (-global_transform.basis.z) * 5
+		if is_instance_valid(enemy):
+			to = enemy.global_position
+			
 		rpc("_fire_launcher", to)
 		
 remotesync func _fire_launcher(to):
-	_special_move_perform = true
+	_using_ability = true
 	_current_anim = "use_launcher"
 	animation_state.travel(_current_anim)
 	
+	if is_instance_valid(_special_projectile):
+		_special_projectile.queue_free()
+		_special_projectile = null
+		
 	_special_projectile = rocket_projectile_scene.instance()
 	_special_projectile.is_master = _is_master
 	_special_projectile.to = to
@@ -392,31 +404,49 @@ remotesync func _fire_launcher(to):
 	_special_projectile.translation = global_position
 	
 func _on_launcher_fired():
-	_special_move_perform = false
-	launcher = 0
-	_special_projectile.launch()
-	_special_projectile = null
+	_using_ability = false
+	
+	if _is_master:
+		launcher = 0
+	
+	if is_instance_valid(_special_projectile):
+		_special_projectile.launch()
+		_special_projectile = null
 	
 func use_grenade():
-	if grenade == 0 or _weapon.firing() or _on_melee_perform:
+	if grenade == 0 or _using_ability:
 		return
 		
 	stop()
-	_weapon_aimed = false
-	_weapon.stop_firing()
 	
-	var to = global_position + (-global_transform.basis.z) * 2
-	if _is_master and is_instance_valid(enemy):
-		to = enemy.global_position 
+	# currently firing
+	# just add to pending task
+	# after firing it will lob grenade
+	if _weapon.firing():
+		pending_task.add_task(self, "_task_use_grenade")
+		return
 		
+	_task_use_grenade()
+	
+func _task_use_grenade():
+	yield(get_tree(),"idle_frame")
+	
 	if _is_master:
-		rpc("_use_grenade", to)
+		var to = global_position + (-global_transform.basis.z) * 2
+		if is_instance_valid(enemy):
+			to = enemy.global_position 
 		
+		rpc("_use_grenade", to)
+	
 remotesync func _use_grenade(to :Vector3):
-	_special_move_perform = true
+	_using_ability = true
 	_current_anim = "use_grenade"
 	animation_state.travel(_current_anim)
 	
+	if is_instance_valid(_special_projectile):
+		_special_projectile.queue_free()
+		_special_projectile = null
+		
 	_special_projectile = grenade_projectile_scene.instance()
 	_special_projectile.is_master = _is_master
 	_special_projectile.to = to
@@ -425,10 +455,14 @@ remotesync func _use_grenade(to :Vector3):
 	_special_projectile.translation = global_position
 	
 func _on_grenade_use():
-	_special_move_perform = false
-	grenade = int(clamp(grenade - 1, 0, 3))
-	_special_projectile.launch()
-	_special_projectile = null
+	_using_ability = false
+	
+	if _is_master:
+		grenade = int(clamp(grenade - 1, 0, 3))
+		
+	if is_instance_valid(_special_projectile):
+		_special_projectile.launch()
+		_special_projectile = null
 	
 func _exit_tree():
 	floating_unit_info.queue_free()
@@ -458,9 +492,9 @@ func puppet_moving(delta :float) -> void:
 		
 	rotation.y = lerp_angle(rotation.y, _puppet_rotation_y, 25 * delta)
 	
-	if not _special_move_perform:
+	if not _using_ability:
 		animation_state.travel(_puppet_anim)
-		
+	
 func clone_mesh():
 	#.clone_mesh()
 	

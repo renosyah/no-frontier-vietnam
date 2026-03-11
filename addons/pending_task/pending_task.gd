@@ -7,7 +7,7 @@ var is_running = false
 
 func has_task() -> bool:
 	return not task_queue.empty()
-
+	
 func add_task(instance: Object,f :String, params: Array = []) -> void:
 	if is_running:
 		return
