@@ -131,7 +131,9 @@ remote func _stop():
 	_paths.clear()
 	
 func sync_update() -> void:
-	.sync_update()
+	
+	if not is_dead:
+		.sync_update()
 	
 	if not is_dead and _is_master and _is_online:
 		rset_unreliable("_puppet_translation", global_position)

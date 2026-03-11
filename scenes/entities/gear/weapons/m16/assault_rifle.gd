@@ -31,6 +31,10 @@ func fire_weapon(count :int):
 	shot_from = barrel.global_position
 	var dist = shot_from.distance_to(shot_at)
 	
+	if is_master:
+		if _rng.randf() < durability_damage_chance:
+			durability = clamp(durability - durability_decrease_rate, 0, max_durability)
+	
 	for i in count:
 		var to = random_point_around(shot_at, dispersion)
 		queue_task.add_task(self, "_bang", [dist, to])

@@ -11,6 +11,10 @@ export var capacity :int = 0
 export var reserve_ammo :int = 0
 export var max_reserve_ammo :int = 0
 export var dispersion :float = 0.3
+export var durability_damage_chance: float = 0.2
+export var durability_decrease_rate: float = 3.6
+export var durability: float = 100.0
+export var max_durability: float = 100.0
 export var is_master :bool
 export var icon :StreamTexture # just holder
 
@@ -53,6 +57,11 @@ func check_hit(accuracy:int) -> bool:
 #			return true
 #
 #	return false
+
+func is_weapon_jammed() -> bool:
+	var jam_chance = (max_durability - durability) / max_durability
+	jam_chance = clamp(jam_chance, 0.1, 0.4)
+	return _rng.randf() < jam_chance
 	
 func reload():
 	var ammo_needed = capacity - ammo

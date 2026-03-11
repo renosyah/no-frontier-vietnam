@@ -1,7 +1,7 @@
 extends BaseTileUnit
 class_name BaseSquad
 
-signal on_squad_task_exit_battle_map(squad, to_grand_map_id)
+signal on_squad_task_exit_battle_map(squad, at_battle_map_id, to_grand_map_id)
 signal on_squad_destroyed(squad)
 
 # MUST SET
@@ -28,8 +28,8 @@ func _ready():
 func _exit_tree():
 	_floating_icon.queue_free()
 	
-func exit_battle_map(_at_battle_map_id :Vector2, to_grand_map_id :Vector2):
-	emit_signal("on_squad_task_exit_battle_map", self, to_grand_map_id)
+func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
+	emit_signal("on_squad_task_exit_battle_map", self, at_battle_map_id, to_grand_map_id)
 	
 func moving(_delta):
 	.moving(_delta)

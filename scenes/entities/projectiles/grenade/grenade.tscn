@@ -140,7 +140,6 @@ script = ExtResource( 1 )
 speed = 2.0
 
 [node name="grenade" type="MeshInstance" parent="."]
-cast_shadow = 0
 mesh = ExtResource( 4 )
 software_skinning_transform_normals = false
 material/0 = ExtResource( 3 )

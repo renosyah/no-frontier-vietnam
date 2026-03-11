@@ -925,22 +925,28 @@ func _on_grand_map_squad_spotted(unit :BaseTileUnit):
 remotesync func _on_grand_map_squad_enter_battle_map(unit :NodePath, from_tile_id :Vector2, current_tile_id :Vector2):
 	order_squad_to_enter_battle_map(get_node_or_null(unit), from_tile_id, current_tile_id)
 	
-func _on_grand_map_squad_task_exit_battle_map(squad :BaseSquad, to_grand_map_id :Vector2):
+func _on_grand_map_squad_task_exit_battle_map(squad :BaseSquad, at_battle_map_id :Vector2, to_grand_map_id :Vector2):
+	rpc("_on_grand_map_squad_exited_battle_map", squad.get_path(), battle_map_holder[squad.current_tile].get_path())
+	
 	squad.tile_map = grand_map
 	squad.move_to(to_grand_map_id)
 	squad.in_battle_map = false
 	
+remotesync func _on_grand_map_squad_exited_battle_map(unit_path :NodePath, tile_map_path :NodePath):
+	var squad :BaseSquad = get_node_or_null(unit_path)
+	var tile_map :BaseTileMap = get_node_or_null(tile_map_path)
+	
 	if squad is VehicleSquad:
 		# remove from spotting mechanic
 		var vehicle :Vehicle = squad.vehicle
-		unit_position_manager.remove_from_position(vehicle.tile_map, vehicle)
-
+		unit_position_manager.remove_from_position(tile_map, vehicle)
+	
 	if squad is InfantrySquad:
 		for i in squad.members:
 			# remove from spotting mechanic
 			var infantry :Infantry = i
-			unit_position_manager.remove_from_position(infantry.tile_map, infantry)
-
+			unit_position_manager.remove_from_position(tile_map, infantry)
+	
 func _on_grand_map_infantry_squad_member_died(squad :BaseSquad, unit :Infantry):
 	if unit.player_id == player.player_id:
 		Global.unit_responded(RadioChatters.CASUALTY, unit.unit_voice)
@@ -956,13 +962,20 @@ func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicl
 		squad.reasemble_member_around()
 		return
 		
+	var tile_map :BaseTileMap = battle_map_holder[squad.current_tile]
+	rpc("_on_grand_map_infatry_squad_entered_vehicle", squad.get_path(), tile_map.get_path())
+	
+	if vehicle is Vehicle:
+		vehicle.take_passenger([squad])
+		
+remotesync func _on_grand_map_infatry_squad_entered_vehicle(unit :NodePath, tile_map_path :NodePath):
+	var squad :InfantrySquad = get_node_or_null(unit)
+	var tile_map :BaseTileMap = get_node_or_null(tile_map_path)
+	
 	for i in squad.members:
 		# remove from spotting mechanic
 		var infantry :Infantry = i
-		unit_position_manager.remove_from_position(infantry.tile_map, infantry)
-		
-	if vehicle is Vehicle:
-		vehicle.take_passenger([squad])
+		unit_position_manager.remove_from_position(tile_map, infantry)
 	
 func on_team_grand_map_squad_moving(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# check if to is a active battle map tile

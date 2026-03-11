@@ -107,7 +107,8 @@ capacity = 18
 reserve_ammo = 80
 max_reserve_ammo = 240
 dispersion = 0.23
-team = null
+durability_damage_chance = 0.74
+durability_decrease_rate = 2.6
 icon = ExtResource( 3 )
 
 [node name="queue_task" parent="." instance=ExtResource( 4 )]

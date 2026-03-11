@@ -197,21 +197,15 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	var foward_dir :Vector3 = (-global_transform.basis.z)
 	var is_align :bool = foward_dir.dot(dir_to) > 0.85
 	
-	_weapon_aimed = true
-	
 	if is_align and attack_time.is_stopped():
 		attack_time.wait_time = _get_fire_rate()
 		attack_time.start()
 		
 		if _in_melee() and pos.y == enemy_pos.y:
-			_current_anim = "melee_weapon"
-			animation_state.travel(_current_anim)
+			peform_melee()
 			return
 			
-		_current_anim = "aim_weapon"
-		animation_state.travel(_current_anim)
-		_weapon.shot_at = enemy_pos + Vector3(0, 0.25, 0)
-		fire_weapon()
+		fire_weapon(enemy_pos)
 	
 func _on_enemy_melee():
 	if is_instance_valid(enemy):
@@ -272,14 +266,38 @@ func master_moving(delta :float) -> void:
 		
 	animation_state.travel(_current_anim)
 	
-func fire_weapon():
+func peform_melee():
 	if is_dead:
 		return
 	
 	if not _is_master:
 		return
 		
+	if not _weapon_aimed:
+		_weapon_aimed = true
+		
+	_current_anim = "melee_weapon"
+	animation_state.travel(_current_anim)
+	
+func fire_weapon(enemy_pos):
+	if is_dead:
+		return
+	
+	if not _is_master:
+		return
+		
+	if not _weapon_aimed:
+		_weapon_aimed = true
+		
+		_current_anim = "aim_weapon"
+		animation_state.travel(_current_anim)
+		return
+	
 	if not _weapon.has_ammo():
+		reload_weapon()
+		return
+		
+	if _weapon.is_weapon_jammed():
 		reload_weapon()
 		return
 		
@@ -287,6 +305,7 @@ func fire_weapon():
 		return
 		
 	# master just do it here
+	_weapon.shot_at = enemy_pos + Vector3(0, 0.25, 0)
 	var burst_count :int = min(_get_burst_count(), _weapon.ammo)
 	_weapon.fire_weapon(burst_count)
 	
@@ -358,7 +377,7 @@ func _on_weapon_update():
 		floating_unit_info.update_bar(hp, _weapon.ammo)
 	
 func use_launcher():
-	if launcher == 0 or _using_ability:
+	if launcher == 0:
 		return
 		
 	stop()
@@ -393,7 +412,7 @@ remotesync func _fire_launcher(to):
 		
 	_special_projectile = rocket_projectile_scene.instance()
 	_special_projectile.is_master = _is_master
-	_special_projectile.to = to
+	_special_projectile.to = to + Vector3(0, 0.25, 0)
 	_special_projectile.max_range = global_position.distance_to(to)
 	get_parent().add_child(_special_projectile)
 	_special_projectile.translation = global_position
@@ -409,7 +428,7 @@ func _on_launcher_fired():
 		_special_projectile = null
 	
 func use_grenade():
-	if grenade == 0 or _using_ability:
+	if grenade == 0:
 		return
 		
 	stop()

@@ -13,6 +13,7 @@ onready var vehicle_image = $HBoxContainer/vehicle_info/MarginContainer/CenterCo
 onready var infantry_weapon_info = $HBoxContainer/infantry_weapon_info
 onready var weapon_image = $HBoxContainer/infantry_weapon_info/MarginContainer/VBoxContainer/CenterContainer/weapon_image
 onready var ammo = $HBoxContainer/infantry_weapon_info/MarginContainer/VBoxContainer/HBoxContainer/ammo
+onready var weapon_durability = $HBoxContainer/infantry_weapon_info/MarginContainer/VBoxContainer/CenterContainer/weapon_durability
 
 onready var infantry_grenade_ability = $HBoxContainer/infantry_grenade_ability
 onready var infantry_launcher_ability = $HBoxContainer/infantry_launcher_ability
@@ -33,6 +34,7 @@ func _process(delta):
 		
 	if is_instance_valid(_info_weapon):
 		ammo.text = "%s/%s" % [_info_weapon.ammo, _info_weapon.reserve_ammo]
+		weapon_durability.modulate.a = (_info_weapon.max_durability - _info_weapon.durability) / 100
 		
 	if is_instance_valid(_infantry_unit):
 		infantry_grenade_ability.visible = _infantry_unit.grenade > 0
