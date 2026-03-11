@@ -165,9 +165,10 @@ func move_to(tile_id :Vector2):
 		
 	_weapon_aimed = false
 	_using_ability = false
-	
 	_weapon.stop_firing()
-	attack_time.stop()
+	
+	if not attack_time.is_stopped():
+		attack_time.stop()
 	
 func sync_update() -> void:
 	.sync_update()
@@ -196,17 +197,22 @@ func _on_enemy_in_range(delta :float, pos :Vector3, enemy_pos :Vector3):
 	var foward_dir :Vector3 = (-global_transform.basis.z)
 	var is_align :bool = foward_dir.dot(dir_to) > 0.85
 	
-	if is_align and _in_melee() and pos.y == enemy_pos.y:
-		_current_anim = "melee_weapon"
-		animation_state.travel(_current_anim)
-		return
-		
+	_weapon_aimed = true
+	
 	if is_align and attack_time.is_stopped():
-		_weapon.shot_at = enemy_pos + Vector3(0, 0.25, 0)
-		fire_weapon()
 		attack_time.wait_time = _get_fire_rate()
 		attack_time.start()
-
+		
+		if _in_melee() and pos.y == enemy_pos.y:
+			_current_anim = "melee_weapon"
+			animation_state.travel(_current_anim)
+			return
+			
+		_current_anim = "aim_weapon"
+		animation_state.travel(_current_anim)
+		_weapon.shot_at = enemy_pos + Vector3(0, 0.25, 0)
+		fire_weapon()
+	
 func _on_enemy_melee():
 	if is_instance_valid(enemy):
 		enemy.take_damage(1)
@@ -243,6 +249,7 @@ func _on_no_enemy():
 	._on_no_enemy()
 	
 	_weapon_aimed = false
+	_using_ability = false
 	_weapon.stop_firing()
 	
 	if not attack_time.is_stopped():
@@ -268,19 +275,7 @@ func master_moving(delta :float) -> void:
 func fire_weapon():
 	if is_dead:
 		return
-		
-	if _weapon_aimed:
-		_on_weapon_aimed()
-		return
-		
-	_current_anim = "aim_weapon"
-	animation_state.travel(_current_anim)
-	_weapon_aimed = true
 	
-func _on_weapon_aimed():
-	if is_dead:
-		return
-		
 	if not _is_master:
 		return
 		
