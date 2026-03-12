@@ -34,10 +34,14 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 		var squad :BaseSquad = i
 		if squad.current_tile == tile_id:
 			squad.stop(false)
+			squad.set_hidden(true)
 			order_squad_to_enter_battle_map(squad, tile_id, tile_id)
 			
 func _on_battle_map_director_spawn_battle_map(tile_id :Vector2):
 	rpc("_spawn_battle_map", tile_id, battle_map_pos[tile_id])
+
+func _on_battle_map_director_despawn_battle_map(tile_id):
+	rpc("_despawn_battle_map", tile_id)
 
 
 

@@ -11,4 +11,5 @@ script = ExtResource( 1 )
 
 [node name="battle_map_director" parent="." instance=ExtResource( 3 )]
 
+[connection signal="despawn_battle_map" from="battle_map_director" to="." method="_on_battle_map_director_despawn_battle_map"]
 [connection signal="spawn_battle_map" from="battle_map_director" to="." method="_on_battle_map_director_spawn_battle_map"]

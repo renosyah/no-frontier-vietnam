@@ -2,6 +2,7 @@ extends Node
 class_name BattleMapDirector
 
 signal spawn_battle_map(tile_id)
+signal despawn_battle_map(tile_id)
 
 export var limit_battle_map :int = 2
 
@@ -25,9 +26,16 @@ func _on_Timer_timeout():
 	
 	if _dynamic_battle_maps.size() < limit_battle_map:
 		_spawn_battle_map()
+		
+	else:
+		_despawn_battle_map()
 	
 func battle_map_spawned(tile_id :Vector2 ):
 	_dynamic_battle_maps.append(tile_id)
+	
+func _despawn_battle_map():
+	emit_signal("despawn_battle_map", _dynamic_battle_maps.front())
+	_dynamic_battle_maps.pop_front()
 	
 func _spawn_battle_map():
 	var clean :Array = []

@@ -526,7 +526,10 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 				break
 	
 	# dont bother spawn if it already created
+	# just called on battle map spawn
+	# all element needed already there
 	if battle_map_holder.has(id):
+		on_battle_map_spawned(id, battle_map_holder[id])
 		return
 	
 	var battle_map = preload("res://scenes/maps/battle/battle_map.tscn").instance()
@@ -540,6 +543,38 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	battle_map.visible = false
 	
 	unit_position_manager.init_position(battle_map,grand_map_manifest_data.battle_map_size)
+	
+# so despawn mechanice is just only to hide
+# or to make zoom in to battle map not possible
+# not actualy despawn/remove from scene fo those battle map
+remotesync func _despawn_battle_map(tile_id :Vector2):
+	if zoomable_battle_map.has(tile_id):
+		zoomable_battle_map.erase(tile_id)
+		
+	for i in spawned_squad:
+		var squad :BaseSquad = i
+		
+		# force out of battle map
+		# yeet everyone out to nowhere
+		if squad.current_tile == tile_id:
+			if squad is InfantrySquad:
+				for infantry in squad.members:
+					infantry.stop(false)
+					infantry.translation = Vector3(-100, -100, -100)
+					infantry.set_sync(false)
+					
+			if squad is VehicleSquad:
+				squad.vehicle.stop(false)
+				squad.vehicle.translation = Vector3(-100, -100, -100)
+				squad.vehicle.set_sync(false)
+			
+			_on_grand_map_squad_exited_battle_map(squad.get_path(), battle_map_holder[squad.current_tile].get_path())
+			
+			squad.stop(false)
+			squad.set_hidden(false)
+			squad.in_battle_map = false
+		
+	on_battle_map_despawned(tile_id, battle_map_holder[tile_id])
 	
 func get_closes_zoomable_battle_map(from :Vector3) -> TileMapData:
 	var tiles :Array = zoomable_battle_map.values()
@@ -596,11 +631,11 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 		spawn_battle_map_base_building(tile_id, battle_map, index)
 		
 	battle_map.visible = false
-	ui.on_zoomable_battle_map_updated(zoomable_battle_map)
-	
 	on_battle_map_spawned(tile_id, battle_map)
 	
 func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
+	ui.on_zoomable_battle_map_updated(zoomable_battle_map)
+	
 	# check if its for bases and point
 	# and ignore it, cause we need to mark it
 	# for only dynamic one
@@ -610,12 +645,25 @@ func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	
 	on_dynamic_battle_map_spawned(tile_id, battle_map)
 	
+func on_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
+	ui.on_zoomable_battle_map_updated(zoomable_battle_map)
+	
+	# check if its for bases and point
+	# and ignore it, cause we need to mark it
+	# for only dynamic one
+	var mission = grand_map_mission_data
+	if tile_id in mission.bases + mission.points:
+		return
+		
+	on_dynamic_battle_map_despawned(tile_id, battle_map)
+	
 ########################################## dynamic battle map ############################################
 
 var contested_battle_map :Dictionary = {} # { Vector2 : ContestedArea }
 
 func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	if contested_battle_map.has(tile_id):
+		contested_battle_map[tile_id].visible = true
 		return
 	
 	var contested :ContestedArea = preload("res://assets/tile_highlight/contested_area.tscn").instance()
@@ -625,6 +673,10 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	
 	contested_battle_map[tile_id] = contested
 	
+func on_dynamic_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
+	if contested_battle_map.has(tile_id):
+		contested_battle_map[tile_id].visible = false
+		
 ########################################## battle map capture point ############################################
 
 var team_listen_radio :int
