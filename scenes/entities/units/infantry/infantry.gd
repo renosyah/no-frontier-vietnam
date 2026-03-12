@@ -70,7 +70,6 @@ var _using_ability :bool # like luncher or grenade
 
 var _current_anim :String = "iddle"
 var _weapon :Weapon
-var _launcher :Spatial
 var _melee_range :Array = []
 var _special_projectile :BaseProjectile
 
@@ -94,7 +93,6 @@ func _ready():
 	circle.set_surface_material(0, team_color_material)
 	
 	_weapon = weapon_scene.instance()
-	_launcher = launcher_scene.instance()
 	bag_holder.add_child(bag_scene.instance())
 	headgear_holder.add_child(hat_scene.instance())
 	vest_holder.add_child(vest_scene.instance())
@@ -106,7 +104,7 @@ func _ready():
 	_weapon.connect("weapon_finish_firing", self, "_on_weapon_finish_firing")
 	
 	weapon_holder.add_child(_weapon)
-	single_use_weapon.add_child(_launcher)
+	single_use_weapon.add_child(launcher_scene.instance())
 	
 	infantry_hit_register.unit = self
 	
@@ -420,8 +418,8 @@ remotesync func _fire_launcher(to):
 func _on_launcher_fired():
 	_using_ability = false
 	
-	if _is_master:
-		launcher = 0
+	if _is_master and not god_mode:
+		launcher = int(clamp(launcher - 1, 0, 2))
 	
 	if is_instance_valid(_special_projectile):
 		_special_projectile.launch()
@@ -471,7 +469,7 @@ remotesync func _use_grenade(to :Vector3):
 func _on_grenade_use():
 	_using_ability = false
 	
-	if _is_master:
+	if _is_master and not god_mode:
 		grenade = int(clamp(grenade - 1, 0, 3))
 		
 	if is_instance_valid(_special_projectile):

@@ -30,6 +30,8 @@ export var unit_voice :int # 1=us, 2:viet
 export var hp :int = 3
 export var max_hp :int = 3
 
+export var god_mode :bool = false
+
 export var is_dead :bool = false
 export var is_selectable :bool = false
 export var is_combatan :bool = true
@@ -99,8 +101,8 @@ func _get_tile_path(to :Vector2) -> Array:
 		
 	return paths
 	
-func stop():
-	if _is_master:
+func stop(use_rpc :bool = true):
+	if _is_master or not use_rpc:
 		_stop()
 		return
 		
@@ -283,7 +285,7 @@ func take_damage(damage :int):
 	hp = int(clamp(hp - damage, 0, max_hp))
 	rpc_unreliable("_taking_damage", damage, hp)
 	
-	if hp <= 0:
+	if hp <= 0 and not god_mode:
 		set_dead()
 	
 remotesync func _taking_damage(damage :int, hp_left: int):

@@ -56,7 +56,22 @@ func on_zoomable_battle_map_updated(zoomable_battle_map :Dictionary):
 		item.button_color = Color.white
 		item.connect("pressed", self, "_on_bm_shortcut_press", [key])
 		bm_shortcut_holder.add_child(item)
-		bm_shortcut_holder.move_child(item, 1)
+		
+		var centerIndex = int(bm_shortcut_holder.get_child_count() / 2)
+		bm_shortcut_holder.move_child(item, centerIndex)
+		
+	for key in keys:
+		if (point + bases).has(key):
+			continue
+			
+		var item = preload("res://menu/gameplay/ui/battle_map_shortcut/bm_shortcut.tscn").instance()
+		item.button_icon = preload("res://assets/user_interface/icons/sword.png")
+		item.button_color = Color.white
+		item.connect("pressed", self, "_on_bm_shortcut_press", [key])
+		bm_shortcut_holder.add_child(item)
+		
+		var centerIndex = int(bm_shortcut_holder.get_child_count() / 2)
+		bm_shortcut_holder.move_child(item, centerIndex)
 		
 func _on_bm_shortcut_press(tile_id :Vector2):
 	emit_signal("to_battle_map", tile_id)

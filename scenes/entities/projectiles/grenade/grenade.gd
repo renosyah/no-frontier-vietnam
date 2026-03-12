@@ -6,6 +6,7 @@ var top_down_point :Vector3
 onready var timer = $Timer
 onready var animation_player = $AnimationPlayer
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
+onready var trail_render = $grenade/TrailRender
 
 # override
 func launch():
@@ -18,6 +19,7 @@ func launch():
 	set_process(true)
 	look_at(top_down_point, Vector3.UP)
 	animation_player.play("rotate")
+	trail_render.render = true
 	
 # override
 func on_travel(delta):

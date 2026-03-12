@@ -74,6 +74,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://bot/battle_map_bot.gd"
 }, {
+"base": "Node",
+"class": "BattleMapDirector",
+"language": "GDScript",
+"path": "res://bot/battle_map_director.gd"
+}, {
 "base": "BaseTileObject",
 "class": "BattleMapTransitPoint",
 "language": "GDScript",
@@ -88,6 +93,11 @@ _global_script_classes=[ {
 "class": "ClickableScreen",
 "language": "GDScript",
 "path": "res://assets/user_interface/clickable_screen/clickable_screen.gd"
+}, {
+"base": "Spatial",
+"class": "ContestedArea",
+"language": "GDScript",
+"path": "res://assets/tile_highlight/contested_area.gd"
 }, {
 "base": "BaseCustomParticle",
 "class": "CustomMeshParticle",
@@ -373,9 +383,11 @@ _global_script_class_icons={
 "BaseTileObject": "",
 "BaseTileUnit": "",
 "BattleMapBot": "",
+"BattleMapDirector": "",
 "BattleMapTransitPoint": "",
 "ClickableFloor": "",
 "ClickableScreen": "",
+"ContestedArea": "",
 "CustomMeshParticle": "",
 "CustomTextParticle": "",
 "DragableCard": "",

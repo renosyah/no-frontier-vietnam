@@ -519,6 +519,13 @@ func setup_battle_map():
 #		_spawn_battle_map(id, battle_map_pos[id])
 	
 remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
+	if not zoomable_battle_map.has(id):
+		for tile in grand_map_data.tiles:
+			if tile.id == id:
+				zoomable_battle_map[id] = tile
+				break
+	
+	# dont bother spawn if it already created
 	if battle_map_holder.has(id):
 		return
 	
@@ -534,12 +541,6 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	
 	unit_position_manager.init_position(battle_map,grand_map_manifest_data.battle_map_size)
 	
-	for tile in grand_map_data.tiles:
-		if tile.id == id:
-			zoomable_battle_map[id] = tile
-			break
-			
-			
 func get_closes_zoomable_battle_map(from :Vector3) -> TileMapData:
 	var tiles :Array = zoomable_battle_map.values()
 	if tiles.empty():
@@ -596,6 +597,33 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 		
 	battle_map.visible = false
 	ui.on_zoomable_battle_map_updated(zoomable_battle_map)
+	
+	on_battle_map_spawned(tile_id, battle_map)
+	
+func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
+	# check if its for bases and point
+	# and ignore it, cause we need to mark it
+	# for only dynamic one
+	var mission = grand_map_mission_data
+	if tile_id in mission.bases + mission.points:
+		return
+	
+	on_dynamic_battle_map_spawned(tile_id, battle_map)
+	
+########################################## dynamic battle map ############################################
+
+var contested_battle_map :Dictionary = {} # { Vector2 : ContestedArea }
+
+func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
+	if contested_battle_map.has(tile_id):
+		return
+	
+	var contested :ContestedArea = preload("res://assets/tile_highlight/contested_area.tscn").instance()
+	contested.name = "contested_%s" % tile_id
+	grand_map.add_child(contested)
+	contested.translation = grand_map.get_tile_instance(tile_id).translation
+	
+	contested_battle_map[tile_id] = contested
 	
 ########################################## battle map capture point ############################################
 
@@ -953,7 +981,9 @@ func _on_grand_map_infantry_squad_member_died(squad :BaseSquad, unit :Infantry):
 		
 func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
 	unit_position_manager.remove_from_position(grand_map, squad)
-	
+	if spawned_squad.has(squad):
+		spawned_squad.erase(squad)
+		
 	yield(get_tree(),"idle_frame")
 	squad.queue_free()
 	
@@ -977,7 +1007,7 @@ remotesync func _on_grand_map_infatry_squad_entered_vehicle(unit :NodePath, tile
 		var infantry :Infantry = i
 		unit_position_manager.remove_from_position(tile_map, infantry)
 	
-func on_team_grand_map_squad_moving(unit :BaseTileUnit, from :Vector2, to :Vector2):
+func on_team_grand_map_squad_moving(_unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# check if to is a active battle map tile
 	var to_in_zone :bool = to in zoomable_battle_map.keys()
 	

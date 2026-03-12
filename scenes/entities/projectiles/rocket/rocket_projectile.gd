@@ -4,12 +4,13 @@ var grenade_collision = preload("res://scenes/entities/projectiles/grenade/grena
 
 onready var animation_player = $AnimationPlayer
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
+onready var trail_render = $Spatial/rocket/TrailRender
 
 func launch():
 	.launch()
 	
 	animation_player.play("launch")
-	
+	trail_render.render = true
 	
 func on_stop():
 	set_process(false)
