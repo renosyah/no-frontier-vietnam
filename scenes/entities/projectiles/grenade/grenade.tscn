@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://scenes/entities/projectiles/grenade/grenade.gd" type="Script" id=1]
 [ext_resource path="res://scenes/entities/units/infantry/skin_color_dark_material.tres" type="Material" id=2]
@@ -6,7 +6,6 @@
 [ext_resource path="res://scenes/entities/gear/weapons/grenade/grenade.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://assets/tile_highlight/contested_area_material.tres" type="Material" id=5]
 [ext_resource path="res://assets/sounds/vehicle/explode.wav" type="AudioStream" id=6]
-[ext_resource path="res://addons/TrailRender/TrailRender.gd" type="Script" id=7]
 [ext_resource path="res://addons/TrailRender/TrailRender.tscn" type="PackedScene" id=8]
 
 [sub_resource type="Curve" id=14]
@@ -147,20 +146,19 @@ albedo_color = Color( 1, 0.447059, 0, 1 )
 script = ExtResource( 1 )
 speed = 2.0
 
+[node name="TrailRender" parent="." instance=ExtResource( 8 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.169306 )
+width_curve = SubResource( 14 )
+max_points = 25
+material = SubResource( 15 )
+render = false
+
 [node name="grenade" type="MeshInstance" parent="."]
 mesh = ExtResource( 4 )
 software_skinning_transform_normals = false
 material/0 = ExtResource( 3 )
 material/1 = ExtResource( 2 )
 material/2 = ExtResource( 5 )
-
-[node name="TrailRender" type="Spatial" parent="grenade" instance=ExtResource( 8 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.106585 )
-script = ExtResource( 7 )
-width_curve = SubResource( 14 )
-max_points = 25
-material = SubResource( 15 )
-render = false
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 2.0

@@ -95,12 +95,23 @@ func _is_need_spacing(infantry :Infantry, unit_pos :Dictionary) -> bool:
 		
 	return not _is_empty_here(id, unit_pos, infantry)
 	
+var _cancel_task :bool
+
+remote func _stop():
+	._stop()
+	_cancel_task = true
+	
 func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	if not task_checker.is_stopped():
 		return
 		
 	var _task_completed :bool = false
 	while not _task_completed:
+		if _cancel_task:
+			_task_completed = true
+			_cancel_task = false
+			break
+			
 		var _all_arived :bool = true
 		for i in members:
 			var infantry :Infantry = i
@@ -137,6 +148,11 @@ func enter_vehicle(at_battle_map_id :Vector2, vehicle):
 		
 	var _task_completed :bool = false
 	while not _task_completed:
+		if _cancel_task:
+			_task_completed = true
+			_cancel_task = false
+			break
+		
 		var _all_arived :bool = true
 		for i in members:
 			var infantry :Infantry = i

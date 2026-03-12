@@ -24,7 +24,7 @@ func _ready():
 	
 	Global.connect("on_global_tick", self, "_on_global_tick")
 	
-func on_global_tick():
+func _on_global_tick():
 	if not _dynamic_battle_maps.empty():
 		for id in _dynamic_battle_maps:
 			var team :int = _get_team_capture_tile(id)
@@ -56,7 +56,10 @@ func _get_team_capture_tile(tile_id :Vector2) -> int:
 func _get_teams(units :Array) -> Array:
 	var teams :Array = []
 	for i in units:
-		var unit :BaseTileUnit
+		var unit :BaseTileUnit = i
+		if not is_instance_valid(unit):
+			continue
+			
 		if not teams.has(unit.team):
 			teams.append(unit.team)
 			

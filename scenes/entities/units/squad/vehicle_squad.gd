@@ -28,9 +28,20 @@ func move_to(tile_id :Vector2):
 	
 	.move_to(tile_id)
 	
+var _cancel_task :bool
+
+remote func _stop():
+	._stop()
+	_cancel_task = true
+	
 func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	var _task_completed :bool = false
 	while not _task_completed:
+		if _cancel_task:
+			_task_completed = true
+			_cancel_task = false
+			break
+		
 		var _all_arived :bool = true
 		for i in [vehicle]:
 			if i.current_tile != at_battle_map_id:

@@ -6,7 +6,7 @@ var top_down_point :Vector3
 onready var timer = $Timer
 onready var animation_player = $AnimationPlayer
 onready var audio_stream_player_3d = $AudioStreamPlayer3D
-onready var trail_render = $grenade/TrailRender
+onready var trail_render = $TrailRender
 
 # override
 func launch():
