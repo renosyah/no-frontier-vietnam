@@ -111,8 +111,8 @@ func _on_grand_map_ready():
 	NetworkLobbyManager.set_ready()
 	setup_base_and_point()
 	
-# var bases :Dictionary = {} # [team_id : BaseTileObject] 
-var points :Dictionary = {} # [team_id : BaseTileObject] 
+# var bases :Dictionary = {} # [Vector2 : BaseTileObject] 
+var capture_points :Dictionary = {} # [Vector2 : BaseTileObject] 
 
 func setup_base_and_point():
 	# remove default object spawn by map
@@ -132,7 +132,7 @@ func setup_base_and_point():
 		grand_map.add_child(point)
 		point.translation = grand_map.get_tile_instance(id).translation
 		point.set_color(MaterialsIndex.team_colors[0])
-		points[id] = point
+		capture_points[id] = point
 		
 ########################################## camera  ############################################
 
@@ -647,6 +647,15 @@ func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	
 func on_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
 	ui.on_zoomable_battle_map_updated(zoomable_battle_map)
+	
+	# force camera to back out
+	if current_cam == movable_camera_battle and current_battle_map == battle_map:
+		if is_instance_valid(ui.selected_battle_map_unit):
+			ui.selected_battle_map_unit.set_selected(false)
+			ui.selected_battle_map_unit = null
+		
+		use_grand_camera()
+		hide_battle_map()
 	
 	# check if its for bases and point
 	# and ignore it, cause we need to mark it
@@ -1395,6 +1404,35 @@ func order_infatry_squad_to_exit_vehicle(squad :InfantrySquad, grand_map_tile_id
 		# add to spotting mechanic
 		# to entered battle map
 		unit_position_manager.add_to_position(infantry.tile_map, infantry)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
