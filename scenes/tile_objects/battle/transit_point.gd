@@ -3,6 +3,7 @@ class_name BattleMapTransitPoint
 
 signal transit_point_click(t)
 
+
 var battle_map :BaseTileMap
 
 # tile id if this transit map id tile

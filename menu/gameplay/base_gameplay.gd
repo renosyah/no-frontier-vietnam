@@ -14,8 +14,8 @@ func _ready():
 	
 	setup_ambient_audio()
 	setup_unit_position_manager()
-	setup_battle_map()
 	spawn_grand_map()
+	setup_battle_map()
 	spawn_movable_camera()
 	setup_clickable_floor()
 	setup_ui()
@@ -805,6 +805,7 @@ func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
 		battle_map.add_child(t)
 		t.set_label("Go to %s" % battle_map_name)
 		t.translation = battle_map.get_tile_instance(pos_point).translation
+		t.visible = not grand_map_tile_id in blocked_grand_map_tiles
 		
 		if not transit_points.has(tile_id):
 			transit_points[tile_id] = []
@@ -812,6 +813,9 @@ func create_transit_point(tile_id :Vector2, battle_map :BaseTileMap):
 		transit_points[tile_id].append(t)
 		
 func _on_transit_point_click(t :BattleMapTransitPoint):
+	if t.grand_map_tile_id in blocked_grand_map_tiles:
+		return
+		
 	if is_instance_valid(ui.selected_battle_map_unit):
 		order_squad_to_exit_battle_map(ui.selected_battle_map_unit.squad, t.battle_map_tile_id, t.grand_map_tile_id)
 		ui.selected_battle_map_unit = null
