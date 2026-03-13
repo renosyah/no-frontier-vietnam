@@ -2,6 +2,7 @@ extends BaseGameplay
 
 onready var battle_map_bot = $battle_map_bot
 onready var battle_map_director = $battle_map_director
+onready var pending_task = $pending_task
 
 func _ready():
 	battle_map_bot.team = 3
@@ -37,8 +38,16 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 			squad.set_hidden(true)
 			order_squad_to_enter_battle_map(squad, tile_id, tile_id)
 			
-func _on_battle_map_director_spawn_battle_map(tile_id :Vector2):
+func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
+	.on_battle_map_spawned(tile_id, battle_map)
+	
+	if pending_task.has_task():
+		pending_task.run()
+	
+func _on_battle_map_director_spawn_battle_map(tile_id :Vector2, bot_count :int):
 	rpc("_spawn_battle_map", tile_id, battle_map_pos[tile_id])
+	
+	pending_task.add_task(self,"spawn_bot_infantry", ["BOT_1", tile_id, bot_count])
 
 func _on_battle_map_director_despawn_battle_map(tile_id):
 	rpc("_despawn_battle_map", tile_id)
@@ -46,8 +55,43 @@ func _on_battle_map_director_despawn_battle_map(tile_id):
 func _on_battle_map_director_update_contested_points(values :Array):
 	rpc_unreliable("_update_contested_points", values)
 
-
-
+func spawn_bot_infantry(bot_id :String, tile_id :Vector2, bot_count :int):
+	yield(get_tree(),"idle_frame")
+	
+	var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
+	infantry_squad.player_network_id = 1
+	infantry_squad.player_id = bot_id
+	infantry_squad.unit_name = "squad_infantry_%s" % Utils.create_unique_id()
+	infantry_squad.team = 0
+	infantry_squad.current_tile = tile_id
+	infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
+	infantry_squad.unit_voice = 2
+	
+	infantry_squad.members = []
+	for i in bot_count:
+		var stats :UnitStatsData = UnitStatsData.new()
+		stats.soldier_name = SoldierNames.get_random_viet_name()
+		stats.randomize_stats()
+		
+		var infantry :InfantryData = preload("res://data/unit_data/infantry/nva_riflement.tres").duplicate()
+		infantry.player_network_id = 1
+		infantry.player_id = bot_id
+		infantry.unit_name = "infantry_%s_%s" % [Utils.create_unique_id(), i]
+		infantry.team = 0
+		infantry.current_tile = Vector2.ZERO
+		infantry.speed = 1.3
+		infantry.position = Vector3.ZERO
+		infantry.scene_index = 0
+		
+		infantry.modified_max_hp = stats.get_max_hp(8)
+		infantry.modified_speed = stats.get_speed_multiplier()
+		infantry.stats = stats
+		infantry.role = infantry.role_riflement
+		infantry.make_variant(infantry.faction_nva)
+		
+		infantry_squad.members.append(infantry)
+		
+	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
 
 
 

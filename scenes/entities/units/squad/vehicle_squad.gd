@@ -44,6 +44,7 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	_has_loop_task = true
 	
 	var _task_completed :bool = false
+	
 	while not _task_completed:
 		if _cancel_task:
 			_task_completed = true

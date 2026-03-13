@@ -217,26 +217,10 @@ expand_icon = true
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/HBoxContainer"]
 margin_left = 84.0
-margin_right = 516.0
-margin_bottom = 1024.0
-mouse_filter = 2
-size_flags_horizontal = 3
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/Control/HBoxContainer"]
-margin_left = 520.0
 margin_right = 600.0
 margin_bottom = 1024.0
 mouse_filter = 2
-alignment = 1
-
-[node name="spawn_bot_infantry" type="Button" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer2"]
-self_modulate = Color( 1, 0, 0, 1 )
-margin_top = 472.0
-margin_right = 80.0
-margin_bottom = 552.0
-rect_min_size = Vector2( 80, 80 )
-icon = ExtResource( 15 )
-expand_icon = true
+size_flags_horizontal = 3
 
 [node name="fps_ping_displayer" parent="CanvasLayer/Control" instance=ExtResource( 4 )]
 margin_top = 974.0

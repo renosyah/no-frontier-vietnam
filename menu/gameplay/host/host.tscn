@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://menu/gameplay/host/host.gd" type="Script" id=1]
 [ext_resource path="res://bot/battle_map_bot.tscn" type="PackedScene" id=2]
 [ext_resource path="res://bot/battle_map_director.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/pending_task/pending_task.tscn" type="PackedScene" id=4]
 
 [node name="gameplay" type="Node"]
 script = ExtResource( 1 )
@@ -10,6 +11,8 @@ script = ExtResource( 1 )
 [node name="battle_map_bot" parent="." instance=ExtResource( 2 )]
 
 [node name="battle_map_director" parent="." instance=ExtResource( 3 )]
+
+[node name="pending_task" parent="." instance=ExtResource( 4 )]
 
 [connection signal="despawn_battle_map" from="battle_map_director" to="." method="_on_battle_map_director_despawn_battle_map"]
 [connection signal="spawn_battle_map" from="battle_map_director" to="." method="_on_battle_map_director_spawn_battle_map"]

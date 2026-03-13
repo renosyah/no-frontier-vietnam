@@ -2,11 +2,13 @@ extends Node
 class_name BattleMapDirector
 
 signal update_contested_points(values)
-signal spawn_battle_map(tile_id)
+signal spawn_battle_map(tile_id, bot_count)
 signal despawn_battle_map(tile_id)
 
+export var director_time :float = 25
 export var limit_battle_map :int = 2
 export var capture_point_value :int = 10
+export var bot_spawned_count :int = 8
 
 var grand_map :BaseTileMap # refrence from gameplay
 var unit_position_manager :UnitPositionManager # refrence from gameplay
@@ -20,6 +22,7 @@ onready var _timer = $Timer
 
 func _ready():
 	_rng.randomize()
+	_timer.wait_time = _rng.randf_range(director_time - 2, director_time + 2)
 	_timer.start()
 	
 	Global.connect("on_global_tick", self, "_on_global_tick")
@@ -65,6 +68,9 @@ func _on_global_tick():
 	emit_signal("update_contested_points", values)
 	
 func _on_point_fully_captured(tile_id :Vector2):
+	_rng.randomize()
+	_timer.wait_time = _rng.randf_range(director_time - 2, director_time + 2)
+	_timer.start()
 	
 	# will only despawn dynamic battle map
 	# it will not touch bases or capture point
@@ -92,23 +98,25 @@ func _get_teams(units :Array) -> Array:
 		if not is_instance_valid(unit):
 			continue
 			
+		# only infantry can capture tile
+		if unit is VehicleSquad:
+			continue
+			
 		if not teams.has(unit.team):
 			teams.append(unit.team)
 			
 	return teams
 	
 func _on_Timer_timeout():
-	_rng.randomize()
-	_timer.start()
-	
 	if _dynamic_battle_maps.size() < limit_battle_map:
 		_spawn_battle_map()
-	
+		
+		_rng.randomize()
+		_timer.wait_time = _rng.randf_range(director_time - 2, director_time + 2)
+		_timer.start()
+		
 func battle_map_spawned(tile_id :Vector2 ):
 	_dynamic_battle_maps.append(tile_id)
-	
-func _despawn_battle_map(tile_id :Vector2):
-	emit_signal("despawn_battle_map", tile_id)
 	
 func _spawn_battle_map():
 	var clean :Array = []
@@ -122,7 +130,8 @@ func _spawn_battle_map():
 		return
 		
 	Utils.shuffle_array(_rng, clean)
-	emit_signal("spawn_battle_map", clean.pick_random())
+	var bot_count :int = int(_rng.randf_range(bot_spawned_count - 2, bot_spawned_count + 2))
+	emit_signal("spawn_battle_map", clean.pick_random(), bot_count)
 
 
 

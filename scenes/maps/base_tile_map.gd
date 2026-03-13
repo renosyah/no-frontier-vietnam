@@ -231,7 +231,7 @@ func _get_navigation(_nav :AStar2D, start :int, end :int, _blocked_nav_ids :Arra
 	# open blocked tile
 	for navigation_id in _restored_disabled_point:
 		_nav.set_point_disabled(navigation_id, false)
-			
+		
 	return paths
 	
 func _update_navigations():

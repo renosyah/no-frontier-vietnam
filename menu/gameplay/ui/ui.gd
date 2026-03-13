@@ -11,7 +11,6 @@ onready var battle_map_overlay_ui = $CanvasLayer/battle_map_overlay_ui
 
 onready var spawn_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_infantry
 onready var spawn_heli = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_heli
-onready var spawn_bot_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer2/spawn_bot_infantry
 
 onready var unit_stats = $CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats
 onready var game_resource = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control2/game_resource
@@ -23,7 +22,6 @@ var selected_battle_map_unit :BaseTileUnit setget _on_selected_battle_map_unit
 var selected_squad :BaseSquad setget _on_selected_squad
 
 func _ready():
-	spawn_bot_infantry.visible = NetworkLobbyManager.is_server()
 	unit_stats.visible = false
 	
 func on_zoomable_battle_map_updated(zoomable_battle_map :Dictionary):

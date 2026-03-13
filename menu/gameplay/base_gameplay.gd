@@ -94,6 +94,7 @@ onready var grand_map_manifest_data :GrandMapFileManifest = Global.grand_map_man
 onready var grand_map_data :TileMapFileData = Global.grand_map_data
 onready var grand_map_mission_data :GrandMapFileMission = Global.grand_map_mission_data
 onready var battle_map_datas :Dictionary = Global.battle_map_datas
+onready var blocked_grand_map_tiles :Array = []
 
 var grand_map :BaseTileMap
 
@@ -128,6 +129,10 @@ func setup_base_and_point():
 		base.translation = grand_map.get_tile_instance(id).translation
 		base.set_color(Global.get_base_material_color(idx, player.player_team))
 		contested_tile_object[id] = base
+		
+		if idx != player.player_team:
+			blocked_grand_map_tiles.append(id)
+		
 		idx += 1
 		
 	for id in grand_map_mission_data.points:
@@ -225,7 +230,6 @@ func setup_ui():
 	
 	ui.spawn_infantry.connect("pressed", self, "_on_spawn_infantry")
 	ui.spawn_heli.connect("pressed", self, "_on_spawn_heli_press")
-	ui.spawn_bot_infantry.connect("pressed", self, "_on_spawn_bot_infantry")
 	
 	use_grand_camera()
 	
@@ -324,46 +328,6 @@ func _on_spawn_heli_press():
 	
 	rpc("_spawn_grand_map_vehicle", vehicle_squad.to_bytes())
 	
-func _on_spawn_bot_infantry():
-	var tile_id :Vector2 = grand_map_mission_data.points[0]
-	
-	var id = "BOT_1"
-	var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
-	infantry_squad.player_network_id = 1
-	infantry_squad.player_id = id
-	infantry_squad.unit_name = "squad_infantry_%s" % Utils.create_unique_id()
-	infantry_squad.team = 3
-	infantry_squad.current_tile = tile_id
-	infantry_squad.position = grand_map.get_tile_instance(tile_id).global_position
-	infantry_squad.unit_voice = 2
-	
-	infantry_squad.members = []
-	for i in 6:
-		var stats :UnitStatsData = UnitStatsData.new()
-		stats.soldier_name = SoldierNames.get_random_viet_name()
-		stats.soldier_potrait_index = int(rand_range(10, 19))
-		stats.randomize_stats()
-		
-		var infantry :InfantryData = preload("res://data/unit_data/infantry/nva_riflement.tres").duplicate()
-		infantry.player_network_id = 1
-		infantry.player_id = id
-		infantry.unit_name = "infantry_%s_%s" % [Utils.create_unique_id(), i]
-		infantry.team = 3
-		infantry.current_tile = Vector2.ZERO
-		infantry.speed = 1.3
-		infantry.position = Vector3.ZERO
-		infantry.scene_index = 0
-		
-		infantry.modified_max_hp = stats.get_max_hp(8)
-		infantry.modified_speed = stats.get_speed_multiplier()
-		infantry.stats = stats
-		infantry.role = infantry.role_riflement
-		infantry.make_variant(infantry.faction_nva)
-		
-		infantry_squad.members.append(infantry)
-		
-	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
-	
 func _on_camera_down_zoom_in():
 	if current_cam != movable_camera_room:
 		return
@@ -411,6 +375,9 @@ func _on_floor_clicked(pos :Vector3):
 			on_battle_map_clicked_input(current_battle_map.get_closes_tile(pos))
 			
 func on_grandmap_clicked_input(tile :TileMapData):
+	if blocked_grand_map_tiles.has(tile.id):
+		return
+		
 	if is_instance_valid(ui.selected_squad):
 		var unit :BaseTileUnit = ui.selected_squad
 		unit.tile_map = grand_map
@@ -681,7 +648,7 @@ var contested_tile_object :Dictionary = {} # { Vector2 : ContestedTile }
 
 func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	if contested_tile_object.has(tile_id):
-		contested_tile_object[tile_id].visible = true
+		#contested_tile_object[tile_id].visible = true
 		var contested_tile:ContestedTile = contested_tile_object[tile_id]
 		contested_tile.team = 0
 		contested_tile.point = 100
@@ -696,8 +663,9 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	contested_tile_object[tile_id] = contested
 	
 func on_dynamic_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
-	if contested_tile_object.has(tile_id):
-		contested_tile_object[tile_id].visible = false
+	pass
+#	if contested_tile_object.has(tile_id):
+#		contested_tile_object[tile_id].visible = false
 	
 remotesync func _update_contested_points(values :Array):
 	for value in values:
@@ -1071,7 +1039,9 @@ func _on_grand_map_infantry_squad_member_died(squad :BaseSquad, unit :Infantry):
 		Global.unit_responded(RadioChatters.CASUALTY, unit.unit_voice)
 		
 func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
+	# remove from spotting mechanic
 	unit_position_manager.remove_from_position(grand_map, squad)
+	
 	if spawned_squad.has(squad):
 		spawned_squad.erase(squad)
 		
@@ -1092,6 +1062,9 @@ func _on_grand_map_infatry_squad_task_enter_vehicle(squad :InfantrySquad, vehicl
 remotesync func _on_grand_map_infatry_squad_entered_vehicle(unit :NodePath, tile_map_path :NodePath):
 	var squad :InfantrySquad = get_node_or_null(unit)
 	var tile_map :BaseTileMap = get_node_or_null(tile_map_path)
+	
+	# remov from spotting mechanic
+	unit_position_manager.remove_from_position(grand_map, squad)
 	
 	for i in squad.members:
 		# remove from spotting mechanic
@@ -1357,25 +1330,43 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 		vehicle.attack_move = false
 		vehicle.unit_position = {}
 		vehicle.tile_map = battle_map_holder[squad.current_tile]
+		
+		# if set path but not moving, then it stuck
+		# stop all, unit are stucked
 		vehicle.move_to(battle_map_tile_id)
+		if not vehicle.is_moving():
+			return
+		
 		vehicle.set_selected(false)
 		vehicle.is_selectable = false
-		
+
 	if squad is InfantrySquad:
+		var stucked_units :Array = []
 		for i in squad.members:
 			var infantry :Infantry = i
 			
 			# remove from spotting mechanic
 			# from leaved battle map
 			unit_position_manager.remove_from_position(infantry.tile_map, infantry)
-				
+			
 			infantry.attack_move = false
 			infantry.unit_position = {}
 			infantry.tile_map = battle_map_holder[squad.current_tile]
+			
+			# if set path but not moving, then it stuck
+			# stop all, unit are stucked
 			infantry.move_to(battle_map_tile_id)
+			if not infantry.is_moving():
+				stucked_units.append(1)
+			
+		if not stucked_units.empty():
+			return
+			
+		for i in squad.members:
+			var infantry :Infantry = i
 			infantry.set_selected(false)
 			infantry.is_selectable = false
-		
+			
 	squad.exit_battle_map(battle_map_tile_id, grand_map_tile_id)
 	
 func order_infatry_squad_to_enter_vehicle(infantry :Infantry, vehicle :Vehicle):
@@ -1410,6 +1401,9 @@ func order_infatry_squad_to_exit_vehicle(squad :InfantrySquad, grand_map_tile_id
 			
 	squad.current_tile = grand_map_tile_id
 	squad.translation = grand_map.get_tile_instance(grand_map_tile_id).global_position
+	
+	# add to spotting mechanic
+	unit_position_manager.add_to_position(grand_map, squad)
 	
 	for member in squad.members:
 		var infantry :Infantry = member
