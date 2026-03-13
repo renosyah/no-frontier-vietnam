@@ -2,8 +2,9 @@ extends Node
 class_name BattleMapDirector
 
 signal update_contested_points(values)
-signal spawn_battle_map(tile_id, bot_count)
+signal spawn_battle_map(tile_id)
 signal despawn_battle_map(tile_id)
+signal spawn_unit_to_battle_map(tile_id, bot_count)
 
 export var director_time :float = 25
 export var limit_battle_map :int = 2
@@ -30,6 +31,9 @@ func _ready():
 func _on_global_tick():
 	var values :Array = [] # [ [tile_object node_path, team_capturing, team_owner, point] ]
 	for tile_id in contested_tile_object.keys():
+		if not tile_id in zoomable_battle_map.keys():
+			continue
+			
 		var team_capturing :int = _get_team_capture_tile(tile_id)
 		var tile_object :ContestedTile = contested_tile_object[tile_id]
 		
@@ -117,6 +121,8 @@ func _on_Timer_timeout():
 		
 func battle_map_spawned(tile_id :Vector2 ):
 	_dynamic_battle_maps.append(tile_id)
+	var bot_count :int = int(_rng.randf_range(bot_spawned_count - 2, bot_spawned_count + 2))
+	emit_signal("spawn_unit_to_battle_map", tile_id, bot_count)
 	
 func _spawn_battle_map():
 	var clean :Array = []
@@ -130,8 +136,8 @@ func _spawn_battle_map():
 		return
 		
 	Utils.shuffle_array(_rng, clean)
-	var bot_count :int = int(_rng.randf_range(bot_spawned_count - 2, bot_spawned_count + 2))
-	emit_signal("spawn_battle_map", clean.pick_random(), bot_count)
+	
+	emit_signal("spawn_battle_map", clean.pick_random())
 
 
 

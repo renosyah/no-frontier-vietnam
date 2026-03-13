@@ -63,6 +63,9 @@ func is_weapon_jammed() -> bool:
 	jam_chance = clamp(jam_chance, 0.1, 0.4)
 	return _rng.randf() < jam_chance
 	
+func repair_weapon():
+	durability = int(clamp(durability + durability_decrease_rate, 0 ,max_durability))
+	
 func reload():
 	var ammo_needed = capacity - ammo
 	var ammo_to_load = min(ammo_needed, reserve_ammo)

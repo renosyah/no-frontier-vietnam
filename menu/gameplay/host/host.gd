@@ -2,7 +2,6 @@ extends BaseGameplay
 
 onready var battle_map_bot = $battle_map_bot
 onready var battle_map_director = $battle_map_director
-onready var pending_task = $pending_task
 
 func _ready():
 	battle_map_bot.team = 3
@@ -31,33 +30,17 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	
 	battle_map_director.battle_map_spawned(tile_id)
 	
-	for i in spawned_squad:
-		var squad :BaseSquad = i
-		if squad.current_tile == tile_id:
-			squad.stop(false)
-			squad.set_hidden(true)
-			order_squad_to_enter_battle_map(squad, tile_id, tile_id)
-			
-func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
-	.on_battle_map_spawned(tile_id, battle_map)
-	
-	if pending_task.has_task():
-		pending_task.run()
-	
-func _on_battle_map_director_spawn_battle_map(tile_id :Vector2, bot_count :int):
+func _on_battle_map_director_spawn_battle_map(tile_id :Vector2):
 	rpc("_spawn_battle_map", tile_id, battle_map_pos[tile_id])
 	
-	pending_task.add_task(self,"spawn_bot_infantry", ["BOT_1", tile_id, bot_count])
-
 func _on_battle_map_director_despawn_battle_map(tile_id):
 	rpc("_despawn_battle_map", tile_id)
 
 func _on_battle_map_director_update_contested_points(values :Array):
 	rpc_unreliable("_update_contested_points", values)
 
-func spawn_bot_infantry(bot_id :String, tile_id :Vector2, bot_count :int):
-	yield(get_tree(),"idle_frame")
-	
+func _on_battle_map_director_spawn_unit_to_battle_map(tile_id :Vector2, bot_count :int):
+	var bot_id :String = "BOT_1"
 	var infantry_squad :InfantrySquadData = preload("res://data/unit_data/squad/infantry_squad.tres").duplicate()
 	infantry_squad.player_network_id = 1
 	infantry_squad.player_id = bot_id
@@ -83,11 +66,11 @@ func spawn_bot_infantry(bot_id :String, tile_id :Vector2, bot_count :int):
 		infantry.position = Vector3.ZERO
 		infantry.scene_index = 0
 		
-		infantry.modified_max_hp = stats.get_max_hp(8)
+		infantry.modified_max_hp = 3
 		infantry.modified_speed = stats.get_speed_multiplier()
 		infantry.stats = stats
 		infantry.role = infantry.role_riflement
-		infantry.make_variant(infantry.faction_nva)
+		infantry.make_variant(0)
 		
 		infantry_squad.members.append(infantry)
 		

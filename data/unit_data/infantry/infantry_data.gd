@@ -73,6 +73,16 @@ func make_variant(faction_idx :int):
 			role_at_specialist:
 				bag_scene_index = 8
 				
+	else:
+		var style = [1,2]
+		var vests = [2,3,4]
+		stats.soldier_name = SoldierNames.get_random_viet_name()
+		stats.soldier_potrait_index = int(rand_range(25, 34))
+		hat_scene_index = 4
+		bag_scene_index = 9
+		vest_scene_index = vests[randi() % 3]
+		uniform_style = style[randi() % 2]
+		
 func from_dictionary(_data : Dictionary):
 	.from_dictionary(_data)
 	

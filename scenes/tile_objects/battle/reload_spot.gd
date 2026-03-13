@@ -60,6 +60,8 @@ func _resupply_squad(unit :Infantry):
 			if w.ammo < w.capacity:
 				w.reload()
 				
+			w.repair_weapon()
+			
 			if w.reserve_ammo >= w.max_reserve_ammo:
 				continue
 				

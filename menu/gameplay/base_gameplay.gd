@@ -531,6 +531,10 @@ remotesync func _despawn_battle_map(tile_id :Vector2):
 		# force out of battle map
 		# yeet everyone out to nowhere
 		if squad.current_tile == tile_id:
+			squad.stop(false)
+			squad.set_hidden(false)
+			squad.in_battle_map = false
+			
 			if squad is InfantrySquad:
 				for infantry in squad.members:
 					infantry.stop(false)
@@ -542,11 +546,7 @@ remotesync func _despawn_battle_map(tile_id :Vector2):
 				squad.vehicle.translation = Vector3(-100, -100, -100)
 				squad.vehicle.set_sync(false)
 			
-			_on_grand_map_squad_exited_battle_map(squad.get_path(), battle_map_holder[squad.current_tile].get_path())
-			
-			squad.stop(false)
-			squad.set_hidden(false)
-			squad.in_battle_map = false
+			_on_grand_map_squad_exited_battle_map(squad.get_path(), battle_map_holder[tile_id].get_path())
 		
 	on_battle_map_despawned(tile_id, battle_map_holder[tile_id])
 	
@@ -647,6 +647,28 @@ func on_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
 var contested_tile_object :Dictionary = {} # { Vector2 : ContestedTile }
 
 func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
+	
+	# any squad stand in it will force to enter
+	for i in spawned_squad:
+		var squad :BaseSquad = i
+		if not is_instance_valid(squad):
+			continue
+			
+		if ui.selected_squad == squad:
+			ui.selected_squad.set_selected(false)
+			ui.selected_squad = null
+			
+		if squad.current_tile == tile_id:
+			squad.set_spotted(squad.team != player.player_team)
+			squad.set_hidden(squad.current_tile in zoomable_battle_map.keys())
+			squad.stop(false)
+			squad.in_battle_map = true
+			
+			# spawned squad
+			# imidiatly enter a battle map
+			# call function via non rpc
+			order_squad_to_enter_battle_map(squad, squad.current_tile, squad.current_tile)
+		
 	if contested_tile_object.has(tile_id):
 		#contested_tile_object[tile_id].visible = true
 		var contested_tile:ContestedTile = contested_tile_object[tile_id]
@@ -1330,16 +1352,16 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 		vehicle.attack_move = false
 		vehicle.unit_position = {}
 		vehicle.tile_map = battle_map_holder[squad.current_tile]
+		vehicle.set_selected(false)
 		
 		# if set path but not moving, then it stuck
 		# stop all, unit are stucked
 		vehicle.move_to(battle_map_tile_id)
 		if not vehicle.is_moving():
 			return
-		
-		vehicle.set_selected(false)
+			
 		vehicle.is_selectable = false
-
+	
 	if squad is InfantrySquad:
 		var stucked_units :Array = []
 		for i in squad.members:
@@ -1352,6 +1374,7 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 			infantry.attack_move = false
 			infantry.unit_position = {}
 			infantry.tile_map = battle_map_holder[squad.current_tile]
+			infantry.set_selected(false)
 			
 			# if set path but not moving, then it stuck
 			# stop all, unit are stucked
@@ -1364,7 +1387,6 @@ func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector
 			
 		for i in squad.members:
 			var infantry :Infantry = i
-			infantry.set_selected(false)
 			infantry.is_selectable = false
 			
 	squad.exit_battle_map(battle_map_tile_id, grand_map_tile_id)
@@ -1376,14 +1398,27 @@ func order_infatry_squad_to_enter_vehicle(infantry :Infantry, vehicle :Vehicle):
 		return
 		
 	var squad :InfantrySquad = infantry.squad
+	var stucked_units :Array = []
+	
 	for i in squad.members:
 		var member :Infantry = i
 		member.attack_move = false
 		member.tile_map = battle_map_holder[squad.current_tile]
-		member.move_to(vehicle.current_tile)
 		member.set_selected(false)
+		
+		# if set path but not moving, then it stuck
+		# stop all, unit are stucked
+		member.move_to(vehicle.current_tile)
+		if not member.is_moving():
+			stucked_units.append(1)
+			
+	if not stucked_units.empty():
+		return
+		
+	for i in squad.members:
+		var member :Infantry = i
 		member.is_selectable = false
-	
+		
 	squad.enter_vehicle(vehicle.current_tile, vehicle)
 	vehicle.prepare_take_passenger()
 	
