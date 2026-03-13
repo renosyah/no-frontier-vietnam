@@ -11,8 +11,7 @@ func _ready():
 	battle_map_director.unit_position_manager = unit_position_manager
 	battle_map_director.battle_map_pos = battle_map_pos
 	battle_map_director.zoomable_battle_map = zoomable_battle_map
-	battle_map_director.contested_battle_map = contested_battle_map
-	battle_map_director.capture_points = capture_points
+	battle_map_director.contested_tile_object = contested_tile_object
 
 func on_grand_map_squad_spawned(squad :BaseSquad):
 	.on_grand_map_squad_spawned(squad)
@@ -43,6 +42,11 @@ func _on_battle_map_director_spawn_battle_map(tile_id :Vector2):
 
 func _on_battle_map_director_despawn_battle_map(tile_id):
 	rpc("_despawn_battle_map", tile_id)
+
+func _on_battle_map_director_update_contested_points(values :Array):
+	rpc_unreliable("_update_contested_points", values)
+
+
 
 
 

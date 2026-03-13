@@ -1,5 +1,4 @@
-extends Spatial
-class_name ContestedArea
+extends ContestedTile
 
 onready var border = $border
 

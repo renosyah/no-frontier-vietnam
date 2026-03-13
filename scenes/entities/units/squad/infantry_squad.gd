@@ -95,22 +95,28 @@ func _is_need_spacing(infantry :Infantry, unit_pos :Dictionary) -> bool:
 		
 	return not _is_empty_here(id, unit_pos, infantry)
 	
+var _has_loop_task :bool
 var _cancel_task :bool
 
 remote func _stop():
 	._stop()
-	_cancel_task = true
+	
+	if _has_loop_task:
+		_cancel_task = true
 	
 func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
-	if not task_checker.is_stopped():
+	if _has_loop_task:
 		return
 		
+	_has_loop_task = true
+	
 	var _task_completed :bool = false
 	while not _task_completed:
 		if _cancel_task:
 			_task_completed = true
 			_cancel_task = false
-			break
+			_has_loop_task = false
+			return
 			
 		var _all_arived :bool = true
 		for i in members:
@@ -132,26 +138,30 @@ func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 		task_checker.start()
 		yield(task_checker,"timeout")
 		
+	_has_loop_task = false
 	.exit_battle_map(at_battle_map_id, to_grand_map_id)
 
 # i cant declare vehicle type class
 # it errr cycle if i do
 # at_battle_map_id id is just a id tile on battle map, dont confuse it
 func enter_vehicle(at_battle_map_id :Vector2, vehicle):
-	if not task_checker.is_stopped():
-		return
-		
 	# case if vehicle is dead
 	if not is_instance_valid(vehicle):
 		_reasemble_member_around(at_battle_map_id)
 		return
 		
+	if _has_loop_task:
+		return
+		
+	_has_loop_task = true
+	
 	var _task_completed :bool = false
 	while not _task_completed:
 		if _cancel_task:
 			_task_completed = true
 			_cancel_task = false
-			break
+			_has_loop_task = false
+			return
 		
 		var _all_arived :bool = true
 		for i in members:
@@ -172,6 +182,8 @@ func enter_vehicle(at_battle_map_id :Vector2, vehicle):
 		task_checker.start()
 		yield(task_checker,"timeout")
 		
+	_has_loop_task = false
+	
 	# case if vehicle is dead
 	if not is_instance_valid(vehicle):
 		_reasemble_member_around(at_battle_map_id)

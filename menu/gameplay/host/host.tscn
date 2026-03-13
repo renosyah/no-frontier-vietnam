@@ -13,3 +13,4 @@ script = ExtResource( 1 )
 
 [connection signal="despawn_battle_map" from="battle_map_director" to="." method="_on_battle_map_director_despawn_battle_map"]
 [connection signal="spawn_battle_map" from="battle_map_director" to="." method="_on_battle_map_director_spawn_battle_map"]
+[connection signal="update_contested_points" from="battle_map_director" to="." method="_on_battle_map_director_update_contested_points"]

@@ -1,6 +1,7 @@
 extends Node
 class_name BaseGameplay
 
+onready var is_server = NetworkLobbyManager.is_server()
 onready var player :PlayerData = Global.player_data
 
 func _ready():
@@ -111,9 +112,6 @@ func _on_grand_map_ready():
 	NetworkLobbyManager.set_ready()
 	setup_base_and_point()
 	
-# var bases :Dictionary = {} # [Vector2 : BaseTileObject] 
-var capture_points :Dictionary = {} # [Vector2 : BaseTileObject] 
-
 func setup_base_and_point():
 	# remove default object spawn by map
 	for id in grand_map_mission_data.bases + grand_map_mission_data.points:
@@ -121,18 +119,27 @@ func setup_base_and_point():
 		
 	var idx = 1
 	for id in grand_map_mission_data.bases:
-		var base :BaseTileObject = preload("res://scenes/tile_objects/grand/faction_base.tscn").instance()
+		var base :ContestedTile = preload("res://scenes/tile_objects/grand/faction_base.tscn").instance()
+		base.team = idx
+		base.name = "base_%s" % id
+		base.overlay_ui = ui.battle_map_overlay_ui.get_path()
+		base.camera = movable_camera_battle.camera.get_path()
 		grand_map.add_child(base)
 		base.translation = grand_map.get_tile_instance(id).translation
 		base.set_color(Global.get_base_material_color(idx, player.player_team))
+		contested_tile_object[id] = base
 		idx += 1
 		
 	for id in grand_map_mission_data.points:
-		var point :BaseTileObject = preload("res://scenes/tile_objects/grand/flag_pole.tscn").instance()
+		var point :ContestedTile = preload("res://scenes/tile_objects/grand/flag_pole.tscn").instance()
+		point.team = 0
+		point.name = "flag_pole_%s" % id
+		point.overlay_ui = ui.battle_map_overlay_ui.get_path()
+		point.camera = movable_camera_battle.camera.get_path()
 		grand_map.add_child(point)
 		point.translation = grand_map.get_tile_instance(id).translation
 		point.set_color(MaterialsIndex.team_colors[0])
-		capture_points[id] = point
+		contested_tile_object[id] = point
 		
 ########################################## camera  ############################################
 
@@ -610,6 +617,8 @@ func set_current_battle_map(battle_map_id :Vector2):
 	movable_camera_room.translation.x = tile.global_position.x
 	movable_camera_room.translation.z = tile.global_position.z + 1
 	
+	ui.battle_map_name.text = grand_map_manifest_data.battle_map_names[battle_map_id]
+	
 func hide_battle_map():
 	for i in battle_map_holder.values():
 		i.visible = false
@@ -668,23 +677,44 @@ func on_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
 	
 ########################################## dynamic battle map ############################################
 
-var contested_battle_map :Dictionary = {} # { Vector2 : ContestedArea }
+var contested_tile_object :Dictionary = {} # { Vector2 : ContestedTile }
 
 func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
-	if contested_battle_map.has(tile_id):
-		contested_battle_map[tile_id].visible = true
+	if contested_tile_object.has(tile_id):
+		contested_tile_object[tile_id].visible = true
+		var contested_tile:ContestedTile = contested_tile_object[tile_id]
+		contested_tile.team = 0
+		contested_tile.point = 100
+		contested_tile.set_color(MaterialsIndex.team_colors[0])
 		return
 	
-	var contested :ContestedArea = preload("res://assets/tile_highlight/contested_area.tscn").instance()
+	var contested :ContestedTile = preload("res://scenes/tile_objects/grand/contested_area.tscn").instance()
 	contested.name = "contested_%s" % tile_id
 	grand_map.add_child(contested)
 	contested.translation = grand_map.get_tile_instance(tile_id).translation
-	
-	contested_battle_map[tile_id] = contested
+	contested.set_color(MaterialsIndex.team_colors[0])
+	contested_tile_object[tile_id] = contested
 	
 func on_dynamic_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
-	if contested_battle_map.has(tile_id):
-		contested_battle_map[tile_id].visible = false
+	if contested_tile_object.has(tile_id):
+		contested_tile_object[tile_id].visible = false
+	
+remotesync func _update_contested_points(values :Array):
+	for value in values:
+		
+		# maybe latter? idk
+		var tile_id :Vector2 = value[0]
+		var contested :ContestedTile = get_node_or_null(value[1])
+		if not is_instance_valid(contested):
+			continue
+			
+		contested.team = value[2]
+		contested.point = value[3]
+		
+		if contested.point == contested.max_point:
+			var is_neutral = contested.team == 0
+			var m = MaterialsIndex.team_colors[0] if is_neutral else Global.get_base_material_color(contested.team, player.player_team)
+			contested.set_color(m)
 		
 ########################################## battle map capture point ############################################
 

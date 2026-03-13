@@ -1,10 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://assets/tile_highlight/contested_area.obj" type="ArrayMesh" id=1]
-[ext_resource path="res://assets/tile_highlight/contested_area.gd" type="Script" id=2]
 
 [node name="contested_area" type="Spatial"]
-script = ExtResource( 2 )
 
 [node name="border" type="MeshInstance" parent="."]
 transform = Transform( 1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 0, 0, 0 )

@@ -28,38 +28,48 @@ func move_to(tile_id :Vector2):
 	
 	.move_to(tile_id)
 	
+var _has_loop_task :bool
 var _cancel_task :bool
 
 remote func _stop():
 	._stop()
-	_cancel_task = true
+	
+	if _has_loop_task:
+		_cancel_task = true
 	
 func exit_battle_map(at_battle_map_id :Vector2, to_grand_map_id :Vector2):
+	if _has_loop_task:
+		return
+		
+	_has_loop_task = true
+	
 	var _task_completed :bool = false
 	while not _task_completed:
 		if _cancel_task:
 			_task_completed = true
 			_cancel_task = false
-			break
+			_has_loop_task = false
+			return
 		
 		var _all_arived :bool = true
-		for i in [vehicle]:
-			if i.current_tile != at_battle_map_id:
-				_all_arived = false
-				
-			else:
-				
-				# hide unit
-				# somewhere far LOL
-				i.stop()
-				i.translation = Vector3(-100, -100, -100)
-				i.set_sync(false)
-				
+		
+		if vehicle.current_tile != at_battle_map_id:
+			_all_arived = false
+			
+		else:
+			
+			# hide unit
+			# somewhere far LOL
+			vehicle.stop()
+			vehicle.translation = Vector3(-100, -100, -100)
+			vehicle.set_sync(false)
+			
 		_task_completed = _all_arived
 		
 		task_checker.start()
 		yield(task_checker,"timeout")
 		
+	_has_loop_task = false
 	.exit_battle_map(at_battle_map_id, to_grand_map_id)
 	
 func _get_tile_path(to :Vector2) -> Array:
