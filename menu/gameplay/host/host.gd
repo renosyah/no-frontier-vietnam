@@ -28,7 +28,6 @@ func on_grand_map_squad_spawned(squad :BaseSquad):
 # call function via non rpc
 func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	.on_dynamic_battle_map_spawned(tile_id, battle_map)
-	
 	battle_map_director.battle_map_spawned(tile_id)
 	
 func _on_battle_map_director_spawn_battle_map(tile_id :Vector2):

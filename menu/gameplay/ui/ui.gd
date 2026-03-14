@@ -9,8 +9,8 @@ onready var battle_map_name = $CanvasLayer/Control/VBoxContainer/MarginContainer
 onready var grand_map_overlay_ui = $CanvasLayer/grand_map_overlay_ui
 onready var battle_map_overlay_ui = $CanvasLayer/battle_map_overlay_ui
 
-onready var spawn_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_infantry
-onready var spawn_heli = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_heli
+onready var spawn_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer/VBoxContainer/spawn_infantry
+onready var spawn_heli = $CanvasLayer/Control/HBoxContainer/VBoxContainer/VBoxContainer/spawn_heli
 
 onready var unit_stats = $CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats
 onready var game_resource = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control2/game_resource
@@ -18,6 +18,7 @@ onready var bm_shortcut_holder = $CanvasLayer/Control/VBoxContainer/MarginContai
 onready var capture_progress = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/capture_progress
 
 onready var toggle_attack_move = $CanvasLayer/Control/HBoxContainer/VBoxContainer2/attack_move/toggle_attack_move
+onready var squad_holder = $CanvasLayer/Control/HBoxContainer/VBoxContainer/VBoxContainer2
 
 var player :PlayerData
 var grand_map_data :TileMapFileData
@@ -30,6 +31,27 @@ var selected_squad :BaseSquad setget _on_selected_squad
 func _ready():
 	unit_stats.visible = false
 	
+func update_squad_members_size(squad :BaseSquad):
+	for i in squad_holder.get_children():
+		var item = i
+		if item.squad == squad:
+			item.update_squad_members_size()
+			return
+		
+func update_squads(squads :Array):
+	for i in squad_holder.get_children():
+		squad_holder.remove_child(i)
+		i.queue_free()
+		
+	for i in squads:
+		var squad :BaseSquad = i
+		if squad.team == player.player_team:
+			var item = preload("res://menu/gameplay/ui/squad_item/squad_item.tscn").instance()
+			item.color = Color.blue
+			item.icon = squad.squad_icon
+			item.squad = squad
+			squad_holder.add_child(item)
+		
 func on_contested_map_point_update():
 	for i in bm_shortcut_holder.get_children():
 		i.display_update_point(player.player_team)
@@ -98,3 +120,6 @@ func _on_menu_button_pressed():
 func _on_attack_move_pressed():
 	attack_move_mode = not attack_move_mode
 	toggle_attack_move.visible = attack_move_mode
+
+func _on_game_resource_manpower_depleted():
+	pass # Replace with function body.

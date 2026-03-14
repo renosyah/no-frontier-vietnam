@@ -1,7 +1,10 @@
 extends MarginContainer
 
-export var manpower :int = 80
-export var max_manpower :int = 80
+signal manpower_depleted
+
+export var manpower :int = 40 setget _set_manpower
+export var max_manpower :int = 40
+var is_manpower_depleted :bool
 
 var resource_spots :Array = []
 
@@ -14,6 +17,16 @@ var _total_med :int
 
 func _ready():
 	Global.connect("on_global_tick", self, "_on_global_tick")
+
+func _set_manpower(v :int):
+	manpower = v
+	
+	if is_manpower_depleted:
+		return
+		
+	if manpower <= 0:
+		is_manpower_depleted = true
+		emit_signal("manpower_depleted")
 
 func _on_global_tick():
 	_total_ammo = 0

@@ -207,25 +207,42 @@ margin_bottom = 1024.0
 mouse_filter = 2
 alignment = 1
 
-[node name="spawn_infantry" type="Button" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer"]
-margin_top = 424.0
+[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer"]
+margin_top = 414.0
 margin_right = 80.0
-margin_bottom = 504.0
+margin_bottom = 414.0
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer"]
+margin_top = 418.0
+margin_right = 80.0
+margin_bottom = 434.0
+rect_min_size = Vector2( 0, 16 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer"]
+margin_top = 438.0
+margin_right = 80.0
+margin_bottom = 610.0
+
+[node name="spawn_infantry" type="Button" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer/VBoxContainer"]
+margin_right = 80.0
+margin_bottom = 80.0
 rect_min_size = Vector2( 80, 80 )
+size_flags_horizontal = 0
 icon = ExtResource( 15 )
 expand_icon = true
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer"]
-margin_top = 508.0
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer/VBoxContainer"]
+margin_top = 84.0
 margin_right = 80.0
-margin_bottom = 516.0
-rect_min_size = Vector2( 0, 8 )
+margin_bottom = 88.0
+rect_min_size = Vector2( 0, 4 )
 
-[node name="spawn_heli" type="Button" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer"]
-margin_top = 520.0
+[node name="spawn_heli" type="Button" parent="CanvasLayer/Control/HBoxContainer/VBoxContainer/VBoxContainer"]
+margin_top = 92.0
 margin_right = 80.0
-margin_bottom = 600.0
+margin_bottom = 172.0
 rect_min_size = Vector2( 80, 80 )
+size_flags_horizontal = 0
 icon = ExtResource( 14 )
 expand_icon = true
 
@@ -277,6 +294,7 @@ margin_bottom = 1024.0
 size_flags_horizontal = 0
 size_flags_vertical = 8
 
+[connection signal="manpower_depleted" from="CanvasLayer/Control/VBoxContainer/MarginContainer/Control2/game_resource" to="." method="_on_game_resource_manpower_depleted"]
 [connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/MarginContainer/Control3/menu_button" to="." method="_on_menu_button_pressed"]
 [connection signal="close" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats" to="." method="_on_infantry_stats_close"]
 [connection signal="drop_passenger" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats" to="." method="_on_unit_stats_drop_passenger"]

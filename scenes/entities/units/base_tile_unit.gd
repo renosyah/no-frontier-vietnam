@@ -238,7 +238,6 @@ func _on_finish_travel(_unit, _from_id :Vector2, _to_id :Vector2):
 	update_spotting()
 	_scan_area()
 	
-	
 func update_spotting():
 	spotting_area = TileMapUtils.get_adjacent_tiles(
 		TileMapUtils.get_directions(), current_tile, spotting_range

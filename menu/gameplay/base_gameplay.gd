@@ -992,6 +992,10 @@ func on_grand_map_squad_spawned(squad :BaseSquad):
 	unit_position_manager.add_to_position(grand_map, squad)
 	
 	spawned_squad.append(squad)
+	
+	if squad.player_id == player.player_id:
+		ui.update_squads(spawned_squad)
+	
 	squad.set_spotted(squad.team != player.player_team)
 	squad.set_hidden(current_tile in zoomable_battle_map.keys())
 	
@@ -1108,6 +1112,9 @@ func _on_grand_map_squad_squad_destroyed(squad :BaseSquad):
 	
 	if spawned_squad.has(squad):
 		spawned_squad.erase(squad)
+		
+	if squad.player_id == player.player_id:
+		ui.update_squads(spawned_squad)
 		
 	yield(get_tree(),"idle_frame")
 	squad.queue_free()
@@ -1235,12 +1242,12 @@ remotesync func _spawn_battle_map_infantry(squad_path :NodePath, bytes :PoolByte
 	infantry.connect("on_unit_dead", infantry_squad, "_on_member_dead")
 	infantry_squad.members.append(infantry)
 	
-	on_battle_map_infantry_spawn(infantry)
+	on_battle_map_infantry_spawn(infantry_squad, infantry)
 	
-func on_battle_map_infantry_spawn(infantry :Infantry):
-	pass
+func on_battle_map_infantry_spawn(infantry_squad :InfantrySquad, infantry :Infantry):
+	ui.update_squad_members_size(infantry_squad)
 	
-var dead_bodies_holder :Dictionary ={}
+var dead_bodies_holder :Dictionary = {}
 
 func _on_battle_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# form of position tracking on map
@@ -1299,11 +1306,14 @@ func _on_battle_map_unit_dead(unit :BaseTileUnit):
 	if unit.player_id == player.player_id:
 		var mp :int = ui.game_resource.manpower
 		var mxmp :int = ui.game_resource.max_manpower
+		
 		if unit is Infantry:
 			ui.game_resource.manpower = int(clamp(mp - 1, 0, mxmp))
+			ui.update_squad_members_size(unit.squad)
+			
 		elif unit is Vehicle:
 			ui.game_resource.manpower = int(clamp(mp - 2, 0, mxmp))
-		
+			
 	# remove from spotting mechanic
 	unit_position_manager.remove_from_position(unit.tile_map, unit)
 	
