@@ -34,11 +34,16 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 func _on_battle_map_director_spawn_battle_map(tile_id :Vector2):
 	rpc("_spawn_battle_map", tile_id, battle_map_pos[tile_id])
 	
-func _on_battle_map_director_despawn_battle_map(tile_id):
-	rpc("_despawn_battle_map", tile_id)
+func _on_battle_map_director_captured_battle_map(tile_id):
+	bot_stats_bonus = int(clamp(bot_stats_bonus + 1, -8, 2))
+	bot_hp_bonus = int(clamp(bot_hp_bonus + 1, -4, 4))
+	rpc("_captured_battle_map", tile_id)
 
 func _on_battle_map_director_update_contested_points(values :Array):
 	rpc_unreliable("_update_contested_points", values)
+
+var bot_stats_bonus :int = -8
+var bot_hp_bonus :int = -4
 
 func _on_battle_map_director_spawn_unit_to_battle_map(tile_id :Vector2, bot_count :int):
 	var bot_id :String = "BOT_1"
@@ -55,7 +60,7 @@ func _on_battle_map_director_spawn_unit_to_battle_map(tile_id :Vector2, bot_coun
 	for i in bot_count:
 		var stats :UnitStatsData = UnitStatsData.new()
 		stats.soldier_name = SoldierNames.get_random_viet_name()
-		stats.randomize_stats()
+		stats.randomize_stats(bot_stats_bonus)
 		
 		var infantry :InfantryData = preload("res://data/unit_data/infantry/nva_riflement.tres").duplicate()
 		infantry.player_network_id = 1
@@ -67,7 +72,7 @@ func _on_battle_map_director_spawn_unit_to_battle_map(tile_id :Vector2, bot_coun
 		infantry.position = Vector3.ZERO
 		infantry.scene_index = 0
 		
-		infantry.modified_max_hp = 3
+		infantry.modified_max_hp = stats.get_max_hp(3 + bot_hp_bonus) 
 		infantry.modified_speed = stats.get_speed_multiplier()
 		infantry.stats = stats
 		infantry.role = infantry.role_riflement
@@ -77,6 +82,7 @@ func _on_battle_map_director_spawn_unit_to_battle_map(tile_id :Vector2, bot_coun
 		infantry_squad.members.append(infantry)
 		
 	rpc("_spawn_grand_map_infantry_squad", infantry_squad.to_bytes())
+
 
 
 

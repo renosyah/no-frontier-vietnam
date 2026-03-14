@@ -3,7 +3,7 @@ class_name BattleMapDirector
 
 signal update_contested_points(values)
 signal spawn_battle_map(tile_id)
-signal despawn_battle_map(tile_id)
+signal captured_battle_map(tile_id)
 signal spawn_unit_to_battle_map(tile_id, bot_count)
 
 export var director_time :float = 25
@@ -20,6 +20,7 @@ var blocked_grand_map_tiles :Array # refrence from gameplay
 
 onready var _rng :RandomNumberGenerator = RandomNumberGenerator.new()
 onready var _dynamic_battle_maps :Array = [] # this just prevent more spawning battle map out of control
+onready var _old_dynamic_battle_maps :Array = [] # prevent same spawned battle map
 onready var _timer = $Timer
 
 func _ready():
@@ -52,15 +53,12 @@ func _on_global_tick():
 		
 		if tile_object.team == team_capturing:
 			if tile_object.point < max_point:
+				tile_object.point = tile_object.point + capture_point_value
 				
 				# before reach actual max
-				# check then notify
-				if (tile_object.point + capture_point_value) == max_point:
-					# notify only if actual player team capturing
-					if tile_object.team != 0:
-						_on_point_fully_captured(tile_id)
-				
-				tile_object.point = tile_object.point + capture_point_value
+				# check then notify if actual player team capturing
+				if tile_object.point >= max_point and tile_object.team != 0:
+					_on_point_fully_captured(tile_id)
 				
 		else:
 			if tile_object.point > 0:
@@ -84,7 +82,14 @@ func _on_point_fully_captured(tile_id :Vector2):
 	# it will not touch bases or capture point
 	if _dynamic_battle_maps.has(tile_id):
 		_dynamic_battle_maps.erase(tile_id)
-		emit_signal("despawn_battle_map", tile_id)
+		
+		if not _old_dynamic_battle_maps.empty():
+			_old_dynamic_battle_maps.pop_front()
+			
+		if _old_dynamic_battle_maps.size() < limit_battle_map:
+			_old_dynamic_battle_maps.append(tile_id)
+		
+	emit_signal("captured_battle_map", tile_id)
 
 # check if squad from each team is present on said tile_id
 # if none or more than one, dont return 0
@@ -132,6 +137,9 @@ func _spawn_battle_map():
 	var clean :Array = []
 	for key in battle_map_pos.keys():
 		if zoomable_battle_map.has(key):
+			continue
+			
+		if _old_dynamic_battle_maps.has(key):
 			continue
 			
 		clean.append(key)

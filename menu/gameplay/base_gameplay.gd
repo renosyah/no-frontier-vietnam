@@ -225,6 +225,7 @@ func setup_ui():
 	
 	ui.player = player
 	ui.grand_map_mission_data = grand_map_mission_data
+	ui.grand_map_data = grand_map_data
 	
 	ui.connect("to_battle_map", self, "_on_ui_to_battle_map")
 	
@@ -381,17 +382,18 @@ func on_grandmap_clicked_input(tile :TileMapData):
 		return
 		
 	if is_instance_valid(ui.selected_squad):
-		var unit :BaseTileUnit = ui.selected_squad
-		unit.tile_map = grand_map
-		unit.move_to(tile.id)
-		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.unit_voice)
+		var squad :BaseSquad = ui.selected_squad
+		squad.tile_map = grand_map
+		squad.attack_move = ui.attack_move_mode
+		squad.move_to(tile.id)
+		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT, squad.unit_voice)
 		show_feedback_move_order(tile.pos + grand_map.global_position)
 		
 func on_battle_map_clicked_input(tile :TileMapData):
 	if is_instance_valid(ui.selected_battle_map_unit):
 		var unit :BaseTileUnit = ui.selected_battle_map_unit
 		unit.tile_map = current_battle_map
-		unit.attack_move = false # true
+		unit.attack_move = ui.attack_move_mode
 		unit.move_to(tile.id)
 		Global.unit_responded(RadioChatters.COMMAND_ACKNOWLEDGEMENT,unit.unit_voice)
 		show_feedback_move_order(tile.pos + current_battle_map.global_position)
@@ -520,6 +522,16 @@ remotesync func _spawn_battle_map(id :Vector2, at :Vector3):
 	
 	unit_position_manager.init_position(battle_map,grand_map_manifest_data.battle_map_size)
 	
+remotesync func _captured_battle_map(tile_id :Vector2):
+	# check if its for bases and point
+	# and ignore it, cause we need to mark it
+	# for only dynamic one
+	var mission = grand_map_mission_data
+	if not tile_id in mission.bases + mission.points:
+		_despawn_battle_map(tile_id)
+		
+	on_captured_battle_map(tile_id, battle_map_holder[tile_id])
+	
 # so despawn mechanice is just only to hide
 # or to make zoom in to battle map not possible
 # not actualy despawn/remove from scene fo those battle map
@@ -621,6 +633,8 @@ func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 		
 	ui.on_contested_map_updated(contested_tile_object, zoomable_battle_map.keys())
 	
+func on_captured_battle_map(tile_id :Vector2, battle_map :BaseTileMap):
+	ui.on_contested_map_updated(contested_tile_object, zoomable_battle_map.keys())
 	
 func on_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
 	# force camera to back out
@@ -669,7 +683,6 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 			order_squad_to_enter_battle_map(squad, squad.current_tile, squad.current_tile)
 		
 	if contested_tile_object.has(tile_id):
-		#contested_tile_object[tile_id].visible = true
 		var contested_tile:ContestedTile = contested_tile_object[tile_id]
 		contested_tile.team = 0
 		contested_tile.point = 100
@@ -685,8 +698,6 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	
 func on_dynamic_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
 	pass
-#	if contested_tile_object.has(tile_id):
-#		contested_tile_object[tile_id].visible = false
 	
 remotesync func _update_contested_points(values :Array):
 	for value in values:
@@ -1067,6 +1078,7 @@ remotesync func _on_grand_map_squad_enter_battle_map(unit :NodePath, from_tile_i
 func _on_grand_map_squad_task_exit_battle_map(squad :BaseSquad, at_battle_map_id :Vector2, to_grand_map_id :Vector2):
 	rpc("_on_grand_map_squad_exited_battle_map", squad.get_path(), battle_map_holder[squad.current_tile].get_path())
 	
+	squad.attack_move = ui.attack_move_mode
 	squad.tile_map = grand_map
 	squad.move_to(to_grand_map_id)
 	squad.in_battle_map = false
@@ -1415,8 +1427,14 @@ func order_squad_to_enter_battle_map(squad :BaseSquad, from_tile_id :Vector2, cu
 				infantry.global_rotation.x = 0
 				infantry.global_rotation.z = 0
 				
+			if squad.attack_move:
+				infantry.attack_move = true
+				infantry.move_to(Vector2.ZERO)
+				
 			infantry.update_spotting()
 			
+		squad.attack_move = false
+		
 func order_squad_to_exit_battle_map(squad :BaseSquad, battle_map_tile_id :Vector2, grand_map_tile_id :Vector2):
 	if squad is VehicleSquad:
 		var vehicle :Vehicle = squad.vehicle

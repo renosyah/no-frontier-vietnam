@@ -15,9 +15,15 @@ onready var spawn_heli = $CanvasLayer/Control/HBoxContainer/VBoxContainer/spawn_
 onready var unit_stats = $CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats
 onready var game_resource = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control2/game_resource
 onready var bm_shortcut_holder = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/bm_shortcut_holder
+onready var capture_progress = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/capture_progress
+
+onready var toggle_attack_move = $CanvasLayer/Control/HBoxContainer/VBoxContainer2/attack_move/toggle_attack_move
 
 var player :PlayerData
+var grand_map_data :TileMapFileData
 var grand_map_mission_data :GrandMapFileMission
+
+var attack_move_mode :bool
 var selected_battle_map_unit :BaseTileUnit setget _on_selected_battle_map_unit
 var selected_squad :BaseSquad setget _on_selected_squad
 
@@ -34,22 +40,31 @@ func on_contested_map_updated(contested_tile_object :Dictionary, zoomable :Array
 		i.queue_free()
 		
 	var keys :Array = contested_tile_object.keys()
-
+	var total_captured :int = 0
+	var total_point :int = 0
+	
 	for key in keys:
-		if not zoomable.has(key):
-			continue
-			
 		var contested :ContestedTile = contested_tile_object[key]
-		var item = preload("res://menu/gameplay/ui/battle_map_shortcut/bm_shortcut.tscn").instance()
-		item.button_icon = contested.icon
-		item.button_color = Global.get_base_color(contested.team, player.player_team)
-		item.connect("pressed", self, "_on_bm_shortcut_press", [key])
-		item.contested = contested
-		bm_shortcut_holder.add_child(item)
+		if contested.team == player.player_team:
+			total_captured += 1
 		
-		var centerIndex = int(bm_shortcut_holder.get_child_count() / 2)
-		bm_shortcut_holder.move_child(item, centerIndex)
-
+		if contested.team != 0:
+			total_point += 1
+		
+		if zoomable.has(key):
+			var item = preload("res://menu/gameplay/ui/battle_map_shortcut/bm_shortcut.tscn").instance()
+			item.button_icon = contested.icon
+			item.button_color = Global.get_base_color(contested.team, player.player_team)
+			item.connect("pressed", self, "_on_bm_shortcut_press", [key])
+			item.contested = contested
+			bm_shortcut_holder.add_child(item)
+			
+			var centerIndex = int(bm_shortcut_holder.get_child_count() / 2)
+			bm_shortcut_holder.move_child(item, centerIndex)
+			
+	capture_progress.max_value = total_point
+	capture_progress.value = total_captured
+	
 func _on_bm_shortcut_press(tile_id :Vector2):
 	emit_signal("to_battle_map", tile_id)
 	
@@ -79,3 +94,7 @@ func _on_unit_stats_drop_passenger():
 	
 func _on_menu_button_pressed():
 	NetworkLobbyManager.leave()
+
+func _on_attack_move_pressed():
+	attack_move_mode = not attack_move_mode
+	toggle_attack_move.visible = attack_move_mode
