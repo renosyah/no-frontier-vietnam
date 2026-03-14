@@ -16,6 +16,7 @@ var unit_position_manager :UnitPositionManager # refrence from gameplay
 var zoomable_battle_map :Dictionary # [Vector2 : TileMapData (grand map)] refrence from gameplay
 var battle_map_pos :Dictionary  # [Vector2 : Vector3] refrence from gameplay
 var contested_tile_object :Dictionary # refrence from gameplay
+var blocked_grand_map_tiles :Array # refrence from gameplay
 
 onready var _rng :RandomNumberGenerator = RandomNumberGenerator.new()
 onready var _dynamic_battle_maps :Array = [] # this just prevent more spawning battle map out of control
@@ -31,6 +32,9 @@ func _ready():
 func _on_global_tick():
 	var values :Array = [] # [ [tile_object node_path, team_capturing, team_owner, point] ]
 	for tile_id in contested_tile_object.keys():
+		if tile_id in blocked_grand_map_tiles:
+			continue
+			
 		if not tile_id in zoomable_battle_map.keys():
 			continue
 			

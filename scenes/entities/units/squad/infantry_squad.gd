@@ -1,6 +1,7 @@
 extends BaseSquad
 class_name InfantrySquad
 
+signal on_infantry_squad_replacement_request(squad, at_tile, at_pos, count)
 signal on_infantry_squad_member_died(squad, member)
 signal on_infatry_squad_task_enter_vehicle(squad, vehicle)
 
@@ -13,6 +14,7 @@ onready var decoration_icon = $decoration_icon
 onready var task_checker = $task_checker
 onready var rng = RandomNumberGenerator.new()
 
+export var member_size :int
 var members :Array = [] # [ Infantry ]
 
 var _on_stealth_mode :bool
@@ -23,6 +25,16 @@ func _ready():
 	for i in mesh_instances:
 		i.set_surface_material(0, team_color_material)
 		
+func check_squad_size(at_tile :Vector2, at_pos :Vector3):
+	if not _is_master:
+		return
+		
+	if members.size() >= member_size:
+		return
+		
+	# request how many squad needed replacement
+	emit_signal("on_infantry_squad_replacement_request", self, at_tile, at_pos, member_size - members.size())
+	
 func get_avg_pos() -> Vector3:
 	var pos :Vector3 = Vector3.ZERO
 	var count :int = 0

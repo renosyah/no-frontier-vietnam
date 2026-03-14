@@ -2,10 +2,19 @@ extends Button
 
 export var button_icon :StreamTexture
 export var button_color :Color
-onready var color_rect = $ColorRect
-onready var texture_rect = $TextureRect
+var contested :ContestedTile
+
+onready var _progress = $progress
+onready var _button_icon = $button_icon
 
 func _ready():
-	color_rect.color = button_color
-	texture_rect.texture = button_icon
-	texture_rect.modulate = button_color
+	_progress.tint_progress = button_color
+	_button_icon.texture = button_icon
+	_button_icon.modulate = button_color
+
+func display_update_point(player_team :int):
+	var _color = Global.get_base_color(contested.team, player_team)
+	_progress.max_value = contested.max_point
+	_progress.value = contested.point
+	_progress.tint_progress = _color
+	_button_icon.modulate = _color

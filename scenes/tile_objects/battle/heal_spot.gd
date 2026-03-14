@@ -50,6 +50,8 @@ func _on_global_tick():
 		
 func _heal_squad(unit :Infantry):
 	var squad :InfantrySquad = unit.squad
+	squad.check_squad_size(unit.current_tile, unit.global_position)
+	
 	for i in squad.members:
 		if medical_supply <= 0:
 			return

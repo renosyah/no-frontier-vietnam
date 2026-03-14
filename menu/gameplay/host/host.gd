@@ -12,6 +12,7 @@ func _ready():
 	battle_map_director.battle_map_pos = battle_map_pos
 	battle_map_director.zoomable_battle_map = zoomable_battle_map
 	battle_map_director.contested_tile_object = contested_tile_object
+	battle_map_director.blocked_grand_map_tiles = blocked_grand_map_tiles
 
 func on_grand_map_squad_spawned(squad :BaseSquad):
 	.on_grand_map_squad_spawned(squad)
@@ -70,11 +71,12 @@ func _on_battle_map_director_spawn_unit_to_battle_map(tile_id :Vector2, bot_coun
 		infantry.modified_speed = stats.get_speed_multiplier()
 		infantry.stats = stats
 		infantry.role = infantry.role_riflement
-		infantry.make_variant(0)
+		infantry.faction = 0 # no faction
+		infantry.make_variant()
 		
 		infantry_squad.members.append(infantry)
 		
-	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
+	rpc("_spawn_grand_map_infantry_squad", infantry_squad.to_bytes())
 
 
 

@@ -38,6 +38,8 @@ func get_team_color(owner_id :String, team :int, player_id :String, player_team 
 	return Color.red
 	
 func get_base_color(index :int, player_team :int):
+	if index == 0:
+		return Color.white
 	if index == player_team:
 		return Color.blue
 	return Color.red

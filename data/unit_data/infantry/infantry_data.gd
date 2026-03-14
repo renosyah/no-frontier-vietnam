@@ -20,6 +20,7 @@ export var weapon_scene_index :int
 export var launcher_scene_index :int
 export var uniform_style :int # 1:normal,2:tanktop,3:notop
 export var role :int
+export var faction :int
 
 # why? because is set from origin side of player
 # if i send entire stats, each peeer generate its own
@@ -28,9 +29,9 @@ export var modified_max_hp :int
 export var modified_speed :float
 var stats:UnitStatsData
 
-func make_variant(faction_idx :int):
+func make_variant():
 	
-	if faction_idx == faction_macv:
+	if faction == faction_macv:
 		var style = [0,1,2]
 		var skin = [0,1]
 		var hats = [0,1,2,4]
@@ -54,7 +55,7 @@ func make_variant(faction_idx :int):
 			role_at_specialist:
 				bag_scene_index = 4
 		
-	elif faction_idx == faction_nva:
+	elif faction == faction_nva:
 		var hats = [3,4]
 		var style = [0,1,2]
 		var bags = [5,6,7,9]
@@ -98,6 +99,7 @@ func from_dictionary(_data : Dictionary):
 	modified_max_hp = _data["j1"]
 	modified_speed = _data["k1"]
 	role = _data["l1"]
+	faction = _data["n1"]
 	
 	stats = UnitStatsData.new()
 	stats.from_dictionary(_data["m1"])
@@ -117,6 +119,7 @@ func to_dictionary() -> Dictionary :
 	_data["j1"] = modified_max_hp
 	_data["k1"] = modified_speed
 	_data["l1"] = role
+	_data["n1"] = faction
 	_data["m1"] = stats.to_dictionary()
 	return _data
 	
@@ -162,11 +165,5 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 			infantry.launcher = 1
 			
 	parent.add_child(infantry)
-	
-	infantry.translation = Vector3(-100, -100, -100)
-	infantry.visible = false
-	infantry.set_hidden(false)
-	infantry.set_spotted(true)
-	infantry.set_sync(false)
 	
 	return infantry

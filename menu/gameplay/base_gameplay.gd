@@ -291,12 +291,14 @@ func _on_spawn_infantry():
 			infantry.role = infantry.role_at_specialist
 			
 		if player.player_team == 1:
-			infantry.make_variant(infantry.faction_macv)
+			infantry.faction = infantry.faction_macv
+			infantry.make_variant()
 			
 		else:
-			infantry.make_variant(infantry.faction_nva)
+			infantry.faction = infantry.faction_nva
+			infantry.make_variant()
 			
-	rpc("_spawn_grand_map_squad", infantry_squad.to_bytes())
+	rpc("_spawn_grand_map_infantry_squad", infantry_squad.to_bytes())
 	
 func _on_spawn_heli_press():
 	var bases = grand_map_mission_data.bases
@@ -326,7 +328,7 @@ func _on_spawn_heli_press():
 	
 	vehicle_squad.vehicle = vehicle
 	
-	rpc("_spawn_grand_map_vehicle", vehicle_squad.to_bytes())
+	rpc("_spawn_grand_map_vehicle_squad", vehicle_squad.to_bytes())
 	
 func _on_camera_down_zoom_in():
 	if current_cam != movable_camera_room:
@@ -610,20 +612,17 @@ func _on_battle_map_ready(tile_id :Vector2, battle_map :BaseTileMap):
 	on_battle_map_spawned(tile_id, battle_map)
 	
 func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
-	ui.on_zoomable_battle_map_updated(zoomable_battle_map)
-	
 	# check if its for bases and point
 	# and ignore it, cause we need to mark it
 	# for only dynamic one
 	var mission = grand_map_mission_data
-	if tile_id in mission.bases + mission.points:
-		return
+	if not tile_id in mission.bases + mission.points:
+		on_dynamic_battle_map_spawned(tile_id, battle_map)
+		
+	ui.on_contested_map_updated(contested_tile_object, zoomable_battle_map.keys())
 	
-	on_dynamic_battle_map_spawned(tile_id, battle_map)
 	
 func on_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
-	ui.on_zoomable_battle_map_updated(zoomable_battle_map)
-	
 	# force camera to back out
 	if current_cam == movable_camera_battle and current_battle_map == battle_map:
 		if is_instance_valid(ui.selected_battle_map_unit):
@@ -637,10 +636,10 @@ func on_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
 	# and ignore it, cause we need to mark it
 	# for only dynamic one
 	var mission = grand_map_mission_data
-	if tile_id in mission.bases + mission.points:
-		return
+	if not tile_id in mission.bases + mission.points:
+		on_dynamic_battle_map_despawned(tile_id, battle_map)
 		
-	on_dynamic_battle_map_despawned(tile_id, battle_map)
+	ui.on_contested_map_updated(contested_tile_object, zoomable_battle_map.keys())
 	
 ########################################## dynamic battle map ############################################
 
@@ -705,7 +704,13 @@ remotesync func _update_contested_points(values :Array):
 			var is_neutral = contested.team == 0
 			var m = MaterialsIndex.team_colors[0] if is_neutral else Global.get_base_material_color(contested.team, player.player_team)
 			contested.set_color(m)
+			
+		on_contested_points_updated(tile_id, contested)
 		
+		
+func on_contested_points_updated(tile_id :Vector2, contested :ContestedTile):
+	ui.on_contested_map_point_update()
+	
 ########################################## battle map capture point ############################################
 
 var team_listen_radio :int
@@ -879,7 +884,7 @@ var spawned_squad :Array = [] # for tracking purposes
 # this is for spotting mechanic
 var grand_map_watchlist_position :Array = []
 
-remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
+remotesync func _spawn_grand_map_infantry_squad(bytes :PoolByteArray):
 	var squad :InfantrySquadData = InfantrySquadData.new()
 	squad.from_bytes(bytes)
 	
@@ -889,15 +894,23 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 	squad.team_color_material_index = Global.get_team_material_color_index(
 		squad.player_id, squad.team, player.player_id, player.player_team
 	)
+	
+	# save this for replacement
+	var fng :InfantryData = InfantryData.new()
+	
 	for i in squad.members:
 		var infantry :InfantryData = i
 		infantry.color = squad.color
 		infantry.team_color_material_index = squad.team_color_material_index
+		
+		if infantry.role == infantry.role_riflement:
+			fng.from_dictionary(infantry.to_dictionary())
 	
 	var infantry_squad :InfantrySquad = squad.spawn(
 		player, self, ui.grand_map_overlay_ui.get_path(), movable_camera_room.camera.get_path()
 	)
 	
+	infantry_squad.connect("on_infantry_squad_replacement_request", self, "_on_infantry_squad_replacement_request", [fng])
 	infantry_squad.connect("on_finish_travel", self ,"_on_grand_map_squad_finish_travel")
 	infantry_squad.connect("on_current_tile_updated", self, "_on_grand_map_squad_current_tile_updated")
 	infantry_squad.connect("on_unit_clicked", self, "_on_grand_map_squad_clicked")
@@ -909,24 +922,15 @@ remotesync func _spawn_grand_map_squad(bytes :PoolByteArray):
 	# connect signal after set_spotted function called
 	# if not,it will trigger to emit on_unit_spotted
 	infantry_squad.connect("on_unit_spotted", self, "_on_grand_map_squad_spotted")
+	infantry_squad.member_size = squad.members.size()
 	
 	for i in squad.members:
 		var inf :InfantryData = i
-		var infantry :Infantry = inf.spawn(
-			player, self, ui.battle_map_overlay_ui.get_path(), movable_camera_battle.camera.get_path()
-		)
-		infantry.squad = infantry_squad
-		
-		#infantry.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
-		infantry.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
-		infantry.connect("on_unit_clicked", self, "_on_battle_map_infantry_clicked", [inf.stats])
-		infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
-		infantry.connect("on_unit_dead", infantry_squad, "_on_member_dead")
-		infantry_squad.members.append(infantry)
-		
+		_spawn_battle_map_infantry(infantry_squad.get_path(), inf.to_bytes(), {})
+	
 	on_grand_map_squad_spawned(infantry_squad)
 	
-remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
+remotesync func _spawn_grand_map_vehicle_squad(bytes :PoolByteArray):
 	var squad :VehicleSquadData = VehicleSquadData.new()
 	squad.from_bytes(bytes)
 	
@@ -959,7 +963,6 @@ remotesync func _spawn_grand_map_vehicle(bytes :PoolByteArray):
 	vehicle.squad = vehicle_squad
 	vehicle_squad.vehicle = vehicle
 	
-	#vehicle.connect("on_finish_travel", self ,"_on_battle_map_squad_finish_travel")
 	vehicle.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
 	vehicle.connect("on_unit_clicked", self, "_on_battle_map_vehicle_clicked", [squad.vehicle.stats])
 	vehicle.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
@@ -986,6 +989,29 @@ func on_grand_map_squad_spawned(squad :BaseSquad):
 	# call function via non rpc
 	order_squad_to_enter_battle_map(squad, squad.current_tile, squad.current_tile)
 	
+func _on_infantry_squad_replacement_request(infantry_squad :InfantrySquad, at_tile :Vector2, at_pos :Vector3, count :int, fng_template :InfantryData):
+	var list_bytes :Array = []
+	var battle_map :BaseTileMap = battle_map_holder[infantry_squad.current_tile]
+	
+	var extra :Dictionary = {
+		"tile_map" : battle_map.get_path(),
+		"current_tile":at_tile,
+		"translation":at_pos,
+		"visible" :true,
+		"set_hidden" :false,
+		"set_spotted":false,
+		"set_sync" :true
+	}
+	
+	for i in count:
+		var fng :InfantryData = InfantryData.new()
+		fng.from_dictionary(fng_template.to_dictionary())
+		fng.unit_name = "infantry_%s_%s" % [Utils.create_unique_id(), i]
+		fng.make_variant()
+		list_bytes.append(fng.to_bytes())
+		
+	rpc("_spawn_battle_map_infantries", infantry_squad.get_path(), list_bytes, extra)
+
 func _on_grand_map_squad_clicked(unit :BaseSquad):
 	if is_instance_valid(ui.selected_squad):
 		var holder = ui.selected_squad
@@ -1151,11 +1177,59 @@ func on_enemy_grand_map_squad_moving(unit :BaseTileUnit, _from :Vector2, to :Vec
 	
 ########################################## battle map unit ############################################
 
-var dead_bodies_holder :Dictionary ={}
+remotesync func _spawn_battle_map_infantries(squad_path :NodePath, list_bytes :Array, extra :Dictionary):
+	for bytes in list_bytes:
+		_spawn_battle_map_infantry(squad_path, bytes, extra)
+		
+remotesync func _spawn_battle_map_infantry(squad_path :NodePath, bytes :PoolByteArray, extra :Dictionary):
+	var infantry_squad :BaseSquad = get_node_or_null(squad_path)
+	if not is_instance_valid(infantry_squad):
+		return
+		
+	if not infantry_squad is InfantrySquad:
+		return
+		
+	var inf :InfantryData = InfantryData.new()
+	inf.from_bytes(bytes)
 	
-func _on_battle_map_squad_finish_travel(_unit :BaseTileUnit, _from_tile_id :Vector2, _current_tile_id :Vector2):
+	var infantry :Infantry = inf.spawn(
+		player, self, ui.battle_map_overlay_ui.get_path(), movable_camera_battle.camera.get_path()
+	)
+	
+	if not extra.empty():
+		infantry.tile_map = get_node_or_null(extra["tile_map"])
+		infantry.current_tile = extra["current_tile"]
+		infantry.translation = extra["translation"]
+		infantry.visible = extra["visible"]
+		infantry.set_hidden(extra["set_hidden"])
+		infantry.set_spotted(extra["set_spotted"])
+		infantry.set_sync(extra["set_sync"])
+		
+		# add new FNG to spotting mechanic
+		unit_position_manager.add_to_position(infantry.tile_map, infantry)
+		
+	else:
+		infantry.translation = Vector3(-100, -100, -100)
+		infantry.visible = false
+		infantry.set_hidden(false)
+		infantry.set_spotted(true)
+		infantry.set_sync(false)
+	
+	infantry.squad = infantry_squad
+	
+	infantry.connect("on_current_tile_updated", self, "_on_battle_map_squad_current_tile_updated")
+	infantry.connect("on_unit_clicked", self, "_on_battle_map_infantry_clicked", [inf.stats])
+	infantry.connect("on_unit_dead", self, "_on_battle_map_unit_dead")
+	infantry.connect("on_unit_dead", infantry_squad, "_on_member_dead")
+	infantry_squad.members.append(infantry)
+	
+	on_battle_map_infantry_spawn(infantry)
+	
+func on_battle_map_infantry_spawn(infantry :Infantry):
 	pass
 	
+var dead_bodies_holder :Dictionary ={}
+
 func _on_battle_map_squad_current_tile_updated(unit :BaseTileUnit, from :Vector2, to :Vector2):
 	# form of position tracking on map
 	# this will tied to spotting mechanic
@@ -1440,6 +1514,7 @@ func order_infatry_squad_to_exit_vehicle(squad :InfantrySquad, grand_map_tile_id
 			
 	squad.current_tile = grand_map_tile_id
 	squad.translation = grand_map.get_tile_instance(grand_map_tile_id).global_position
+	squad.set_hidden(squad.current_tile in zoomable_battle_map.keys())
 	
 	# add to spotting mechanic
 	unit_position_manager.add_to_position(grand_map, squad)

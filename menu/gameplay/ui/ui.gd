@@ -24,53 +24,32 @@ var selected_squad :BaseSquad setget _on_selected_squad
 func _ready():
 	unit_stats.visible = false
 	
-func on_zoomable_battle_map_updated(zoomable_battle_map :Dictionary):
+func on_contested_map_point_update():
+	for i in bm_shortcut_holder.get_children():
+		i.display_update_point(player.player_team)
+		
+func on_contested_map_updated(contested_tile_object :Dictionary, zoomable :Array):
 	for i in bm_shortcut_holder.get_children():
 		bm_shortcut_holder.remove_child(i)
 		i.queue_free()
 		
-	var keys :Array = zoomable_battle_map.keys()
-	var bases :Array = grand_map_mission_data.bases
-	var point :Array = grand_map_mission_data.points
-	
-	var idx = 1
-	for key in bases:
-		if not keys.has(key):
-			continue
-			
-		var item = preload("res://menu/gameplay/ui/battle_map_shortcut/bm_shortcut.tscn").instance()
-		item.button_icon = preload("res://assets/user_interface/icons/base.png")
-		item.button_color = Global.get_base_color(idx, player.player_team)
-		item.connect("pressed", self, "_on_bm_shortcut_press", [key])
-		bm_shortcut_holder.add_child(item)
-		idx += 1
-		
-	for key in point:
-		if not keys.has(key):
-			continue
-			
-		var item = preload("res://menu/gameplay/ui/battle_map_shortcut/bm_shortcut.tscn").instance()
-		item.button_icon = preload("res://assets/user_interface/icons/flag.png")
-		item.button_color = Color.white
-		item.connect("pressed", self, "_on_bm_shortcut_press", [key])
-		bm_shortcut_holder.add_child(item)
-		
-		var centerIndex = int(bm_shortcut_holder.get_child_count() / 2)
-		bm_shortcut_holder.move_child(item, centerIndex)
-		
+	var keys :Array = contested_tile_object.keys()
+
 	for key in keys:
-		if (point + bases).has(key):
+		if not zoomable.has(key):
 			continue
 			
+		var contested :ContestedTile = contested_tile_object[key]
 		var item = preload("res://menu/gameplay/ui/battle_map_shortcut/bm_shortcut.tscn").instance()
-		item.button_icon = preload("res://assets/user_interface/icons/sword.png")
-		item.button_color = Color.white
+		item.button_icon = contested.icon
+		item.button_color = Global.get_base_color(contested.team, player.player_team)
 		item.connect("pressed", self, "_on_bm_shortcut_press", [key])
+		item.contested = contested
 		bm_shortcut_holder.add_child(item)
 		
 		var centerIndex = int(bm_shortcut_holder.get_child_count() / 2)
 		bm_shortcut_holder.move_child(item, centerIndex)
-		
+
 func _on_bm_shortcut_press(tile_id :Vector2):
 	emit_signal("to_battle_map", tile_id)
 	

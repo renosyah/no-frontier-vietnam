@@ -24,5 +24,6 @@ weapon_scene_index = 0
 launcher_scene_index = 0
 uniform_style = 2
 role = 1
+faction = 0
 modified_max_hp = 0
 modified_speed = 0.0

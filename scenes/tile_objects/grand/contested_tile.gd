@@ -4,6 +4,7 @@ class_name ContestedTile
 # MUST SET
 export var overlay_ui :NodePath
 export var camera :NodePath
+export var icon :StreamTexture
 
 export var team :int = 0 setget _set_team
 export var point :int = 100

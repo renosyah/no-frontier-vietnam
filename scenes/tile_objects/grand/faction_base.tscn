@@ -1,12 +1,14 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scenes/tiles/models/ground_material.tres" type="Material" id=1]
 [ext_resource path="res://assets/tile_highlight/contested_area.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://scenes/tile_objects/grand/faction_base.gd" type="Script" id=3]
 [ext_resource path="res://scenes/tile_objects/models/faction_base.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://assets/user_interface/icons/base.png" type="Texture" id=5]
 
 [node name="faction_base" type="Spatial"]
 script = ExtResource( 3 )
+icon = ExtResource( 5 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( -3.0598e-08, 0, -0.7, 0, 0.7, 0, 0.7, 0, -3.0598e-08, 0, 0, 0 )
