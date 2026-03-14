@@ -29,8 +29,13 @@ const bags = [
 const vests = [
 	preload("res://scenes/entities/gear/vest/vest_1_green.tscn"),
 	preload("res://scenes/entities/gear/vest/vest_1_green_bullet.tscn"),
+	
 	preload("res://scenes/entities/gear/vest/vest_1_khaki.tscn"),
 	preload("res://scenes/entities/gear/vest/vest_1_khaki_bullet.tscn"),
+	
+	preload("res://scenes/entities/gear/vest/vest_1_bandit_a.tscn"),
+	preload("res://scenes/entities/gear/vest/vest_1_bandit_b.tscn"),
+	
 	preload("res://scenes/entities/gear/vest/no_vest.tscn")
 ]
 const weapons = [

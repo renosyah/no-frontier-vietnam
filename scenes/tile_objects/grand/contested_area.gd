@@ -10,12 +10,11 @@ func _ready():
 
 func _set_team(v :int):
 	._set_team(v)
-
 	if is_instance_valid(swords):
-		swords.visible = (v == 0)
+		swords.visible = (team == 0)
 		
 	if is_instance_valid(flag):
-		flag.visible = (v != 0 and point < max_point)
+		flag.visible = (team != 0 and point < max_point)
 
 func set_color(m :SpatialMaterial):
 	border.set_surface_material(0,m)

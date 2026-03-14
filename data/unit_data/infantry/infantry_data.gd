@@ -9,7 +9,6 @@ const faction_macv = 1
 const faction_nva = 2
 
 # get all at ScenesIndex
-
 export var skin_material_index :int
 export var uniform_material_index :int
 export var team_color_material_index :int
@@ -36,13 +35,14 @@ func make_variant():
 		var skin = [0,1]
 		var hats = [0,1,2,4]
 		var bags = [0,1,2,9]
-		var vests = [0,1,4]
+		var vests = [0,1,6]
 		var black_potrait = [1,2,4,6]
 		var white_potrait = [0,3,5,7,8,9]
 		
 		stats.soldier_name = SoldierNames.get_random_us_name()
 		skin_material_index = skin[randi() % 2]
 		stats.soldier_potrait_index = black_potrait[randi() % 4] if skin_material_index == 1 else white_potrait[randi() % 6]
+		uniform_material_index = 0
 		hat_scene_index = hats[randi() % 4]
 		bag_scene_index = bags[randi() % 4]
 		vest_scene_index = vests[randi() % 3]
@@ -56,15 +56,15 @@ func make_variant():
 				bag_scene_index = 4
 		
 	elif faction == faction_nva:
-		var hats = [3,4]
 		var style = [0,1,2]
 		var bags = [5,6,7,9]
-		var vests = [2,3,4]
+		var vests = [2,3]
 		stats.soldier_name = SoldierNames.get_random_viet_name()
 		stats.soldier_potrait_index = int(rand_range(25, 34))
-		hat_scene_index = hats[randi() % 2]
+		uniform_material_index = 1
+		hat_scene_index = 3
 		bag_scene_index = bags[randi() % 4]
-		vest_scene_index = vests[randi() % 3]
+		vest_scene_index = vests[randi() % 2]
 		uniform_style = style[randi() % 3]
 		
 		match (role):
@@ -75,13 +75,15 @@ func make_variant():
 				bag_scene_index = 8
 				
 	else:
+		var unif = [2,3,4]
 		var style = [1,2]
-		var vests = [2,3,4]
+		var vests = [1,3,4,5,6]
 		stats.soldier_name = SoldierNames.get_random_viet_name()
 		stats.soldier_potrait_index = int(rand_range(25, 34))
+		uniform_material_index = unif[randi() % 3]
 		hat_scene_index = 4
 		bag_scene_index = 9
-		vest_scene_index = vests[randi() % 3]
+		vest_scene_index = vests[randi() % 5]
 		uniform_style = style[randi() % 2]
 		
 func from_dictionary(_data : Dictionary):

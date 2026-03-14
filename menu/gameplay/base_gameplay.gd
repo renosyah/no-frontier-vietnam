@@ -634,6 +634,14 @@ func on_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	ui.on_contested_map_updated(contested_tile_object, zoomable_battle_map.keys())
 	
 func on_captured_battle_map(tile_id :Vector2, battle_map :BaseTileMap):
+	# to trigger update
+	if contested_tile_object.has(tile_id):
+		var max_point = contested_tile_object[tile_id].max_point
+		var team = contested_tile_object[tile_id].team
+		
+		contested_tile_object[tile_id].point = max_point
+		contested_tile_object[tile_id].team = team
+		
 	ui.on_contested_map_updated(contested_tile_object, zoomable_battle_map.keys())
 	
 func on_battle_map_despawned(tile_id :Vector2, battle_map :BaseTileMap):
@@ -1021,7 +1029,11 @@ func _on_infantry_squad_replacement_request(infantry_squad :InfantrySquad, at_ti
 	for i in count:
 		var fng :InfantryData = InfantryData.new()
 		fng.from_dictionary(fng_template.to_dictionary())
+		fng.stats.randomize_stats()
+		
 		fng.unit_name = "infantry_%s_%s" % [Utils.create_unique_id(), i]
+		fng.modified_max_hp = fng.stats.get_max_hp(8)
+		fng.modified_speed = fng.stats.get_speed_multiplier()
 		fng.make_variant()
 		list_bytes.append(fng.to_bytes())
 		
@@ -1210,6 +1222,11 @@ remotesync func _spawn_battle_map_infantry(squad_path :NodePath, bytes :PoolByte
 		
 	var inf :InfantryData = InfantryData.new()
 	inf.from_bytes(bytes)
+	
+	inf.color = infantry_squad.color
+	inf.team_color_material_index = Global.get_team_material_color_index(
+		infantry_squad.player_id, infantry_squad.team, player.player_id, player.player_team
+	)
 	
 	var infantry :Infantry = inf.spawn(
 		player, self, ui.battle_map_overlay_ui.get_path(), movable_camera_battle.camera.get_path()

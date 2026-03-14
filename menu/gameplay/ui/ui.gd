@@ -5,7 +5,7 @@ signal to_battle_map(tile_id)
 
 onready var movable_camera_ui = $CanvasLayer/movable_camera_ui
 onready var center_pos = $CanvasLayer/center_pos
-onready var battle_map_name = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/MarginContainer/battle_map_name
+onready var battle_map_name = $CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer/battle_map_name
 onready var grand_map_overlay_ui = $CanvasLayer/grand_map_overlay_ui
 onready var battle_map_overlay_ui = $CanvasLayer/battle_map_overlay_ui
 
@@ -13,9 +13,9 @@ onready var spawn_infantry = $CanvasLayer/Control/HBoxContainer/VBoxContainer/VB
 onready var spawn_heli = $CanvasLayer/Control/HBoxContainer/VBoxContainer/VBoxContainer/spawn_heli
 
 onready var unit_stats = $CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats
-onready var game_resource = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control2/game_resource
-onready var bm_shortcut_holder = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/bm_shortcut_holder
-onready var capture_progress = $CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/capture_progress
+onready var game_resource = $CanvasLayer/Control/VBoxContainer/HBoxContainer2/game_resource
+onready var bm_shortcut_holder = $CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer/bm_shortcut_holder
+onready var capture_progress = $CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer/capture_progress
 
 onready var toggle_attack_move = $CanvasLayer/Control/HBoxContainer/VBoxContainer2/attack_move/toggle_attack_move
 onready var squad_holder = $CanvasLayer/Control/HBoxContainer/VBoxContainer/VBoxContainer2

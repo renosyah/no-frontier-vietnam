@@ -57,38 +57,37 @@ margin_right = 600.0
 margin_bottom = 1024.0
 mouse_filter = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
 margin_right = 600.0
-margin_bottom = 10.0
+margin_bottom = 200.0
 mouse_filter = 2
+alignment = 1
 
-[node name="Control" type="Control" parent="CanvasLayer/Control/VBoxContainer/MarginContainer"]
-margin_left = 295.0
-margin_right = 305.0
-margin_bottom = 10.0
-rect_min_size = Vector2( 10, 10 )
+[node name="game_resource" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2" instance=ExtResource( 9 )]
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 104.0
+margin_right = 121.0
+margin_bottom = 200.0
 mouse_filter = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
+size_flags_horizontal = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control"]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -175.0
-margin_right = 175.0
-margin_bottom = 80.0
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 125.0
+margin_right = 475.0
+margin_bottom = 200.0
 mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer"]
 margin_right = 350.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 300, 80 )
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/MarginContainer"]
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer"]
 margin_right = 350.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 350, 80 )
@@ -96,7 +95,7 @@ mouse_filter = 2
 texture = ExtResource( 6 )
 expand = true
 
-[node name="battle_map_name" type="Label" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer/MarginContainer"]
+[node name="battle_map_name" type="Label" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer/MarginContainer"]
 margin_top = 29.0
 margin_right = 350.0
 margin_bottom = 50.0
@@ -105,11 +104,12 @@ text = "..."
 align = 1
 valign = 1
 
-[node name="capture_progress" type="TextureProgress" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer"]
+[node name="capture_progress" type="TextureProgress" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer"]
 margin_top = 84.0
 margin_right = 350.0
 margin_bottom = 116.0
 rect_min_size = Vector2( 0, 32 )
+mouse_filter = 2
 value = 24.0
 texture_under = ExtResource( 10 )
 texture_progress = ExtResource( 10 )
@@ -117,7 +117,7 @@ tint_under = Color( 1, 0, 0, 1 )
 tint_progress = Color( 0, 0.298039, 1, 1 )
 nine_patch_stretch = true
 
-[node name="bm_shortcut_holder" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control/VBoxContainer"]
+[node name="bm_shortcut_holder" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/VBoxContainer"]
 margin_top = 120.0
 margin_right = 350.0
 margin_bottom = 160.0
@@ -125,41 +125,29 @@ rect_min_size = Vector2( 0, 40 )
 mouse_filter = 2
 alignment = 1
 
-[node name="Control2" type="Control" parent="CanvasLayer/Control/VBoxContainer/MarginContainer"]
-margin_right = 10.0
-margin_bottom = 10.0
-rect_min_size = Vector2( 10, 10 )
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 479.0
+margin_right = 496.0
+margin_bottom = 200.0
 mouse_filter = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
+size_flags_horizontal = 3
 
-[node name="game_resource" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control2" instance=ExtResource( 9 )]
-
-[node name="Control3" type="Control" parent="CanvasLayer/Control/VBoxContainer/MarginContainer"]
-margin_left = 590.0
+[node name="menu_button" type="Button" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2"]
+margin_left = 500.0
 margin_right = 600.0
-margin_bottom = 10.0
-rect_min_size = Vector2( 10, 10 )
-size_flags_horizontal = 8
-size_flags_vertical = 0
-
-[node name="menu_button" type="Button" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control3"]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -100.0
 margin_bottom = 100.0
 rect_min_size = Vector2( 100, 100 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="ColorRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control3/menu_button"]
+[node name="ColorRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/menu_button"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 texture = ExtResource( 6 )
 expand = true
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/MarginContainer/Control3/menu_button"]
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer2/menu_button"]
 modulate = Color( 0.27451, 0.27451, 0.27451, 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -169,7 +157,7 @@ expand = true
 flip_h = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control/VBoxContainer"]
-margin_top = 14.0
+margin_top = 204.0
 margin_right = 600.0
 margin_bottom = 1024.0
 mouse_filter = 2
@@ -177,22 +165,22 @@ size_flags_vertical = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer"]
 margin_right = 30.0
-margin_bottom = 1010.0
+margin_bottom = 820.0
 rect_min_size = Vector2( 30, 0 )
 mouse_filter = 2
 
 [node name="unit_stats" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 34.0
-margin_top = 710.0
+margin_top = 520.0
 margin_right = 566.0
-margin_bottom = 1010.0
+margin_bottom = 820.0
 size_flags_horizontal = 3
 size_flags_vertical = 8
 
 [node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Control/VBoxContainer/HBoxContainer"]
 margin_left = 570.0
 margin_right = 600.0
-margin_bottom = 1010.0
+margin_bottom = 820.0
 rect_min_size = Vector2( 30, 0 )
 mouse_filter = 2
 
@@ -294,8 +282,8 @@ margin_bottom = 1024.0
 size_flags_horizontal = 0
 size_flags_vertical = 8
 
-[connection signal="manpower_depleted" from="CanvasLayer/Control/VBoxContainer/MarginContainer/Control2/game_resource" to="." method="_on_game_resource_manpower_depleted"]
-[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/MarginContainer/Control3/menu_button" to="." method="_on_menu_button_pressed"]
+[connection signal="manpower_depleted" from="CanvasLayer/Control/VBoxContainer/HBoxContainer2/game_resource" to="." method="_on_game_resource_manpower_depleted"]
+[connection signal="pressed" from="CanvasLayer/Control/VBoxContainer/HBoxContainer2/menu_button" to="." method="_on_menu_button_pressed"]
 [connection signal="close" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats" to="." method="_on_infantry_stats_close"]
 [connection signal="drop_passenger" from="CanvasLayer/Control/VBoxContainer/HBoxContainer/unit_stats" to="." method="_on_unit_stats_drop_passenger"]
 [connection signal="pressed" from="CanvasLayer/Control/HBoxContainer/VBoxContainer2/attack_move" to="." method="_on_attack_move_pressed"]

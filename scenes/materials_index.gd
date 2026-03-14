@@ -3,7 +3,11 @@ class_name MaterialsIndex
 
 const infantry_uniforms = [
 	preload("res://scenes/entities/units/infantry/uniform_green.tres"), # uniform_green
-	preload("res://scenes/entities/units/infantry/uniform_khaki.tres") # uniform_khaki
+	preload("res://scenes/entities/units/infantry/uniform_khaki.tres"), # uniform_khaki
+	
+	preload("res://scenes/entities/units/infantry/uniform_grey.tres"),
+	preload("res://scenes/entities/units/infantry/skin_color_dark_material.tres"),
+	preload("res://scenes/entities/units/infantry/black_material.tres")
 ]
  
 const infantry_skin_colors = [
