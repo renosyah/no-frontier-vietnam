@@ -83,11 +83,11 @@ func _get_enemy(battle_map :BaseTileMap) -> BaseTileUnit:
 		return null
 		
 	for id in positions.keys():
-		var units :Array = unit_position_manager.units_in_position(battle_map, id)
-		if units.empty():
+		var _units :Array = unit_position_manager.units_in_position(battle_map, id)
+		if _units.empty():
 			continue
 			
-		for i in units:
+		for i in _units:
 			var unit :BaseTileUnit = i
 			if not is_instance_valid(unit):
 				return null

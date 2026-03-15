@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://assets/user_interface/fonts/montserrat_eb_16.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/user_interface/backdrop/paper_plain_1.png" type="Texture" id=2]
@@ -15,6 +15,7 @@
 [ext_resource path="res://assets/user_interface/icons/grenade.png" type="Texture" id=13]
 [ext_resource path="res://assets/user_interface/icons/launcher.png" type="Texture" id=14]
 [ext_resource path="res://assets/user_interface/vehicle_potraits/uh1d.png" type="Texture" id=15]
+[ext_resource path="res://assets/user_interface/icons/aid.png" type="Texture" id=16]
 
 [node name="unit_stats" type="MarginContainer"]
 margin_right = 600.0
@@ -459,6 +460,65 @@ text = "x 1"
 align = 1
 valign = 1
 
+[node name="infantry_heal_ability" type="Control" parent="HBoxContainer"]
+visible = false
+margin_left = 444.0
+margin_top = 80.0
+margin_right = 524.0
+margin_bottom = 220.0
+rect_min_size = Vector2( 80, 140 )
+mouse_filter = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/infantry_heal_ability"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -40.0
+margin_top = -100.0
+margin_right = 40.0
+rect_min_size = Vector2( 80, 100 )
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/infantry_heal_ability/MarginContainer"]
+margin_right = 80.0
+margin_bottom = 100.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="HBoxContainer/infantry_heal_ability/MarginContainer"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 75.0
+margin_bottom = 95.0
+rect_min_size = Vector2( 70, 90 )
+mouse_filter = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color( 0.231373, 0.231373, 0.231373, 1 )
+
+[node name="heal" type="Button" parent="HBoxContainer/infantry_heal_ability/MarginContainer"]
+margin_right = 80.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 80, 80 )
+icon = ExtResource( 16 )
+flat = true
+expand_icon = true
+
+[node name="heal_count" type="Label" parent="HBoxContainer/infantry_heal_ability/MarginContainer"]
+margin_top = 72.0
+margin_right = 80.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 24, 28 )
+size_flags_horizontal = 9
+size_flags_vertical = 8
+custom_fonts/font = ExtResource( 1 )
+text = "x 1"
+align = 1
+valign = 1
+
 [node name="MarginContainer2" type="MarginContainer" parent="HBoxContainer"]
 margin_left = 444.0
 margin_right = 546.0
@@ -506,4 +566,5 @@ expand_icon = true
 [connection signal="pressed" from="HBoxContainer/vehicle_option/MarginContainer/drop_unit" to="." method="_on_drop_unit_pressed"]
 [connection signal="pressed" from="HBoxContainer/infantry_grenade_ability/MarginContainer/grenade" to="." method="_on_grenade_pressed"]
 [connection signal="pressed" from="HBoxContainer/infantry_launcher_ability/MarginContainer/launch" to="." method="_on_launch_pressed"]
+[connection signal="pressed" from="HBoxContainer/infantry_heal_ability/MarginContainer/heal" to="." method="_on_heal_pressed"]
 [connection signal="pressed" from="HBoxContainer/Control4/MarginContainer/close" to="." method="_on_close_pressed"]

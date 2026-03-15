@@ -69,8 +69,6 @@ func _ready():
 	if is_combatan:
 		update_spotting()
 		Global.connect("on_global_tick", self, "_on_global_tick")
-		connect("on_current_tile_updated", self, "_on_current_tile_updated")
-		connect("on_finish_travel", self, "_on_finish_travel")
 
 func move_to(tile_id :Vector2):
 	if is_dead:
@@ -175,7 +173,7 @@ func master_moving(delta :float) -> void:
 		
 		if _paths.empty():
 			_is_moving = false
-			emit_signal("on_finish_travel", self, _last_tile, current_tile)
+			_on_finish_travel(_last_tile, current_tile)
 			return
 			
 		_last_to = new_to
@@ -186,7 +184,7 @@ func master_moving(delta :float) -> void:
 	var new_tile = _paths.front().tile_id
 	
 	if dist_from > dist_to and current_tile != new_tile:
-		emit_signal("on_current_tile_updated", self, current_tile, new_tile)
+		_on_current_tile_updated(current_tile, new_tile)
 		_last_tile = current_tile
 		current_tile = new_tile
 		
@@ -222,17 +220,22 @@ func _on_global_tick():
 	if _is_master and not _is_moving:
 		_scan_area()
 
-func _on_current_tile_updated(_unit, _from_id :Vector2, _to_id :Vector2):
-	if not _is_master:
+func _on_current_tile_updated(from_id :Vector2, to_id :Vector2):
+	emit_signal("on_current_tile_updated", self, from_id, to_id)
+	
+	if not _is_master or not is_combatan:
 		return
 		
 	update_spotting()
 	
 	if attack_move:
+		spotting_area.invert()
 		_scan_area()
 	
-func _on_finish_travel(_unit, _from_id :Vector2, _to_id :Vector2):
-	if not _is_master:
+func _on_finish_travel(from_id :Vector2, to_id :Vector2):
+	emit_signal("on_finish_travel", self, from_id, to_id)
+	
+	if not _is_master or not is_combatan:
 		return
 		
 	update_spotting()
@@ -243,7 +246,7 @@ func update_spotting():
 		TileMapUtils.get_directions(), current_tile, spotting_range
 	)
 	
-
+	
 # check wheter enemy stil in spotting range or not
 func _is_enemy_in_range() -> bool:
 	if enemy.is_dead or unit_position.empty():

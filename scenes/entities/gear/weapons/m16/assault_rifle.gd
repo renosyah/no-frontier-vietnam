@@ -2,6 +2,12 @@ extends Weapon
 
 const bullet_scene = preload("res://scenes/entities/projectiles/bullet/bullet.tscn")
 
+const shot_sounds = [
+	preload("res://assets/sounds/weapons/shot_1.wav"),
+	preload("res://assets/sounds/weapons/shot_2.wav"),
+	preload("res://assets/sounds/weapons/shot_3.wav")
+]
+
 onready var barrel = $barrel
 onready var animation_player = $AnimationPlayer
 onready var queue_task = $queue_task
@@ -16,6 +22,9 @@ func _ready():
 		add_child(bullet)
 		_bullets.append(bullet)
 		
+func get_shot_sound() -> AudioStream:
+	return shot_sounds.pick_random()
+	
 func _get_ready_bullet() -> BaseProjectile:
 	for i in _bullets:
 		if i.is_ready:

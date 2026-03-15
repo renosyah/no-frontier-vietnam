@@ -288,8 +288,10 @@ func _on_spawn_infantry():
 		
 		if i == 0:
 			infantry.role = infantry.role_radio_operator
-		elif i == 3:
+		elif i == 1:
 			infantry.role = infantry.role_at_specialist
+		elif i == 2:
+			infantry.role = infantry.role_medic
 			
 		if player.player_team == 1:
 			infantry.faction = infantry.faction_macv

@@ -3,11 +3,7 @@ class_name Infantry
 
 const punch = preload("res://assets/sounds/weapons/punch.wav")
 const reload_sound = preload("res://assets/sounds/weapons/reload.wav")
-const shot_sounds = [
-	preload("res://assets/sounds/weapons/shot_1.wav"),
-	preload("res://assets/sounds/weapons/shot_2.wav"),
-	preload("res://assets/sounds/weapons/shot_3.wav")
-]
+
 const dead_sounds = [
 	preload("res://assets/sounds/infantry/dead_1.wav"),
 	preload("res://assets/sounds/infantry/dead_2.wav"),
@@ -52,6 +48,7 @@ onready var attack_time = $attack_time
 onready var infantry_hit_register = $infantry_hit_register
 onready var floating_unit_info = $floating_unit_info
 onready var pending_task = $pending_task
+onready var healing_indicator = $healing_indicator
 
 onready var meshes = [
 	$pivot/body/head/h, # head : 0=skin, 1:hair
@@ -75,8 +72,9 @@ var _special_projectile :BaseProjectile
 
 var squad :BaseSquad
 
-var grenade :int = 3
+var grenade :int = 0
 var launcher :int = 0
+var medkit :int = 0
 
 # set from stats
 var discipline :int
@@ -236,7 +234,8 @@ remotesync func _heal(hp :int):
 		
 	if visible:
 		floating_unit_info.update_bar(hp, _weapon.ammo)
-	
+		healing_indicator.healed()
+		
 func _on_no_enemy():
 	._on_no_enemy()
 	
@@ -329,7 +328,7 @@ func _on_weapon_fired():
 			if is_instance_valid(enemy):
 				enemy.take_damage(_weapon.damage)
 		
-	audio_stream_player_3d.stream = shot_sounds[randi() % shot_sounds.size()]
+	audio_stream_player_3d.stream = _weapon.get_shot_sound()
 	audio_stream_player_3d.play()
 	
 	_current_anim = "fire_weapon"
@@ -373,6 +372,18 @@ func _on_reloading():
 func _on_weapon_update():
 	if visible:
 		floating_unit_info.update_bar(hp, _weapon.ammo)
+	
+func use_medkit():
+	if medkit == 0:
+		return
+		
+	if _is_master and not god_mode:
+		medkit = int(clamp(medkit - 1, 0, 2))
+		
+	stop()
+	
+	for i in squad.members:
+		i.heal([1,2,3].pick_random())
 	
 func use_launcher():
 	if launcher == 0:
@@ -525,7 +536,7 @@ func on_dead():
 	# animation finished
 	#.on_dead()
 	
-	audio_stream_player_3d.stream = dead_sounds[randi() % dead_sounds.size()]
+	audio_stream_player_3d.stream = dead_sounds.pick_random()
 	audio_stream_player_3d.play()
 	
 	circle.visible = false

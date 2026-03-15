@@ -14,8 +14,8 @@ var vehicle :Vehicle
 func _ready():
 	mesh_instance.set_surface_material(0, team_color_material)
 	
-func _on_current_tile_updated(_unit, _from_id, _to_id):
-	._on_current_tile_updated(_unit, _from_id, _to_id)
+func _on_current_tile_updated(_from_id, _to_id):
+	._on_current_tile_updated(_from_id, _to_id)
 	
 	fuel = int(clamp(fuel - fuel_cost, 0, max_fuel))
 	

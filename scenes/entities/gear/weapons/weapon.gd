@@ -88,3 +88,6 @@ func weapon_update():
 	
 func stop_firing():
 	pass
+	
+func get_shot_sound() -> AudioStream:
+	return null

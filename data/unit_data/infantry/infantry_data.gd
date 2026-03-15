@@ -4,6 +4,7 @@ class_name InfantryData
 const role_riflement = 1
 const role_radio_operator = 2
 const role_at_specialist = 3
+const role_medic = 4
 
 const faction_macv = 1
 const faction_nva = 2
@@ -40,13 +41,13 @@ func make_variant():
 		var white_potrait = [0,3,5,7,8,9]
 		
 		stats.soldier_name = SoldierNames.get_random_us_name()
-		skin_material_index = skin[randi() % 2]
-		stats.soldier_potrait_index = black_potrait[randi() % 4] if skin_material_index == 1 else white_potrait[randi() % 6]
+		skin_material_index = skin.pick_random()
+		stats.soldier_potrait_index = black_potrait.pick_random() if skin_material_index == 1 else white_potrait.pick_random()
 		uniform_material_index = 0
-		hat_scene_index = hats[randi() % 4]
-		bag_scene_index = bags[randi() % 4]
-		vest_scene_index = vests[randi() % 3]
-		uniform_style = style[randi() % 3]
+		hat_scene_index = hats.pick_random()
+		bag_scene_index = bags.pick_random()
+		vest_scene_index = vests.pick_random()
+		uniform_style = style.pick_random()
 		
 		match (role):
 			role_radio_operator:
@@ -63,9 +64,9 @@ func make_variant():
 		stats.soldier_potrait_index = int(rand_range(25, 34))
 		uniform_material_index = 1
 		hat_scene_index = 3
-		bag_scene_index = bags[randi() % 4]
-		vest_scene_index = vests[randi() % 2]
-		uniform_style = style[randi() % 3]
+		bag_scene_index = bags.pick_random()
+		vest_scene_index = vests.pick_random()
+		uniform_style = style.pick_random()
 		
 		match (role):
 			role_radio_operator:
@@ -80,11 +81,11 @@ func make_variant():
 		var vests = [1,3,4,5,6]
 		stats.soldier_name = SoldierNames.get_random_viet_name()
 		stats.soldier_potrait_index = int(rand_range(25, 34))
-		uniform_material_index = unif[randi() % 3]
+		uniform_material_index = unif.pick_random()
 		hat_scene_index = 4
 		bag_scene_index = 9
-		vest_scene_index = vests[randi() % 5]
-		uniform_style = style[randi() % 2]
+		vest_scene_index = vests.pick_random()
+		uniform_style = style.pick_random()
 		
 func from_dictionary(_data : Dictionary):
 	.from_dictionary(_data)
@@ -158,13 +159,14 @@ func spawn(player_data :PlayerData, parent, overlay_ui_path:NodePath, cam_path:N
 	infantry.accuracy = stats.accuracy
 	
 	match (infantry.role):
-		role_radio_operator:
-			infantry.grenade = 0
-			infantry.launcher = 0
+		role_riflement:
+			infantry.grenade = 3
 			
 		role_at_specialist:
-			infantry.grenade = 0
 			infantry.launcher = 1
+			
+		role_medic:
+			infantry.medkit = 1
 			
 	parent.add_child(infantry)
 	

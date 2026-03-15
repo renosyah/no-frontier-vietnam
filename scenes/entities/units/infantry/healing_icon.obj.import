@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/healing_icon.obj-5ffd675a8ffbe5995bcf392bb500d838.mesh"
+
+[deps]
+
+files=[ "res://.import/healing_icon.obj-5ffd675a8ffbe5995bcf392bb500d838.mesh" ]
+
+source_file="res://scenes/entities/units/infantry/healing_icon.obj"
+dest_files=[ "res://.import/healing_icon.obj-5ffd675a8ffbe5995bcf392bb500d838.mesh", "res://.import/healing_icon.obj-5ffd675a8ffbe5995bcf392bb500d838.mesh" ]
+
+[params]
+
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh_flags=4286
+generate_tangents=true
+vertex_cache_optimization=true
+octahedral_compression=true
