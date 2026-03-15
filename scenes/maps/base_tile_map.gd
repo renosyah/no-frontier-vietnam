@@ -151,7 +151,7 @@ func get_closes_tile_instance(from :Vector3) -> BaseTile:
 			continue
 
 		var dist_1 = current.global_position.distance_squared_to(from)
-		var dist_2 = i.global_position.translation.distance_squared_to(from)
+		var dist_2 = i.global_position.distance_squared_to(from)
 		if dist_2 < dist_1:
 			current = i
 			

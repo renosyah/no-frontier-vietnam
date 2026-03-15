@@ -11,6 +11,7 @@ onready var bg_2 = $bg2
 onready var bg = $bg
 onready var icn = $VBoxContainer/icn
 onready var input_detection = $input_detection
+onready var label = $VBoxContainer/Label
 
 func _ready():
 	bg.modulate = color
@@ -25,6 +26,9 @@ func _ready():
 	
 func selected(v :bool):
 	bg_2.visible = v
+	
+func set_label(v :String):
+	label.text = v
 
 func _on_floating_icon_gui_input(event):
 	input_detection.check_input(event)

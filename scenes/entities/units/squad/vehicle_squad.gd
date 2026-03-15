@@ -91,7 +91,8 @@ func set_hidden(v :bool):
 	.set_hidden(v)
 	
 	decoration_icon.visible = _current_visible
-
+	_floating_icon.set_label("1")
+	
 func _on_vehicle_dead(veh):
 	if veh == vehicle:
 		emit_signal("on_squad_destroyed", self)

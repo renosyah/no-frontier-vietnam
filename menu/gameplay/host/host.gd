@@ -31,15 +31,18 @@ func on_dynamic_battle_map_spawned(tile_id :Vector2, battle_map :BaseTileMap):
 	battle_map_director.battle_map_spawned(tile_id)
 	
 func _on_battle_map_director_spawn_battle_map(tile_id :Vector2):
-	rpc("_spawn_battle_map", tile_id, battle_map_pos[tile_id])
+	if NetworkLobbyManager.is_network_on():
+		rpc("_spawn_battle_map", tile_id, battle_map_pos[tile_id])
 	
 func _on_battle_map_director_captured_battle_map(tile_id):
 	bot_stats_bonus = int(clamp(bot_stats_bonus + 1, -8, 2))
 	bot_hp_bonus = int(clamp(bot_hp_bonus + 1, -4, 4))
-	rpc("_captured_battle_map", tile_id)
+	if NetworkLobbyManager.is_network_on():
+		rpc("_captured_battle_map", tile_id)
 
 func _on_battle_map_director_update_contested_points(values :Array):
-	rpc_unreliable("_update_contested_points", values)
+	if NetworkLobbyManager.is_network_on():
+		rpc_unreliable("_update_contested_points", values)
 
 var bot_stats_bonus :int = -8
 var bot_hp_bonus :int = -4

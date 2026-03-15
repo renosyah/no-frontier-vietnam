@@ -246,7 +246,6 @@ func update_spotting():
 		TileMapUtils.get_directions(), current_tile, spotting_range
 	)
 	
-	
 # check wheter enemy stil in spotting range or not
 func _is_enemy_in_range() -> bool:
 	if enemy.is_dead or unit_position.empty():
@@ -263,9 +262,14 @@ func _is_enemy_in_range() -> bool:
 	return false
 	
 func _scan_area():
-	if unit_position.empty() or is_instance_valid(enemy):
+	if unit_position.empty():
 		return
 		
+	if is_instance_valid(enemy):
+		if not enemy.is_dead:
+			return
+		
+	var enemies :Array = []
 	for pos in spotting_area:
 		if not unit_position.has(pos):
 			continue
@@ -279,7 +283,7 @@ func _scan_area():
 				if unit.team != team:
 					enemy = unit
 					return
-		
+				
 func take_damage(damage :int):
 	if is_dead:
 		return

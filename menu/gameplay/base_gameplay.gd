@@ -543,7 +543,7 @@ remotesync func _despawn_battle_map(tile_id :Vector2):
 		
 	for i in spawned_squad:
 		var squad :BaseSquad = i
-		
+
 		# force out of battle map
 		# yeet everyone out to nowhere
 		if squad.current_tile == tile_id:
