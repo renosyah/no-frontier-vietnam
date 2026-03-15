@@ -198,7 +198,11 @@ func _on_enemy_in_range(_delta :float, _pos :Vector3, _enemy_pos :Vector3):
 	pass
 	
 func _on_no_enemy():
-	pass
+	if not _is_master or not is_combatan:
+		return
+		
+	update_spotting()
+	_scan_area()
 	
 func puppet_moving(delta :float) -> void:
 	.puppet_moving(delta)
@@ -229,7 +233,6 @@ func _on_current_tile_updated(from_id :Vector2, to_id :Vector2):
 	update_spotting()
 	
 	if attack_move:
-		spotting_area.invert()
 		_scan_area()
 	
 func _on_finish_travel(from_id :Vector2, to_id :Vector2):
@@ -280,7 +283,7 @@ func _scan_area():
 			
 		for unit in unit_positions:
 			if is_instance_valid(unit):
-				if unit.team != team:
+				if not unit.is_dead and unit.team != team:
 					enemy = unit
 					return
 				

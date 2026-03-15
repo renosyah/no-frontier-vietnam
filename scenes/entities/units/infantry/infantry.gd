@@ -235,14 +235,14 @@ remotesync func _heal(hp :int):
 	if visible:
 		floating_unit_info.update_bar(hp, _weapon.ammo)
 		healing_indicator.healed()
-		
+	
 func _on_no_enemy():
 	._on_no_enemy()
-	
+
 	_weapon_aimed = false
 	_using_ability = false
 	_weapon.stop_firing()
-	
+
 	if not attack_time.is_stopped():
 		attack_time.stop()
 	
